@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validación de Reserva</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="./navbar.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <navbar-header></navbar-header>
+
+  <main class="max-w-xl mx-auto px-4 py-8 sm:py-12">
+    <div id="loadingState" class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
+      <div class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-3"></div>
+      <p class="text-gray-600 font-semibold">Verificando entrada...</p>
+    </div>
+
+    <div id="errorState" class="hidden bg-white p-8 rounded-xl shadow-sm border border-red-200 text-center">
+      <div class="text-5xl mb-4">❌</div>
+      <h2 class="text-2xl font-extrabold text-red-600 mb-2">Entrada No Válida</h2>
+      <p id="errorMessage" class="text-gray-600 mb-6">No se ha encontrado ninguna reserva asociada a este código.</p>
+      <a href="inicio.html" class="btn-secondary text-sm">Volver al Inicio</a>
+    </div>
+   <div id="qrContainer" class="bg-white"></div>
+
+    <div id="validState" class="hidden bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+      
+      <!-- CÓDIGO QR EN GRANDE AL PRINCIPIO -->
+      <div class="p-6 bg-gray-100/70 border-b border-gray-200 flex flex-col items-center justify-center">
+        <span class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-3">Código QR de Verificación</span>
+      </div>
+
+      <div id="headerStatus" class="p-6 text-center transition-colors duration-300">
+        <span id="headerIcon" class="text-4xl block mb-1">⏳</span>
+        <h2 id="headerTitle" class="text-2xl font-black uppercase tracking-wider">Cargando...</h2>
+        <p id="headerSubtitle" class="text-xs opacity-90 mt-1">--</p>
+      </div>
+
+      <div class="p-6 space-y-4">
+        
+        <div>
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Evento</span>
+          <h3 id="resEvento" class="text-xl font-black text-gray-900">--</h3>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 border-t border-b border-gray-100 py-4">
+          <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Asistente</span>
+            <p id="resNombre" class="text-base font-bold text-gray-800">--</p>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Talla Reservada</span>
+            <p id="resTalla" class="text-2xl font-black text-primary">--</p>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-sm text-gray-600">
+          <p><strong>Estado:</strong> <span id="resEstado" class="inline-block px-2.5 py-1 text-xs rounded-md border">--</span></p>
+          <p><strong>ID Solicitud:</strong> <span id="resId" class="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">--</span></p>
+        </div>
+
+        <!-- BOTONERA DE ACCIONES (SOLO VISIBLE SI EL USUARIO TIENE SESIÓN INICIADA) -->
+        <div id="adminActionsContainer" class="hidden pt-4 border-t border-gray-100 space-y-3">
+          <div id="actionPendiente" class="hidden">
+            <button id="btnConfirmarAsistencia" class="btn-primary w-full text-center py-3 text-base font-bold bg-green-600 hover:bg-green-700 shadow-sm">
+              <span>✅ CONFIRMAR</span>
+            </button>
+          </div>
+
+          <div id="actionConfirmado" class="hidden space-y-2">
+            <button id="btnToggleDevolucion" class="w-full text-center font-bold py-2.5 px-4 rounded-md text-xs transition-colors flex items-center justify-center gap-2 shadow-sm">
+              <span id="txtBtnDevolucion">🔄 Marcar como devuelto</span>
+            </button>
+
+            <button id="btnBorrarConfirmacion" class="btn-danger w-full text-center text-xs py-2.5 font-bold">
+              <span>⚠️ Borrar confirmación</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-2 text-center">
+          <a href="inicio.html" class="text-xs font-semibold text-gray-400 hover:text-gray-600 underline">Volver al portal</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL DE CONFIRMACIÓN DE ACCIONES -->
+  <div id="modalAccion" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
+    <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center space-y-4 border border-gray-200 mx-4">
+      <div class="text-3xl">❓</div>
+      <h3 class="text-lg font-bold text-gray-900">Confirmar Acción</h3>
+      <p id="modalAccionTexto" class="text-sm text-gray-600 font-medium">¿Seguro que quieres proceder?</p>
+      <div class="flex justify-center gap-3 pt-2">
+        <button id="btnModalCancelar" class="btn-secondary text-xs px-4 py-2">No, cancelar</button>
+        <button id="btnModalConfirmar" class="btn-primary text-xs px-4 py-2">Sí, proceder</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { db, auth } from './firebase.config.js';
+    import { doc, getDoc, updateDoc, collectionGroup, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const solId = urlParams.get('id');
+    const eventoId = urlParams.get('evento');
+
+    const loadingState = document.getElementById("loadingState");
+    const errorState = document.getElementById("errorState");
+    const validState = document.getElementById("validState");
+
+    const headerStatus = document.getElementById("headerStatus");
+    const headerIcon = document.getElementById("headerIcon");
+    const headerTitle = document.getElementById("headerTitle");
+    const headerSubtitle = document.getElementById("headerSubtitle");
+
+    const adminActionsContainer = document.getElementById("adminActionsContainer");
+    const actionPendiente = document.getElementById("actionPendiente");
+    const actionConfirmado = document.getElementById("actionConfirmado");
+    const btnConfirmarAsistencia = document.getElementById("btnConfirmarAsistencia");
+    const btnBorrarConfirmacion = document.getElementById("btnBorrarConfirmacion");
+    const btnToggleDevolucion = document.getElementById("btnToggleDevolucion");
+    const txtBtnDevolucion = document.getElementById("txtBtnDevolucion");
+    const qrContainer = document.getElementById("qrContainer");
+
+    const modalAccion = document.getElementById("modalAccion");
+    const modalAccionTexto = document.getElementById("modalAccionTexto");
+    const btnModalCancelar = document.getElementById("btnModalCancelar");
+    const btnModalConfirmar = document.getElementById("btnModalConfirmar");
+
+    let docRefActual = null;
+    let datosActuales = null;
+    let unsubReserva = null;
+    let accionPendienteCallback = null;
+
+    function obtenerEstadoCalculado(confirmado, devolucion) {
+      if (!confirmado) return "Pendiente de confirmar";
+      return devolucion === 1 ? "Confirmado | Material devuelto" : "Confirmado | Pendiente de devolución";
+    }
+
+    // GESTIÓN DE MODAL
+    function solicitarConfirmacion(textoAccion, callback) {
+      modalAccionTexto.textContent = `¿Seguro que quieres ${textoAccion}?`;
+      accionPendienteCallback = callback;
+      modalAccion.classList.remove("hidden");
+    }
+
+    function cerrarModal() {
+      modalAccion.classList.add("hidden");
+      accionPendienteCallback = null;
+    }
+
+    btnModalCancelar.addEventListener("click", cerrarModal);
+
+    btnModalConfirmar.addEventListener("click", async () => {
+      if (typeof accionPendienteCallback === "function") {
+        await accionPendienteCallback();
+      }
+      cerrarModal();
+    });
+
+    // CONTROL DE AUTENTICACIÓN (Mostrar/Ocultar botonera de acciones)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        adminActionsContainer.classList.remove("hidden");
+      } else {
+        adminActionsContainer.classList.add("hidden");
+      }
+    });
+
+    // INICIO PÚBLICO DE CARGA DE DATOS
+    if (!solId) {
+      mostrarError("Falta el parámetro identificador de la reserva.");
+    } else {
+      iniciarEscuchaReserva(solId, eventoId);
+    }
+
+    async function iniciarEscuchaReserva(idSolicitud, idEvento) {
+      try {
+        if (idEvento) {
+          docRefActual = doc(db, "eventos", idEvento, "solicitudes", idSolicitud);
+        } else {
+          const q = query(collectionGroup(db, 'solicitudes'), where('__name__', '==', idSolicitud));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            docRefActual = querySnapshot.docs[0].ref;
+          }
+        }
+
+        if (!docRefActual) {
+          mostrarError("La reserva no existe o ha sido cancelada.");
+          return;
+        }
+
+        if (unsubReserva) unsubReserva();
+
+        unsubReserva = onSnapshot(docRefActual, async (docSnap) => {
+          if (!docSnap.exists()) {
+            mostrarError("La reserva ha sido eliminada.");
+            return;
+          }
+
+          datosActuales = docSnap.data();
+
+          let nombreEvento = "Evento Deportivo";
+          if (idEvento) {
+            const evSnap = await getDoc(doc(db, "eventos", idEvento));
+            if (evSnap.exists()) nombreEvento = evSnap.data().nombre || nombreEvento;
+          }
+
+          renderizarQR(datosActuales);
+
+          const estaConfirmado = Boolean(datosActuales.confirmado);
+          const devVal = Number(datosActuales.devolucion || 0);
+          const textoEstado = obtenerEstadoCalculado(estaConfirmado, devVal);
+          const nombreCompleto = `${datosActuales.nombre || ''} ${datosActuales.apellidos || ''}`.trim();
+
+          document.getElementById("resEvento").textContent = nombreEvento;
+          document.getElementById("resNombre").textContent = nombreCompleto;
+          document.getElementById("resId").textContent = idSolicitud;
+
+          // RENDERIZAR TALLA CON COLOR SEGÚN GÉNERO
+          const resTallaEl = document.getElementById("resTalla");
+          const tallaStr = datosActuales.talla || 'N/A';
+          const tallaTexto = tallaStr.toLowerCase();
+          
+          let tallaEstilo = "text-purple-600";
+          if (tallaTexto.includes("hombre")) {
+            tallaEstilo = "text-blue-600";
+          } else if (tallaTexto.includes("mujer")) {
+            tallaEstilo = "text-pink-600";
+          }
+          resTallaEl.textContent = `Talla ${tallaStr}`;
+          resTallaEl.className = `text-2xl font-black ${tallaEstilo}`;
+
+          // RENDERIZAR ETIQUETA DE ESTADO
+          const resEstadoEl = document.getElementById("resEstado");
+          resEstadoEl.textContent = textoEstado;
+
+          if (estaConfirmado && devVal === 1) {
+            resEstadoEl.className = "inline-block px-2.5 py-1 text-xs rounded-md border bg-green-100 text-green-800 border-green-300 font-extrabold";
+          } else if (estaConfirmado) {
+            resEstadoEl.className = "inline-block px-2.5 py-1 text-xs rounded-md border bg-yellow-300 text-black border-yellow-400 font-extrabold shadow-sm";
+          } else {
+            resEstadoEl.className = "inline-block px-2.5 py-1 text-xs rounded-md border bg-gray-100 text-gray-700 border-gray-200";
+          }
+
+          actualizarInterfaz(estaConfirmado, devVal);
+
+          loadingState.classList.add("hidden");
+          validState.classList.remove("hidden");
+        });
+
+      } catch (err) {
+        mostrarError("Error consultando la base de datos: " + err.message);
+      }
+    }
+
+    // GENERACIÓN DE QR EN TAMAÑO MÁS GRANDE (280x280)
+    function renderizarQR(solicitudData) {
+      qrContainer.innerHTML = "";
+      if (solicitudData.qrCode) {
+        const img = document.createElement("img");
+        img.src = solicitudData.qrCode;
+        img.alt = "Código QR";
+        img.className = "height: 100%";
+        qrContainer.appendChild(img);
+      } else {
+        new QRCode(qrContainer, {
+          text: window.location.href,
+          width: 280,
+          height: 280,
+          colorDark: "#111827",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    }
+
+    function actualizarInterfaz(estaConfirmado, valorDevolucion) {
+      if (estaConfirmado) {
+        if (valorDevolucion === 1) {
+          headerStatus.className = "bg-green-600 text-white p-6 text-center transition-colors duration-300";
+          headerIcon.textContent = "✅";
+          headerTitle.textContent = "Material Devuelto";
+          headerSubtitle.textContent = "Proceso de reserva completado al 100%";
+
+          btnToggleDevolucion.className = "w-full text-center font-bold py-2.5 px-4 rounded-md text-xs bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors";
+          txtBtnDevolucion.textContent = "🔄 Limpiar devolución";
+        } else {
+          headerStatus.className = "bg-yellow-400 text-black p-6 text-center transition-colors duration-300";
+          headerIcon.textContent = "⚠️";
+          headerTitle.textContent = "Usuario Confirmado";
+          headerSubtitle.textContent = "Pendiente de devolución de material";
+
+          btnToggleDevolucion.className = "w-full text-center font-bold py-2.5 px-4 rounded-md text-xs bg-purple-600 text-white hover:bg-purple-700 transition-colors shadow-sm";
+          txtBtnDevolucion.textContent = "🔄 Marcar como devuelto";
+        }
+
+        actionPendiente.classList.add("hidden");
+        actionConfirmado.classList.remove("hidden");
+      } else {
+        headerStatus.className = "bg-gray-600 text-white p-6 text-center transition-colors duration-300";
+        headerIcon.textContent = "⏳";
+        headerTitle.textContent = "Pendiente de confirmar";
+        headerSubtitle.textContent = "Reserva lista para confirmación";
+
+        actionConfirmado.classList.add("hidden");
+        actionPendiente.classList.remove("hidden");
+      }
+    }
+
+    // EVENTO CONFIRMAR CON MODAL
+    btnConfirmarAsistencia.addEventListener("click", () => {
+      if (!docRefActual || !datosActuales) return;
+      const nombre = `${datosActuales.nombre || ''} ${datosActuales.apellidos || ''}`.trim();
+
+      solicitarConfirmacion(`confirmar a ${nombre}`, async () => {
+        try {
+          await updateDoc(docRefActual, { confirmado: true });
+        } catch (err) {
+          alert("Error al confirmar: " + err.message);
+        }
+      });
+    });
+
+    // EVENTO MARCAR / LIMPIAR DEVOLUCIÓN CON MODAL
+    btnToggleDevolucion.addEventListener("click", () => {
+      if (!docRefActual || !datosActuales) return;
+
+      const devActual = Number(datosActuales.devolucion || 0);
+      const nuevoDev = devActual === 1 ? 0 : 1;
+      const nombre = `${datosActuales.nombre || ''} ${datosActuales.apellidos || ''}`.trim();
+      const textoAccion = devActual === 1 
+        ? `limpiar la devolución de ${nombre}` 
+        : `marcar como devuelto el material de ${nombre}`;
+
+      solicitarConfirmacion(textoAccion, async () => {
+        try {
+          await updateDoc(docRefActual, { devolucion: nuevoDev });
+        } catch (err) {
+          alert("Error al actualizar devolución: " + err.message);
+        }
+      });
+    });
+
+    // EVENTO BORRAR CONFIRMACIÓN CON MODAL
+    btnBorrarConfirmacion.addEventListener("click", () => {
+      if (!docRefActual || !datosActuales) return;
+      const nombre = `${datosActuales.nombre || ''} ${datosActuales.apellidos || ''}`.trim();
+
+      solicitarConfirmacion(`borrar la confirmación de ${nombre}`, async () => {
+        try {
+          await updateDoc(docRefActual, { 
+            confirmado: false,
+            devolucion: 0 
+          });
+        } catch (err) {
+          alert("Error al revertir confirmación: " + err.message);
+        }
+      });
+    });
+
+    function mostrarError(msg) {
+      document.getElementById("errorMessage").textContent = msg;
+      loadingState.classList.add("hidden");
+      errorState.classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

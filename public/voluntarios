@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Voluntarios</title>
+    <!-- Cargamos Google Maps (REEMPLAZA TU_API_KEY) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY_AQUI"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .hidden { display: none; }
+        .btn { padding: 10px 15px; margin: 5px; cursor: pointer; color: white; border: none; border-radius: 5px; }
+        .btn-blue { background-color: #007bff; }
+        .btn-green { background-color: #28a745; }
+        #mapa { height: 400px; width: 100%; margin-top: 20px; background: #eee; }
+    </style>
+</head>
+<body>
+
+    <h1>App Voluntarios (Web)</h1>
+
+    <!-- Selector de Rol (Simulación de Login) -->
+    <div id="login-section">
+        <h3>Selecciona tu rol para entrar:</h3>
+        <button class="btn btn-blue" onclick="mostrarSeccion('voluntario-section')">Entrar como Voluntario</button>
+        <button class="btn btn-blue" onclick="mostrarSeccion('jefe-section')">Entrar como Jefe de Tramo</button>
+    </div>
+
+    <!-- PANTALLA DEL VOLUNTARIO -->
+    <div id="voluntario-section" class="hidden">
+        <h2>Panel de Voluntario</h2>
+        <p>Tu ID de prueba es: <strong>vol_001</strong></p>
+        
+        <button id="btn-gps" class="btn btn-blue">📍 Enviar mi posición actual (Coordenada Final)</button>
+        <p id="gps-status"></p>
+
+        <h3>Contactar Jefe de Tramo</h3>
+        <!-- Usamos enlaces estándar de HTML para llamadas y WhatsApp -->
+        <a id="link-llamar" href="#" class="btn btn-blue" style="text-decoration:none;">📞 Llamar al Jefe</a>
+        <a id="link-whatsapp" href="#" class="btn btn-green" style="text-decoration:none;">💬 Enviar WhatsApp</a>
+        
+        <br><br>
+        <button onclick="mostrarSeccion('login-section')">Volver</button>
+    </div>
+
+    <!-- PANTALLA DEL JEFE DE TRAMO -->
+    <div id="jefe-section" class="hidden">
+        <h2>Control de Tramo</h2>
+        <p>Tus voluntarios asignados aparecerán en el mapa.</p>
+        <div id="mapa"></div>
+        <br>
+        <button onclick="mostrarSeccion('login-section')">Volver</button>
+    </div>
+
+    <!-- LÓGICA DE FIREBASE Y MAPAS -->
+    <script type="module">
+        // Importamos Firebase v10 (Modular)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            initializeFirestore, 
+            persistentLocalCache, 
+            doc, 
+            updateDoc, 
+            onSnapshot, 
+            collection, 
+            query, 
+            where,
+            GeoPoint 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+		import { db } from './firebase.config.js';
+
+        // Variables globales y de prueba
+        const voluntarioId = "vol_001"; 
+        const jefeId = "jefe_001";
+        let map;
+        let marcadores = {}; // Para guardar los pines del mapa
+
+        // Utilidad para cambiar de pantalla
+        window.mostrarSeccion = function(id) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('voluntario-section').classList.add('hidden');
+            document.getElementById('jefe-section').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
+
+            if(id === 'jefe-section') inicializarMapa();
+            if(id === 'voluntario-section') cargarDatosVoluntario();
+        }
+
+        // --- LÓGICA DEL VOLUNTARIO ---
+
+        function cargarDatosVoluntario() {
+            // Escuchamos el documento del voluntario para obtener el teléfono de su jefe
+            const docRef = doc(db, "voluntarios", voluntarioId);
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const telJefe = data.telefono_jefe || "";
+                    
+                    // Actualizamos los enlaces de los botones
+                    document.getElementById('link-llamar').href = `tel:${telJefe}`;
+                    document.getElementById('link-whatsapp').href = `https://wa.me/${telJefe}`;
+                }
+            });
+        }
+
+        document.getElementById('btn-gps').addEventListener('click', () => {
+            const statusLabel = document.getElementById('gps-status');
+            statusLabel.innerText = "Buscando satélites...";
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    try {
+                        // Guardamos en Firestore. Si no hay internet, se guarda en caché
+                        // y se envía en cuanto vuelva la conexión.
+                        const docRef = doc(db, "voluntarios", voluntarioId);
+                        await updateDoc(docRef, {
+                            coordenada_final: new GeoPoint(lat, lng)
+                        });
+                        statusLabel.innerText = `✅ Posición guardada: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                    } catch (error) {
+                        statusLabel.innerText = "❌ Error al guardar en base de datos.";
+                    }
+                }, (error) => {
+                    statusLabel.innerText = "❌ Error GPS: " + error.message;
+                }, { enableHighAccuracy: true });
+            } else {
+                statusLabel.innerText = "❌ Tu navegador no soporta GPS.";
+            }
+        });
+
+        // --- LÓGICA DEL JEFE DE TRAMO ---
+
+        function inicializarMapa() {
+            if (!map) {
+                map = new google.maps.Map(document.getElementById("mapa"), {
+                    center: { lat: 40.416, lng: -3.703 }, // Madrid por defecto
+                    zoom: 13,
+                });
+            }
+
+            // Escuchamos a los voluntarios que tienen asignado a este jefe
+            const q = query(collection(db, "voluntarios"), where("jefe_tramo_id", "==", jefeId));
+            
+            onSnapshot(q, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    const data = change.doc.data();
+                    const id = change.doc.id;
+
+                    // Si se modifica la coordenada final, actualizamos o creamos el marcador
+                    if (data.coordenada_final) {
+                        const latLng = { 
+                            lat: data.coordenada_final.latitude, 
+                            lng: data.coordenada_final.longitude 
+                        };
+
+                        if (marcadores[id]) {
+                            // Mover marcador existente
+                            marcadores[id].setPosition(latLng);
+                        } else {
+                            // Crear nuevo marcador
+                            marcadores[id] = new google.maps.Marker({
+                                position: latLng,
+                                map: map,
+                                title: data.nombre + " (Posición Real)",
+                                icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                            });
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

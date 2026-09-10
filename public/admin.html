@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - Gestión de Eventos</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="./navbar.js" defer></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <navbar-header></navbar-header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-8 border-b pb-4 border-gray-200">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Panel de Control Administrador</h1>
+      <a href="inicio.html" class="btn-secondary text-sm">← Volver al Portal</a>
+    </div>
+
+    <div id="loginSection" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 my-12">
+      <h3 class="text-xl font-bold text-gray-900 mb-6">Iniciar Sesión Administrador</h3>
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Correo Electrónico:</label>
+          <input type="email" id="loginEmail" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="admin@tudominio.com">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Contraseña:</label>
+          <input type="password" id="loginPassword" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="******">
+        </div>
+        <button type="submit" class="btn-primary w-full">Acceder</button>
+      </form>
+      <p id="loginError" class="text-red-500 text-sm mt-3 font-semibold"></p>
+    </div>
+
+    <div id="adminContent" class="hidden space-y-8">
+      <div class="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-200">
+        <p class="text-sm text-gray-600">Sesión activa: <b id="adminEmailText" class="text-gray-900"></b></p>
+        <button id="btnLogout" class="btn-danger text-xs py-1 px-3">Cerrar Sesión</button>
+      </div>
+
+      <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
+        <h3 id="formEventoTitle" class="text-xl font-bold text-gray-900 mb-6">Crear Nuevo Evento</h3>
+        <form id="eventoForm" class="space-y-4">
+          <input type="hidden" id="eventoIdEdit">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Slug URL (único):</label>
+              <input type="text" id="evSlug" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="maraton-nocturna-2026">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Evento:</label>
+              <input type="text" id="evNombre" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="Ej: Maratón Nocturna 2026">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Fecha del Evento:</label>
+              <input type="date" id="evFecha" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Hora del Evento:</label>
+              <input type="time" id="evHora" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Color Primario del Evento:</label>
+              <div class="flex items-center gap-2">
+                <input type="color" id="evColor" value="#5da999" class="h-10 w-16 border border-gray-300 rounded-md p-1 cursor-pointer">
+                <span class="text-xs text-gray-500">Color personalizado para evento.html</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Coordenadas (Lat, Lng):</label>
+              <div class="flex gap-2">
+                <input type="text" id="evLat" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lat: 36.7212">
+                <input type="text" id="evLng" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lng: -4.4212">
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Descripción:</label>
+              <textarea id="evDesc" rows="3" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Detalles del evento..."></textarea>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-semibold text-gray-700 mb-1">Imagen de Portada:</label>
+              <input type="file" id="evImagenFile" accept="image/*" class="w-full text-sm text-gray-500 mb-2">
+              <input type="url" id="evImagenUrl" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="o pega una URL de imagen directamente...">
+            </div>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="submit" id="btnGuardarEvento" class="btn-primary">Guardar Evento</button>
+            <button type="button" id="btnCancelarEditEvento" class="btn-danger hidden">Cancelar Edición</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <h3 class="text-xl font-bold text-gray-900 mb-4">Eventos Registrados</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-gray-600">
+            <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
+              <tr>
+                <th class="p-3">Nombre</th>
+                <th class="p-3">Fecha y Hora</th>
+                <th class="p-3">Color</th>
+                <th class="p-3">Imagen</th>
+                <th class="p-3">Coordenadas</th>
+                <th class="p-3 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaEventos" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="seccionDetalleEvento" class="hidden bg-white p-6 sm:p-8 rounded-xl shadow-sm border-2 border-primary space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+          <h2 id="detalleEventoNombre" class="text-2xl font-bold text-primary m-0">--</h2>
+          <!-- SISTEMA DE PESTAÑAS DE GESTIÓN -->
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-primary text-white shadow-sm" data-target="tabStock">📦 Stock y Solicitudes</button>
+            <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabVoluntarios">👥 Personal Voluntario</button>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 1: STOCK Y SOLICITUDES -->
+        <div id="tabStock" class="tab-content space-y-8">
+          <div>
+            <h3 class="text-lg font-bold text-gray-900 mb-4">1. Control de Stock de Tallas</h3>
+            <form id="stockForm" class="flex flex-wrap sm:flex-nowrap gap-3 items-end mb-4">
+              <div class="w-full sm:w-1/3">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Talla:</label>
+                <input type="text" id="stockTallaInput" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Ej: 42" required>
+              </div>
+              <div class="w-full sm:w-1/3">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Unidades:</label>
+                <input type="number" id="stockCantidadInput" min="0" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Ej: 15" required>
+              </div>
+              <button type="submit" class="btn-primary text-sm w-full sm:w-auto">Añadir/Modificar</button>
+            </form>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
+                  <tr>
+                    <th class="p-3">Talla</th>
+                    <th class="p-3">Unidades</th>
+                    <th class="p-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaStockAdmin" class="divide-y divide-gray-100"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-gray-900">2. Solicitudes de Clientes</h3>
+              <button id="btnExportarCSV" class="btn-primary text-xs">📥 Exportar CSV</button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
+                  <tr>
+                    <th class="p-3">Id</th>
+                    <th class="p-3">Fecha</th>
+                    <th class="p-3">Nombre</th>
+                    <th class="p-3">Teléfono</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Talla</th>
+                    <th class="p-3 text-center">Confirmado</th>
+                    <th class="p-3 text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaSolicitudesAdmin" class="divide-y divide-gray-100"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 2: PERSONAL VOLUNTARIO -->
+        <div id="tabVoluntarios" class="tab-content hidden space-y-6">
+          <h3 class="text-lg font-bold text-gray-900">Gestión de Personal Voluntario</h3>
+
+          <form id="voluntarioForm" class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4">
+            <input type="hidden" id="voluntarioIdEdit">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre:</label>
+                <input type="text" id="volNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="Nombre">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Apellidos:</label>
+                <input type="text" id="volApellidos" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="Apellidos">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Teléfono:</label>
+                <input type="tel" id="volTelefono" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="600000000">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Tel. Emergencia:</label>
+                <input type="tel" id="volTelEmergencia" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="600000000">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre Responsable:</label>
+                <input type="text" id="volResponsable" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="Responsable a cargo">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Coord. Designadas (Lat, Lng):</label>
+                <input type="text" id="volCoordDesignada" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: 36.7212, -4.4212">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Coord. Real (Lat, Lng):</label>
+                <input type="text" id="volCoordReal" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: 36.7220, -4.4200">
+              </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button type="submit" class="btn-primary text-xs py-2">Guardar Voluntario</button>
+              <button type="button" id="btnCancelarVoluntario" class="btn-secondary text-xs py-2 hidden">Cancelar</button>
+            </div>
+          </form>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
+                <tr>
+                  <th class="p-3">Voluntario</th>
+                  <th class="p-3">Teléfonos</th>
+                  <th class="p-3">Responsable</th>
+                  <th class="p-3">Ubicaciones</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaVoluntariosAdmin" class="divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+
+          <!-- MAPA INTERACTIVO DE DOBLE PUNTO -->
+          <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="font-bold text-gray-800 text-sm">🗺️ Mapa de Ubicación: <span id="mapaVoluntarioTitulo" class="text-primary font-normal">Selecciona un voluntario</span></h4>
+              <div class="flex items-center gap-4 text-xs font-semibold">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Designado</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Real</span>
+              </div>
+            </div>
+            <div id="voluntarioMapaContainer" class="w-full h-72 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+              Selecciona un voluntario para ver su mapa comparativo.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { db, auth } from './firebase.config.js';
+    import { collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, runTransaction, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const loginSection = document.getElementById("loginSection");
+    const adminContent = document.getElementById("adminContent");
+    const tablaEventos = document.getElementById("tablaEventos");
+    const seccionDetalleEvento = document.getElementById("seccionDetalleEvento");
+
+    let eventoActualId = null;
+    let eventoActualNombre = "";
+    let unsubStockAdmin = null;
+    let unsubSolicitudesAdmin = null;
+    let unsubVoluntariosAdmin = null;
+    let solicitudesCache = [];
+
+    // LÓGICA DE PESTAÑAS (TABS)
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const targetId = e.currentTarget.getAttribute("data-target");
+
+        // Ocultar todos los contenidos y resetear estilos de botones
+        document.querySelectorAll(".tab-content").forEach(content => content.classList.add("hidden"));
+        document.querySelectorAll(".tab-btn").forEach(b => {
+          b.classList.remove("bg-primary", "text-white", "shadow-sm");
+          b.classList.add("bg-gray-100", "text-gray-600", "hover:bg-gray-200");
+        });
+
+        // Activar la pestaña seleccionada
+        document.getElementById(targetId).classList.remove("hidden");
+        e.currentTarget.classList.remove("bg-gray-100", "text-gray-600", "hover:bg-gray-200");
+        e.currentTarget.classList.add("bg-primary", "text-white", "shadow-sm");
+      });
+    });
+
+    function formatearFecha(fechaStr) {
+      if (!fechaStr) return 'N/A';
+      const partes = fechaStr.split('-');
+      if (partes.length === 3) {
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      }
+      return fechaStr;
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        await signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value, document.getElementById("loginPassword").value);
+        document.getElementById("loginForm").reset();
+      } catch (err) {
+        document.getElementById("loginError").textContent = "Credenciales inválidas.";
+      }
+    });
+
+    document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("adminEmailText").textContent = user.email;
+        loginSection.classList.add("hidden");
+        adminContent.classList.remove("hidden");
+        cargarEventos();
+      } else {
+        loginSection.classList.remove("hidden");
+        adminContent.classList.add("hidden");
+      }
+    });
+
+    async function obtenerImagenURL() {
+      const fileInput = document.getElementById("evImagenFile");
+      const urlInput = document.getElementById("evImagenUrl").value.trim();
+
+      if (fileInput.files && fileInput.files[0]) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(fileInput.files[0]);
+        });
+      }
+      return urlInput;
+    }
+
+    document.getElementById("eventoForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const editId = document.getElementById("eventoIdEdit").value;
+      const imagenUrl = await obtenerImagenURL();
+
+      const eventoData = {
+        nombre: document.getElementById("evNombre").value.trim(),
+        slug: document.getElementById("evSlug").value.trim().toLowerCase().replace(/\s+/g, '-'),
+        fecha: document.getElementById("evFecha").value,
+        hora: document.getElementById("evHora").value,
+        color: document.getElementById("evColor").value,
+        descripcion: document.getElementById("evDesc").value.trim(),
+        imagen: imagenUrl,
+        latitud: document.getElementById("evLat").value.trim(),
+        longitud: document.getElementById("evLng").value.trim()
+      };
+
+      try {
+        if (editId) {
+          await updateDoc(doc(db, "eventos", editId), eventoData);
+          alert("Evento actualizado correctamente.");
+        } else {
+          const newDocRef = doc(collection(db, "eventos"));
+          await setDoc(newDocRef, eventoData);
+          alert("Evento creado correctamente.");
+        }
+        resetFormEvento();
+      } catch (err) {
+        alert("Error guardando evento: " + err.message);
+      }
+    });
+
+    function resetFormEvento() {
+      document.getElementById("eventoForm").reset();
+      document.getElementById("eventoIdEdit").value = "";
+      document.getElementById("evColor").value = "#5da999";
+      document.getElementById("formEventoTitle").textContent = "Crear Nuevo Evento";
+      document.getElementById("btnCancelarEditEvento").classList.add("hidden");
+    }
+
+    document.getElementById("btnCancelarEditEvento").addEventListener("click", resetFormEvento);
+
+    function cargarEventos() {
+      onSnapshot(collection(db, "eventos"), (snapshot) => {
+        tablaEventos.innerHTML = "";
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const id = docSnap.id;
+          const fechaFormateada = formatearFecha(data.fecha);
+          const horaTexto = data.hora ? ` (${data.hora})` : '';
+
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50 border-b border-gray-100";
+          tr.innerHTML = `
+            <td class="p-3 font-semibold text-gray-900">${data.nombre}</td>
+            <td class="p-3 text-gray-500">${fechaFormateada}${horaTexto}</td>
+            <td class="p-3"><span class="inline-block w-6 h-6 rounded border border-gray-300" style="background-color: ${data.color || '#5da999'};"></span></td>
+            <td class="p-3"><img src="${data.imagen || ''}" class="w-12 h-8 object-cover rounded border border-gray-200"></td>
+            <td class="p-3 text-xs text-gray-500">${data.latitud && data.longitud ? data.latitud + ', ' + data.longitud : 'Sin coords'}</td>
+            <td class="p-3 text-right space-x-1">
+              <button class="btn-primary text-xs py-1 px-2 btn-gestionar" data-id="${id}">Gestionar</button>
+              <button class="btn-secondary text-xs py-1 px-2 btn-editar-ev" data-id="${id}">Editar</button>
+              <button class="btn-danger text-xs py-1 px-2 btn-borrar-ev" data-id="${id}">Borrar</button>
+            </td>
+          `;
+          tablaEventos.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-gestionar").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            const evDoc = snapshot.docs.find(d => d.id === id);
+            if (evDoc) seleccionarEventoParaGestion(id, evDoc.data().nombre);
+          });
+        });
+
+        document.querySelectorAll(".btn-editar-ev").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            const evDoc = snapshot.docs.find(d => d.id === id);
+            if (!evDoc) return;
+            const data = evDoc.data();
+
+            document.getElementById("eventoIdEdit").value = id;
+            document.getElementById("evNombre").value = data.nombre || "";
+            document.getElementById("evSlug").value = data.slug || "";
+            document.getElementById("evFecha").value = data.fecha || "";
+            document.getElementById("evHora").value = data.hora || "";
+            document.getElementById("evColor").value = data.color || "#5da999";
+            document.getElementById("evDesc").value = data.descripcion || "";
+            document.getElementById("evImagenUrl").value = data.imagen || "";
+            document.getElementById("evLat").value = data.latitud || "";
+            document.getElementById("evLng").value = data.longitud || "";
+
+            document.getElementById("formEventoTitle").textContent = "Editar Evento: " + data.nombre;
+            document.getElementById("btnCancelarEditEvento").classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        });
+
+        document.querySelectorAll(".btn-borrar-ev").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            if (confirm("⚠️ ¿Estás seguro de ELIMINAR todo el evento? Se borrarán sus solicitudes y stock.")) {
+              await deleteDoc(doc(db, "eventos", id));
+              if (eventoActualId === id) seccionDetalleEvento.classList.add("hidden");
+            }
+          });
+        });
+      });
+    }
+
+    function seleccionarEventoParaGestion(eventoId, eventoNombre) {
+      eventoActualId = eventoId;
+      eventoActualNombre = eventoNombre || "Evento";
+      document.getElementById("detalleEventoNombre").textContent = "Gestión: " + eventoActualNombre;
+      seccionDetalleEvento.classList.remove("hidden");
+      seccionDetalleEvento.scrollIntoView({ behavior: 'smooth' });
+
+      // 1. STOCK DE TALLAS
+      if (unsubStockAdmin) unsubStockAdmin();
+      const tablaStockAdmin = document.getElementById("tablaStockAdmin");
+
+      unsubStockAdmin = onSnapshot(collection(db, "eventos", eventoId, "stock"), (snapshot) => {
+        tablaStockAdmin.innerHTML = "";
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const tallaId = docSnap.id;
+
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50 border-b border-gray-100";
+          tr.innerHTML = `
+            <td class="p-3 font-semibold text-gray-900">Talla ${tallaId}</td>
+            <td class="p-3"><input type="number" min="0" value="${data.cantidad}" class="w-16 border border-gray-300 rounded p-1 text-sm" id="stk-${tallaId}"></td>
+            <td class="p-3 text-right space-x-1">
+              <button class="btn-primary text-xs py-1 px-2 btn-save-stk" data-id="${tallaId}">Guardar</button>
+              <button class="btn-danger text-xs py-1 px-2 btn-del-stk" data-id="${tallaId}">Eliminar</button>
+            </td>
+          `;
+          tablaStockAdmin.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-save-stk").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            const cant = parseInt(document.getElementById(`stk-${id}`).value, 10);
+            if (confirm(`¿Actualizar Talla ${id} a ${cant} unidades?`)) {
+              await updateDoc(doc(db, "eventos", eventoActualId, "stock", id), { cantidad: cant });
+            }
+          });
+        });
+
+        document.querySelectorAll(".btn-del-stk").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            if (confirm(`¿Eliminar la Talla ${id}?`)) {
+              await deleteDoc(doc(db, "eventos", eventoActualId, "stock", id));
+            }
+          });
+        });
+      });
+
+      // 2. SOLICITUDES DE CLIENTES
+      if (unsubSolicitudesAdmin) unsubSolicitudesAdmin();
+      const tablaSolicitudesAdmin = document.getElementById("tablaSolicitudesAdmin");
+
+      unsubSolicitudesAdmin = onSnapshot(query(collection(db, "eventos", eventoId, "solicitudes"), orderBy("fecha", "desc")), (snapshot) => {
+        tablaSolicitudesAdmin.innerHTML = "";
+        solicitudesCache = [];
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const id = docSnap.id;
+          const fechaFormat = data.fecha ? new Date(data.fecha.toDate()).toLocaleString() : "Reciente";
+          const estaConfirmado = Boolean(data.confirmado);
+		
+          solicitudesCache.push({ id, ...data, fechaFormat, confirmado: estaConfirmado });
+
+          // BOTÓN DE WHATSAPP CON TEXTO DE RESGUARDO PERSONALIZADO
+          let btnWhatsAppLinkHtml = `<span class="text-xs text-gray-300">—</span>`;
+          const numTelLimpio = (data.telefono || '').replace(/\D/g, '');
+
+          if (numTelLimpio) {
+            const numWa = numTelLimpio.startsWith("34") ? numTelLimpio : `34${numTelLimpio}`;
+            const baseUrl = window.location.origin + window.location.pathname.replace("admin.html", "validar.html");
+            const linkValidacion = `${baseUrl}?id=${id}&evento=${eventoActualId}`;
+            
+            const textoMensaje = `Este es el enlace del resguardo de inscripción "${eventoActualNombre}" ábrelo y enseña el QR al llegar al evento: ${linkValidacion}`;
+            const mensajeWa = encodeURIComponent(textoMensaje);
+            
+            btnWhatsAppLinkHtml = `
+              <a href="https://wa.me/+${numWa}?text=${mensajeWa}" target="_blank" rel="noopener noreferrer" style="background-color: #25D366; color: #ffffff;" class="inline-flex items-center gap-1 font-bold px-2 py-1 rounded-md text-xs transition-opacity hover:opacity-90 shadow-sm ml-1.5" title="Enviar enlace de resguardo por WhatsApp">
+                <svg style="width: 14px; height: 14px; fill: #ffffff;" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+              </a>
+            `;
+          }
+
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50 border-b border-gray-100";
+          tr.innerHTML = `
+            <td class="p-3 text-gray-500 text-xs font-mono">
+              <span class="font-bold text-gray-700">${id.slice(0, 6)}</span>
+              ${btnWhatsAppLinkHtml}
+            </td>
+			      <td class="p-3 text-gray-500 text-xs">${fechaFormat}</td>
+            <td class="p-3 font-semibold text-gray-900">${data.nombre} ${data.apellidos}</td>
+            <td class="p-3 text-gray-600">${data.telefono}</td>
+            <td class="p-3 text-gray-600">${data.email}</td>
+            <td class="p-3 font-bold text-primary">${data.talla}</td>
+            <td class="p-3 text-center">
+              <button class="btn-toggle-confirm text-xs px-2 py-1 rounded font-bold transition-colors ${estaConfirmado ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}" data-id="${id}" data-estado="${estaConfirmado}">
+                ${estaConfirmado ? '✅ SÍ' : '⏳ NO'}
+              </button>
+            </td>
+            <td class="p-3 text-right">
+              <button class="btn-danger text-xs py-1 px-2 btn-del-solicitud" data-id="${id}">Eliminar</button>
+            </td>
+          `;
+          tablaSolicitudesAdmin.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-toggle-confirm").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            const estadoActual = e.target.getAttribute("data-estado") === 'true';
+            const nuevoEstado = !estadoActual;
+
+            const solRef = doc(db, "eventos", eventoActualId, "solicitudes", id);
+            await updateDoc(solRef, { confirmado: nuevoEstado });
+          });
+        });
+
+        document.querySelectorAll(".btn-del-solicitud").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            const item = solicitudesCache.find(s => s.id === id);
+            if (!item) return;
+
+            if (confirm(`¿Eliminar reserva de ${item.nombre}? Se devolverá 1 unidad al stock de la Talla ${item.talla}.`)) {
+              const solRef = doc(db, "eventos", eventoActualId, "solicitudes", id);
+              const stkRef = doc(db, "eventos", eventoActualId, "stock", item.talla);
+
+              await runTransaction(db, async (transaction) => {
+                const stkDoc = await transaction.get(stkRef);
+                if (stkDoc.exists()) {
+                  transaction.update(stkRef, { cantidad: (stkDoc.data().cantidad || 0) + 1 });
+                } else {
+                  transaction.set(stkRef, { cantidad: 1 });
+                }
+                transaction.delete(solRef);
+              });
+            }
+          });
+        });
+      });
+
+      // 3. PERSONAL VOLUNTARIO
+      if (unsubVoluntariosAdmin) unsubVoluntariosAdmin();
+      const tablaVoluntariosAdmin = document.getElementById("tablaVoluntariosAdmin");
+
+      unsubVoluntariosAdmin = onSnapshot(collection(db, "eventos", eventoId, "personal"), (snapshot) => {
+        tablaVoluntariosAdmin.innerHTML = "";
+        if (snapshot.empty) {
+          tablaVoluntariosAdmin.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 text-xs">No hay personal voluntario registrado.</td></tr>`;
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const id = docSnap.id;
+
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50 border-b border-gray-100";
+          tr.innerHTML = `
+            <td class="p-3 font-semibold text-gray-900">${data.nombre} ${data.apellidos}</td>
+            <td class="p-3 text-xs text-gray-600">Tel: ${data.telefono}<br>Emerg: ${data.telEmergencia}</td>
+            <td class="p-3 text-gray-700">${data.responsable}</td>
+            <td class="p-3 text-xs text-gray-500">
+              <b>Desig:</b> ${data.coordDesignada || 'N/A'}<br>
+              <b>Real:</b> ${data.coordReal || 'N/A'}
+            </td>
+            <td class="p-3 text-right space-x-1">
+              <button class="btn-primary text-xs py-1 px-2 btn-ver-mapa" data-id="${id}">Ver Mapa</button>
+              <button class="btn-secondary text-xs py-1 px-2 btn-editar-vol" data-id="${id}">Editar</button>
+              <button class="btn-danger text-xs py-1 px-2 btn-del-vol" data-id="${id}">Borrar</button>
+            </td>
+          `;
+          tablaVoluntariosAdmin.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-ver-mapa").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            const volDoc = snapshot.docs.find(d => d.id === id);
+            if (volDoc) mostrarMapaVoluntario(volDoc.data());
+          });
+        });
+
+        document.querySelectorAll(".btn-editar-vol").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            const volDoc = snapshot.docs.find(d => d.id === id);
+            if (!volDoc) return;
+            const data = volDoc.data();
+
+            document.getElementById("voluntarioIdEdit").value = id;
+            document.getElementById("volNombre").value = data.nombre || "";
+            document.getElementById("volApellidos").value = data.apellidos || "";
+            document.getElementById("volTelefono").value = data.telefono || "";
+            document.getElementById("volTelEmergencia").value = data.telEmergencia || "";
+            document.getElementById("volResponsable").value = data.responsable || "";
+            document.getElementById("volCoordDesignada").value = data.coordDesignada || "";
+            document.getElementById("volCoordReal").value = data.coordReal || "";
+
+            document.getElementById("btnCancelarVoluntario").classList.remove("hidden");
+            document.getElementById("voluntarioForm").scrollIntoView({ behavior: 'smooth' });
+          });
+        });
+
+        document.querySelectorAll(".btn-del-vol").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            if (confirm("¿Estás seguro de eliminar este voluntario?")) {
+              await deleteDoc(doc(db, "eventos", eventoActualId, "personal", id));
+            }
+          });
+        });
+      });
+    }
+
+    // FORMULARIO VOLUNTARIOS
+    document.getElementById("voluntarioForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!eventoActualId) return;
+
+      const editId = document.getElementById("voluntarioIdEdit").value;
+      const volData = {
+        nombre: document.getElementById("volNombre").value.trim(),
+        apellidos: document.getElementById("volApellidos").value.trim(),
+        telefono: document.getElementById("volTelefono").value.trim(),
+        telEmergencia: document.getElementById("volTelEmergencia").value.trim(),
+        responsable: document.getElementById("volResponsable").value.trim(),
+        coordDesignada: document.getElementById("volCoordDesignada").value.trim(),
+        coordReal: document.getElementById("volCoordReal").value.trim()
+      };
+
+      try {
+        if (editId) {
+          await updateDoc(doc(db, "eventos", eventoActualId, "personal", editId), volData);
+          alert("Voluntario actualizado correctamente.");
+        } else {
+          const newDocRef = doc(collection(db, "eventos", eventoActualId, "personal"));
+          await setDoc(newDocRef, volData);
+          alert("Voluntario añadido correctamente.");
+        }
+        resetFormVoluntario();
+      } catch (err) {
+        alert("Error guardando voluntario: " + err.message);
+      }
+    });
+
+    function resetFormVoluntario() {
+      document.getElementById("voluntarioForm").reset();
+      document.getElementById("voluntarioIdEdit").value = "";
+      document.getElementById("btnCancelarVoluntario").classList.add("hidden");
+    }
+
+    document.getElementById("btnCancelarVoluntario").addEventListener("click", resetFormVoluntario);
+
+    // MAPA DOBLE MARCADOR (Designado vs Real corregido)
+    function mostrarMapaVoluntario(data) {
+      document.getElementById("mapaVoluntarioTitulo").textContent = `${data.nombre} ${data.apellidos}`;
+      const mapaContainer = document.getElementById("voluntarioMapaContainer");
+
+      const desig = data.coordDesignada ? data.coordDesignada.replace(/\s+/g, '') : null;
+      const real = data.coordReal ? data.coordReal.replace(/\s+/g, '') : null;
+
+      if (!desig && !real) {
+        mapaContainer.innerHTML = `<p class="text-red-500 text-xs">Este voluntario no tiene coordenadas designadas ni reales registradas.</p>`;
+        return;
+      }
+
+      let markersString = "";
+      if (desig) markersString += `&markers=color:blue%7Clabel:D%7C${desig}`;
+      if (real) markersString += `&markers=color:red%7Clabel:R%7C${real}`;
+
+      const centerPoint = real || desig;
+
+      mapaContainer.innerHTML = `
+        <iframe 
+          class="w-full h-full border-0" 
+          src="https://maps.google.com/maps?q=${centerPoint}&t=m&z=15&output=embed${markersString}">
+        </iframe>
+      `;
+    }
+
+    document.getElementById("stockForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!eventoActualId) return;
+
+      const talla = document.getElementById("stockTallaInput").value.trim();
+      const cant = parseInt(document.getElementById("stockCantidadInput").value, 10);
+
+      if (talla && !isNaN(cant)) {
+        await setDoc(doc(db, "eventos", eventoActualId, "stock", talla), { cantidad: cant });
+        document.getElementById("stockForm").reset();
+      }
+    });
+
+    document.getElementById("btnExportarCSV").addEventListener("click", () => {
+      if (solicitudesCache.length === 0) return alert("No hay solicitudes para exportar.");
+
+      let csv = "\uFEFFFecha,Nombre,Apellidos,Telefono,Email,Talla,Confirmado\n";
+      solicitudesCache.forEach(r => {
+        csv += `"${r.fechaFormat}","${r.nombre}","${r.apellidos}","${r.telefono}","${r.email}","${r.talla}","${r.confirmado ? 'SI' : 'NO'}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `solicitudes_evento_${eventoActualId}.csv`;
+      link.click();
+    });
+  </script>
+</body>
+</html>

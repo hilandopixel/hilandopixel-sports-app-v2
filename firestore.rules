@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Reglas para la colección principal de eventos
+    match /eventos/{eventoId} {
+      // Cualquier usuario puede ver los eventos
+      allow read: if true;
+      
+      // Solo usuarios autenticados (Admin) pueden crear, editar o borrar eventos
+      allow write: if request.auth != null;
+
+// 🔑 REGLA AÑADIDA: Permitir lectura y creación de sorteos a usuarios autenticados
+      match /sorteos/{idSorteo} {
+        allow read, create, update: if request.auth != null;
+      }
+
+      // Subcolección: STOCK
+      match /stock/{tallaId} {
+        // Lectura pública para cargar tallas disponibles
+        allow read: if true;
+        
+        // Permitir actualizar stock si es una reserva pública O si es Admin
+        allow update: if true;
+        
+        // Crear o borrar tallas solo Admin
+        allow create, delete: if request.auth != null;
+      }
+
+      // Reglas para la colección 'voluntarios'
+      match /personal/{personalId} {
+        // Permite leer y escribir (crear, actualizar, eliminar) 
+        // únicamente si el usuario está autenticado.
+        allow read, update, write: if request.auth != null;
+      }
+
+      // Subcolección: SOLICITUDES
+      match /solicitudes/{solicitudId} {
+        // Permitir crear solicitudes desde la web pública (reserva)
+        allow create: if true;
+
+        // Permitir actualizar la solicitud (para adjuntar el QR en la reserva o validar asistencia)
+        // Si el usuario no está autenticado, solo permite la actualización durante la creación (Base64 QR)
+        allow update: if request.auth != null || resource.data.qrCode == null;
+
+        // Lectura de solicitudes solo para Admin o para validación
+        allow read: if true;
+
+        // Borrar solicitudes solo Admin
+        allow delete: if request.auth != null;
+      }
+    }
+
+    // Permitir consultas de grupo de colecciones (Collection Group Query) para validar.html
+    match /{path=**}/solicitudes/{solicitudId} {
+      allow read: if true;
+    }
+  }
+}
