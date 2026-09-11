@@ -7,8 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="./navbar.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body id="eventoBody" class="bg-gray-50 min-h-screen">
 
@@ -23,7 +22,6 @@
 
     <div id="eventoContent" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 sm:p-8 space-y-6">
       
-      <!-- CONTENEDOR DE IMAGEN CON MAX-HEIGHT Y COMPLETA ADAPTABILIDAD -->
       <div class="overflow-hidden rounded-lg bg-gray-100 flex justify-center items-center">
         <img id="evImagen" class="object-cover rounded-lg" src="" alt="Portada del evento">
       </div>
@@ -43,36 +41,39 @@
         <div id="evMapa" class="w-full h-64 rounded-lg overflow-hidden border border-gray-200"></div>
       </div>
 
-          <h3 class="text-xl font-bold text-gray-900 mb-4">Datos de inscripción</h3>
-          <form id="orderForm" class="space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre:</label>
-                <input type="text" id="nombre" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Apellidos:</label>
-                <input type="text" id="apellidos" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono:</label>
-                <input type="tel" id="telefono" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Email:</label>
-                <input type="email" id="email" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Talla disponible:</label>
-              <select id="talla" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
-                <option value="">Cargando tallas...</option>
-              </select>
-            </div>
-            <button type="submit" id="btnSubmit" class="btn w-full py-3 text-base">✅ Confirmar inscripción</button>
-          </form>
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Datos de inscripción</h3>
+      <form id="orderForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre:</label>
+            <input type="text" id="nombre" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Apellidos:</label>
+            <input type="text" id="apellidos" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono:</label>
+            <input type="tel" id="telefono" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Email:</label>
+            <input type="email" id="email" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Talla disponible:</label>
+          <select id="talla" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none bg-white" required>
+            <option value="">Cargando tallas...</option>
+          </select>
+        </div>
+        <button type="submit" id="btnSubmit" class="btn w-full py-3 text-base">✅ Confirmar inscripción</button>
+      </form>
+      <div id="bannerFinalizado" class="hidden bg-red-600 text-white font-bold p-4 rounded-lg text-center text-base tracking-wide shadow-sm">
+        🏁 ESTE EVENTO HA FINALIZADO (Inscripciones cerradas)
+      </div>
     </div>
   </main>
 
@@ -91,19 +92,10 @@
 
   <script type="module">
     import { db } from './firebase.config.js';
-    import { 
-  collection, 
-  doc, 
-  query, 
-  where, 
-  getDocs, 
-  onSnapshot, 
-  runTransaction, 
-  serverTimestamp, 
-  updateDoc 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, doc, query, where, getDocs, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let eventoId = null;
+    let esFinalizado = false;
     let solicitudPendiente = null;
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -112,9 +104,7 @@
     function formatearFecha(fechaStr) {
       if (!fechaStr) return 'Por confirmar';
       const partes = fechaStr.split('-');
-      if (partes.length === 3) {
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      }
+      if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
       return fechaStr;
     }
 
@@ -138,7 +128,8 @@
         eventoId = docSnap.id;
         const data = docSnap.data();
 
-        // Aplicación del color del evento al body y variables CSS
+        esFinalizado = Boolean(data.finalizado);
+
         if (data.color) {
           document.documentElement.style.setProperty('--color-primary', data.color);
           document.getElementById("eventoBody").classList.add("event-theme-bg");
@@ -162,6 +153,11 @@
           mapaDiv.innerHTML = `<iframe class="w-full h-full border-0" src="https://maps.google.com/maps?q=${data.latitud},${data.longitud}&t=k&z=15&output=embed"></iframe>`;
         } else {
           mapaDiv.innerHTML = "<p class='p-4 text-sm text-gray-500'>Ubicación no disponible.</p>";
+        }
+
+        if (esFinalizado) {
+          document.getElementById("bannerFinalizado").classList.remove("hidden");
+          document.getElementById("orderForm").classList.add("hidden");
         }
 
         escucharStock(eventoId);
@@ -192,11 +188,17 @@
           }
           selectTalla.appendChild(opt);
         });
+
+        if (esFinalizado) {
+          selectTalla.disabled = true;
+        }
       });
     }
 
     document.getElementById("orderForm").addEventListener("submit", (e) => {
       e.preventDefault();
+      if (esFinalizado) return alert("Este evento ya ha finalizado.");
+
       const tallaVal = document.getElementById("talla").value;
       if (!tallaVal) return;
 
@@ -217,132 +219,116 @@
     });
 
     document.getElementById("btnConfirmModal").addEventListener("click", async () => {
-  document.getElementById("modalConfirmTalla").classList.add("hidden");
-  if (!solicitudPendiente || !eventoId) return;
+      document.getElementById("modalConfirmTalla").classList.add("hidden");
+      if (!solicitudPendiente || !eventoId || esFinalizado) return;
 
-  const btnSubmit = document.getElementById("btnSubmit");
-  btnSubmit.disabled = true;
+      const btnSubmit = document.getElementById("btnSubmit");
+      btnSubmit.disabled = true;
 
-  try {
-    const stockRef = doc(db, "eventos", eventoId, "stock", solicitudPendiente.talla);
-    const solRef = doc(collection(db, "eventos", eventoId, "solicitudes"));
-    const idSolicitudCreada = solRef.id;
+      try {
+        const stockRef = doc(db, "eventos", eventoId, "stock", solicitudPendiente.talla);
+        const solRef = doc(collection(db, "eventos", eventoId, "solicitudes"));
+        const idSolicitudCreada = solRef.id;
 
-    // 1. Generar la URL de validación y la imagen QR en memoria ANTES de la transacción
-    const urlValidacion = `${window.location.origin}/validar.html?id=${idSolicitudCreada}&evento=${eventoId}`;
-    
-    // Poblar la plantilla visual oculta
-    const nombreEvento = document.getElementById("evNombre").textContent;
-    document.getElementById("tmplEvento").textContent = nombreEvento;
-    document.getElementById("tmplNombre").textContent = `${solicitudPendiente.nombre} ${solicitudPendiente.apellidos}`;
-    document.getElementById("tmplTalla").textContent = `Talla ${solicitudPendiente.talla}`;
-    document.getElementById("tmplEmail").textContent = solicitudPendiente.email;
-    document.getElementById("tmplTelefono").textContent = solicitudPendiente.telefono;
-    document.getElementById("tmplId").textContent = idSolicitudCreada;
+        const urlValidacion = `${window.location.origin}/validar.html?id=${idSolicitudCreada}&evento=${eventoId}`;
+        
+        const nombreEvento = document.getElementById("evNombre").textContent;
+        document.getElementById("tmplEvento").textContent = nombreEvento;
+        document.getElementById("tmplNombre").textContent = `${solicitudPendiente.nombre} ${solicitudPendiente.apellidos}`;
+        document.getElementById("tmplTalla").textContent = `Talla ${solicitudPendiente.talla}`;
+        document.getElementById("tmplEmail").textContent = solicitudPendiente.email;
+        document.getElementById("tmplTelefono").textContent = solicitudPendiente.telefono;
+        document.getElementById("tmplId").textContent = idSolicitudCreada;
 
-    const qrContainer = document.getElementById("tmplQr");
-    qrContainer.innerHTML = "";
-    
-    new QRCode(qrContainer, {
-      text: urlValidacion,
-      width: 140,
-      height: 140,
-      colorDark: "#111827",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
+        const qrContainer = document.getElementById("tmplQr");
+        qrContainer.innerHTML = "";
+        
+        new QRCode(qrContainer, {
+          text: urlValidacion,
+          width: 140,
+          height: 140,
+          colorDark: "#111827",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 300));
+        const ticketElement = document.getElementById("ticketTemplate");
+        const canvas = await html2canvas(ticketElement, { scale: 2, backgroundColor: "#ffffff" });
+        const ticketBase64 = canvas.toDataURL("image/png");
+
+        await runTransaction(db, async (transaction) => {
+          const stockDoc = await transaction.get(stockRef);
+          if (!stockDoc.exists()) throw "Talla no encontrada.";
+
+          const nuevoStock = stockDoc.data().cantidad - 1;
+          if (nuevoStock < 0) throw "La talla se acaba de agotar.";
+
+          transaction.update(stockRef, { cantidad: nuevoStock });
+
+          transaction.set(solRef, {
+            ...solicitudPendiente,
+            confirmado: false,
+            qrCode: ticketBase64,
+            fecha: serverTimestamp()
+          });
+        });
+
+        const link = document.createElement("a");
+        link.download = `Entrada_${solicitudPendiente.nombre}_${solicitudPendiente.talla}.png`;
+        link.href = ticketBase64;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        alert("¡Reserva completada con éxito! Se ha descargado la tarjeta de tu entrada.");
+        document.getElementById("orderForm").reset();
+
+      } catch (err) {
+        alert("Error procesando reserva: " + err);
+      } finally {
+        if (!esFinalizado) btnSubmit.disabled = false;
+      }
     });
-
-    // Pequeña pausa para renderizar el QR y capturar con html2canvas
-    await new Promise(resolve => setTimeout(resolve, 300));
-    const ticketElement = document.getElementById("ticketTemplate");
-    const canvas = await html2canvas(ticketElement, { scale: 2, backgroundColor: "#ffffff" });
-    const ticketBase64 = canvas.toDataURL("image/png");
-
-    // 2. Transacción Única: Se actualiza el stock y se guarda la solicitud CON el qrCode incluido desde el inicio
-    await runTransaction(db, async (transaction) => {
-      const stockDoc = await transaction.get(stockRef);
-      if (!stockDoc.exists()) throw "Talla no encontrada.";
-
-      const nuevoStock = stockDoc.data().cantidad - 1;
-      if (nuevoStock < 0) throw "La talla se acaba de agotar.";
-
-      transaction.update(stockRef, { cantidad: nuevoStock });
-
-      transaction.set(solRef, {
-        ...solicitudPendiente,
-        confirmado: false,
-        qrCode: ticketBase64, // <-- Se guarda directamente en el create
-        fecha: serverTimestamp()
-      });
-    });
-
-    // 3. Descargar la entrada automáticamente al cliente
-    const link = document.createElement("a");
-    link.download = `Entrada_${solicitudPendiente.nombre}_${solicitudPendiente.talla}.png`;
-    link.href = ticketBase64;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    alert("¡Reserva completada con éxito! Se ha descargado la tarjeta de tu entrada.");
-    document.getElementById("orderForm").reset();
-
-  } catch (err) {
-    alert("Error procesando reserva: " + err);
-  } finally {
-    btnSubmit.disabled = false;
-  }
-});
   </script>
-  
-  
-  
-  <!-- CONTENEDOR INVISIBLE PARA RENDERIZAR Y DESCARGAR EL TICKET DE VALIDAR.HTML -->
-<div style="position: absolute; left: -9999px; top: -9999px;">
-  <div id="ticketTemplate" style="width: 480px; background-color: #ffffff; border-radius: 0.75rem; overflow: hidden; border: 1px solid #e5e7eb; font-family: system-ui, -apple-system, sans-serif;">
-    
-    <!-- Header Status -->
-    <div style="background-color: #5da999; color: #ffffff; padding: 1.5rem; text-align: center;">
-      <span style="font-size: 2.25rem; display: block; margin-bottom: 0.25rem;">⏳</span>
-      <h2 style="font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;"> ✅ REGISTRO FINALIZADO</h2>
-      <p style="font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem;">Puedes enseñar este resguardo el día del evento</p>
-    </div>
 
-    <div style="padding: 1.5rem;">
-      <!-- QR Box -->
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background-color: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
-        <div id="tmplQr" style="background-color: #ffffff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; display: flex; justify-content: center; align-items: center;"></div>
-        <span style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem; font-family: monospace;">Código de verificación</span>
+  <div style="position: absolute; left: -9999px; top: -9999px;">
+    <div id="ticketTemplate" style="width: 480px; background-color: #ffffff; border-radius: 0.75rem; overflow: hidden; border: 1px solid #e5e7eb; font-family: system-ui, -apple-system, sans-serif;">
+      <div style="background-color: #5da999; color: #ffffff; padding: 1.5rem; text-align: center;">
+        <span style="font-size: 2.25rem; display: block; margin-bottom: 0.25rem;">⏳</span>
+        <h2 style="font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;"> ✅ REGISTRO FINALIZADO</h2>
+        <p style="font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem;">Puedes enseñar este resguardo el día del evento</p>
       </div>
 
-      <!-- Datos Evento -->
-      <div style="margin-bottom: 1rem;">
-        <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Evento</span>
-        <h3 id="tmplEvento" style="font-size: 1.25rem; font-weight: 900; color: #111827; margin: 0;">--</h3>
-      </div>
-
-      <!-- Datos Asistente y Talla -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6; padding-top: 1rem; padding-bottom: 1rem; margin-bottom: 1rem;">
-        <div>
-          <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Asistente</span>
-          <p id="tmplNombre" style="font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0;">--</p>
+      <div style="padding: 1.5rem;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background-color: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
+          <div id="tmplQr" style="background-color: #ffffff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; display: flex; justify-content: center; align-items: center;"></div>
+          <span style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem; font-family: monospace;">Código de verificación</span>
         </div>
-        <div>
-          <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Talla Reservada</span>
-          <p id="tmplTalla" style="font-size: 1.5rem; font-weight: 900; color: #5da999; margin: 0;">--</p>
-        </div>
-      </div>
 
-      <!-- Contacto e ID -->
-      <div style="font-size: 0.875rem; color: #4b5563; line-height: 1.5;">
-        <p style="margin: 0.25rem 0;"><strong>Email:</strong> <span id="tmplEmail">--</span></p>
-        <p style="margin: 0.25rem 0;"><strong>Teléfono:</strong> <span id="tmplTelefono">--</span></p>
-        <p style="margin: 0.25rem 0;"><strong>ID Solicitud:</strong> <span id="tmplId" style="font-family: monospace; font-size: 0.75rem; background-color: #f3f4f6; padding: 0.125rem 0.5rem; border-radius: 0.25rem;">--</span></p>
+        <div style="margin-bottom: 1rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Evento</span>
+          <h3 id="tmplEvento" style="font-size: 1.25rem; font-weight: 900; color: #111827; margin: 0;">--</h3>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6; padding-top: 1rem; padding-bottom: 1rem; margin-bottom: 1rem;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Asistente</span>
+            <p id="tmplNombre" style="font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0;">--</p>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; display: block;">Talla Reservada</span>
+            <p id="tmplTalla" style="font-size: 1.5rem; font-weight: 900; color: #5da999; margin: 0;">--</p>
+          </div>
+        </div>
+
+        <div style="font-size: 0.875rem; color: #4b5563; line-height: 1.5;">
+          <p style="margin: 0.25rem 0;"><strong>Email:</strong> <span id="tmplEmail">--</span></p>
+          <p style="margin: 0.25rem 0;"><strong>Teléfono:</strong> <span id="tmplTelefono">--</span></p>
+          <p style="margin: 0.25rem 0;"><strong>ID Solicitud:</strong> <span id="tmplId" style="font-family: monospace; font-size: 0.75rem; background-color: #f3f4f6; padding: 0.125rem 0.5rem; border-radius: 0.25rem;">--</span></p>
+        </div>
       </div>
     </div>
-
   </div>
-</div>
-  
 </body>
 </html>

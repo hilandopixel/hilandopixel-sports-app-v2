@@ -13,7 +13,6 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <!-- SECCIÓN 1: LOGIN SI NO ESTÁ AUTENTICADO -->
     <div id="loginSection" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-200 my-12">
       <h3 class="text-xl font-bold text-gray-900 mb-2">Acceso Restringido</h3>
       <p class="text-xs text-gray-500 mb-6">Debes iniciar sesión con una cuenta de administrador para ver el listado de registros.</p>
@@ -32,23 +31,23 @@
       <p id="loginError" class="text-red-500 text-sm mt-3 font-semibold"></p>
     </div>
 
-    <!-- SECCIÓN 2: LISTADO SI ESTÁ AUTENTICADO -->
     <div id="listadoContent" class="hidden space-y-6">
       
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4 border-gray-200">
         <div>
           <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Listado de Registros</h1>
-          <p id="eventoTitulo" class="text-sm font-semibold text-primary mt-1">Cargando evento...</p>
+          <div class="flex items-center gap-2 mt-1">
+            <p id="eventoTitulo" class="text-sm font-semibold text-primary">Cargando evento...</p>
+            <span id="badgeEventoFinalizado" class="hidden text-xs bg-red-100 text-red-700 border border-red-200 font-extrabold px-2 py-0.5 rounded-full">🏁 EVENTO FINALIZADO</span>
+          </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <!-- BOTÓN SORTEO -->
           <button id="btnAbrirSorteo" class="btn-primary text-xs bg-purple-600 hover:bg-purple-700 border-none">🎲 SORTEO</button>
           <button id="btnExportarCSV" class="btn-primary text-xs">📥 Exportar CSV</button>
           <button id="btnLogout" class="btn-danger text-xs py-1.5 px-3">Cerrar Sesión</button>
         </div>
       </div>
 
-      <!-- TARJETAS CON CONTEO Y ESTADÍSTICAS -->
       <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
           <div>
@@ -135,7 +134,6 @@
 
   </main>
 
-  <!-- MODAL DE CONFIRMACIÓN DE ACCIONES -->
   <div id="modalAccion" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden">
     <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center space-y-4 border border-gray-200 mx-4">
       <div class="text-3xl">❓</div>
@@ -148,7 +146,6 @@
     </div>
   </div>
 
-  <!-- MODAL SECCIÓN SORTEO -->
   <div id="modalSorteo" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden overflow-y-auto py-6">
     <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full p-6 sm:p-8 space-y-6 border border-gray-200 mx-4 max-h-[90vh] overflow-y-auto">
       
@@ -157,7 +154,6 @@
         <button id="btnCerrarSorteo" class="text-gray-400 hover:text-gray-600 text-xl font-bold p-1">✕</button>
       </div>
 
-      <!-- CONFIGURACIÓN DE NUEVO SORTEO -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Número de Premios:</label>
@@ -169,7 +165,6 @@
         </div>
       </div>
 
-      <!-- LISTADO DE PARTICIPANTES ACTUALES -->
       <div class="space-y-2">
         <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Participantes Confirmados:</h4>
         <div id="listaParticipantesSorteo" class="bg-gray-50 p-3 rounded-lg border border-gray-200 max-h-32 overflow-y-auto text-xs space-y-1 font-medium text-gray-700 divide-y divide-gray-100">
@@ -177,12 +172,10 @@
         </div>
       </div>
 
-      <!-- BOTÓN EJECUTAR -->
       <button id="btnEjecutarSorteo" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-lg text-sm transition-colors shadow-md">
         🎉 Realizar Sorteo
       </button>
 
-      <!-- RESULTADO PREMIADOS DEL SORTEO ACTUAL -->
       <div id="seccionResultadoSorteo" class="hidden bg-green-50 border-2 border-green-500 rounded-xl p-5 space-y-3">
         <h3 class="text-base font-extrabold text-green-900 flex items-center gap-2">🏆 ¡Ganadores del Sorteo Reciente!</h3>
         <ul id="listaPremiados" class="space-y-2 text-sm font-bold text-green-800"></ul>
@@ -191,7 +184,6 @@
 
       <hr class="border-gray-200 my-4">
 
-      <!-- HISTORIAL DE SORTEOS REALIZADOS -->
       <div class="space-y-3">
         <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider flex items-center gap-2">
           📜 Historial de Sorteos Realizados
@@ -227,6 +219,7 @@
     const statusMessage = document.getElementById("statusMessage");
     const tablaContainer = document.getElementById("tablaContainer");
     const eventoTitulo = document.getElementById("eventoTitulo");
+    const badgeEventoFinalizado = document.getElementById("badgeEventoFinalizado");
     const tablaListado = document.getElementById("tablaListado");
     const contadorRegistros = document.getElementById("contadorRegistros");
 
@@ -235,7 +228,6 @@
     const btnModalCancelar = document.getElementById("btnModalCancelar");
     const btnModalConfirmar = document.getElementById("btnModalConfirmar");
 
-    // ELEMENTOS SORTEO
     const btnAbrirSorteo = document.getElementById("btnAbrirSorteo");
     const btnCerrarSorteo = document.getElementById("btnCerrarSorteo");
     const modalSorteo = document.getElementById("modalSorteo");
@@ -251,6 +243,7 @@
     let unsubSolicitudes = null;
     let unsubSorteos = null;
     let accionPendienteCallback = null;
+    let esEventoFinalizado = false;
 
     const filtros = {
       estadoTexto: '',
@@ -286,6 +279,10 @@
     }
 
     function solicitarConfirmacion(textoAccion, callback) {
+      if (esEventoFinalizado) {
+        alert("Este evento está finalizado y es de solo lectura.");
+        return;
+      }
       modalAccionTexto.textContent = `¿Seguro que quieres ${textoAccion}?`;
       accionPendienteCallback = callback;
       modalAccion.classList.remove("hidden");
@@ -305,7 +302,6 @@
       cerrarModal();
     });
 
-    // LÓGICA Y HISTORIAL DE SORTEO
     btnAbrirSorteo.addEventListener("click", () => {
       const confirmados = solicitudesData.filter(r => r.confirmado);
       infoParticipantes.textContent = `Se realizará el sorteo con ${confirmados.length} participantes`;
@@ -326,7 +322,11 @@
       listaPremiados.innerHTML = "";
       modalSorteo.classList.remove("hidden");
 
-      // Cargar lista de sorteos existentes
+      if (esEventoFinalizado) {
+        btnEjecutarSorteo.disabled = true;
+        btnEjecutarSorteo.classList.add("opacity-50", "cursor-not-allowed");
+      }
+
       escucharHistorialSorteos();
     });
 
@@ -387,6 +387,8 @@
     }
 
     btnEjecutarSorteo.addEventListener("click", async () => {
+      if (esEventoFinalizado) return;
+
       const confirmados = solicitudesData.filter(r => r.confirmado);
       const cantidadPremios = parseInt(numPremios.value, 10);
 
@@ -405,7 +407,6 @@
         return;
       }
 
-      // Algoritmo de selección aleatoria (Fisher-Yates Shuffle)
       const copiaConfirmados = [...confirmados];
       for (let i = copiaConfirmados.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -414,11 +415,9 @@
 
       const ganadores = copiaConfirmados.slice(0, cantidadPremios);
 
-      // Deshabilitar botón durante el guardado
       btnEjecutarSorteo.disabled = true;
       btnEjecutarSorteo.textContent = "Guardando sorteo en Firebase...";
 
-      // PRIMERO GUARDAR EN FIREBASE (INCLUYENDO TELÉFONO)
       try {
         const sorteosRef = collection(db, "eventos", idEvento, "sorteos");
         await addDoc(sorteosRef, {
@@ -429,7 +428,6 @@
           premiados: ganadores.map(g => ({ id: g.id, nombre: g.nombreCompleto, talla: g.talla, telefono: g.telefono }))
         });
 
-        // Si la escritura en Firestore tiene éxito, mostramos los resultados con botones de contacto
         listaPremiados.innerHTML = "";
         ganadores.forEach((g, idx) => {
           const li = document.createElement("li");
@@ -447,8 +445,10 @@
       } catch (err) {
         alert("⚠️ ERROR DE PERMISOS FIRESTORE: No se pudo guardar el sorteo en la base de datos.\n\nDetalle: " + err.message);
       } finally {
-        btnEjecutarSorteo.disabled = false;
-        btnEjecutarSorteo.textContent = "🎉 Realizar Sorteo";
+        if (!esEventoFinalizado) {
+          btnEjecutarSorteo.disabled = false;
+          btnEjecutarSorteo.textContent = "🎉 Realizar Sorteo";
+        }
       }
     });
 
@@ -493,7 +493,19 @@
     async function cargarInfoEvento(idEv) {
       try {
         const evSnap = await getDoc(doc(db, "eventos", idEv));
-        eventoTitulo.textContent = evSnap.exists() ? "Evento: " + (evSnap.data().nombre || idEv) : "Evento ID: " + idEv;
+        if (evSnap.exists()) {
+          const evData = evSnap.data();
+          eventoTitulo.textContent = "Evento: " + (evData.nombre || idEv);
+          esEventoFinalizado = Boolean(evData.finalizado);
+
+          if (esEventoFinalizado) {
+            badgeEventoFinalizado.classList.remove("hidden");
+            btnAbrirSorteo.disabled = true;
+            btnAbrirSorteo.classList.add("opacity-50", "cursor-not-allowed");
+          }
+        } else {
+          eventoTitulo.textContent = "Evento ID: " + idEv;
+        }
       } catch (e) {
         eventoTitulo.textContent = "Evento ID: " + idEv;
       }
@@ -580,16 +592,18 @@
           badgeColor = "bg-yellow-300 text-black border-yellow-400 font-extrabold shadow-sm";
         }
 
+        let disabledAttr = esEventoFinalizado ? 'disabled class="btn-toggle-confirm text-xs px-2.5 py-1 rounded-md font-bold bg-gray-300 text-gray-500 cursor-not-allowed opacity-60"' : '';
+
         let btnConfirmarHtml = "";
         if (item.confirmado) {
           btnConfirmarHtml = `
-            <button class="btn-toggle-confirm text-xs px-2.5 py-1 rounded-md font-bold bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm" data-id="${item.id}" data-estado="true" data-nombre="${item.nombreCompleto}">
+            <button ${disabledAttr || 'class="btn-toggle-confirm text-xs px-2.5 py-1 rounded-md font-bold bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"'} data-id="${item.id}" data-estado="true" data-nombre="${item.nombreCompleto}">
               ⚠️ Borrar confirmación
             </button>
           `;
         } else {
           btnConfirmarHtml = `
-            <button class="btn-toggle-confirm text-xs px-2.5 py-1 rounded-md font-bold bg-green-600 text-white hover:bg-green-700 transition-colors shadow-sm" data-id="${item.id}" data-estado="false" data-nombre="${item.nombreCompleto}">
+            <button ${disabledAttr || 'class="btn-toggle-confirm text-xs px-2.5 py-1 rounded-md font-bold bg-green-600 text-white hover:bg-green-700 transition-colors shadow-sm"'} data-id="${item.id}" data-estado="false" data-nombre="${item.nombreCompleto}">
               ✅ CONFIRMAR
             </button>
           `;
@@ -599,13 +613,13 @@
         if (item.confirmado) {
           if (item.devolucion === 1) {
             btnDevolucionHtml = `
-              <button class="btn-toggle-dev text-xs px-2 py-1 rounded-md font-bold bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors" data-id="${item.id}" data-dev="1" data-nombre="${item.nombreCompleto}">
+              <button ${disabledAttr || 'class="btn-toggle-dev text-xs px-2 py-1 rounded-md font-bold bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"'} data-id="${item.id}" data-dev="1" data-nombre="${item.nombreCompleto}">
                 🔄 Limpiar devolución
               </button>
             `;
           } else {
             btnDevolucionHtml = `
-              <button class="btn-toggle-dev text-xs px-2 py-1 rounded-md font-bold bg-purple-600 text-white hover:bg-purple-700 transition-colors shadow-sm" data-id="${item.id}" data-dev="0" data-nombre="${item.nombreCompleto}">
+              <button ${disabledAttr || 'class="btn-toggle-dev text-xs px-2 py-1 rounded-md font-bold bg-purple-600 text-white hover:bg-purple-700 transition-colors shadow-sm"'} data-id="${item.id}" data-dev="0" data-nombre="${item.nombreCompleto}">
                 🔄 Marcar como devuelto
               </button>
             `;
@@ -646,49 +660,51 @@
         tablaListado.appendChild(tr);
       });
 
-      document.querySelectorAll(".btn-toggle-confirm").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const id = e.currentTarget.getAttribute("data-id");
-          const estadoActual = e.currentTarget.getAttribute("data-estado") === 'true';
-          const nombre = e.currentTarget.getAttribute("data-nombre");
-          const nuevoEstado = !estadoActual;
-          const textoAccion = estadoActual 
-            ? `borrar la confirmación de ${nombre}` 
-            : `confirmar a ${nombre}`;
+      if (!esEventoFinalizado) {
+        document.querySelectorAll(".btn-toggle-confirm").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const id = e.currentTarget.getAttribute("data-id");
+            const estadoActual = e.currentTarget.getAttribute("data-estado") === 'true';
+            const nombre = e.currentTarget.getAttribute("data-nombre");
+            const nuevoEstado = !estadoActual;
+            const textoAccion = estadoActual 
+              ? `borrar la confirmación de ${nombre}` 
+              : `confirmar a ${nombre}`;
 
-          solicitarConfirmacion(textoAccion, async () => {
-            const solRef = doc(db, "eventos", idEvento, "solicitudes", id);
-            try {
-              const payload = { confirmado: nuevoEstado };
-              if (!nuevoEstado) payload.devolucion = 0;
-              await updateDoc(solRef, payload);
-            } catch (err) {
-              alert("Error al actualizar confirmación: " + err.message);
-            }
+            solicitarConfirmacion(textoAccion, async () => {
+              const solRef = doc(db, "eventos", idEvento, "solicitudes", id);
+              try {
+                const payload = { confirmado: nuevoEstado };
+                if (!nuevoEstado) payload.devolucion = 0;
+                await updateDoc(solRef, payload);
+              } catch (err) {
+                alert("Error al actualizar confirmación: " + err.message);
+              }
+            });
           });
         });
-      });
 
-      document.querySelectorAll(".btn-toggle-dev").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const id = e.currentTarget.getAttribute("data-id");
-          const devActual = parseInt(e.currentTarget.getAttribute("data-dev"), 10);
-          const nombre = e.currentTarget.getAttribute("data-nombre");
-          const nuevoDev = devActual === 1 ? 0 : 1;
-          const textoAccion = devActual === 1 
-            ? `limpiar la devolución de ${nombre}` 
-            : `marcar como devuelto el material de ${nombre}`;
+        document.querySelectorAll(".btn-toggle-dev").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const id = e.currentTarget.getAttribute("data-id");
+            const devActual = parseInt(e.currentTarget.getAttribute("data-dev"), 10);
+            const nombre = e.currentTarget.getAttribute("data-nombre");
+            const nuevoDev = devActual === 1 ? 0 : 1;
+            const textoAccion = devActual === 1 
+              ? `limpiar la devolución de ${nombre}` 
+              : `marcar como devuelto el material de ${nombre}`;
 
-          solicitarConfirmacion(textoAccion, async () => {
-            const solRef = doc(db, "eventos", idEvento, "solicitudes", id);
-            try {
-              await updateDoc(solRef, { devolucion: nuevoDev });
-            } catch (err) {
-              alert("Error al actualizar devolución: " + err.message);
-            }
+            solicitarConfirmacion(textoAccion, async () => {
+              const solRef = doc(db, "eventos", idEvento, "solicitudes", id);
+              try {
+                await updateDoc(solRef, { devolucion: nuevoDev });
+              } catch (err) {
+                alert("Error al actualizar devolución: " + err.message);
+              }
+            });
           });
         });
-      });
+      }
     }
 
     document.querySelectorAll(".filter-input").forEach(input => {

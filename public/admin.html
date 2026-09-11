@@ -74,6 +74,19 @@
                 <input type="text" id="evLng" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lng: -4.4212">
               </div>
             </div>
+
+            <!-- PROPIEDADES ESTADO (FINALIZADO / OCULTO) -->
+            <div class="md:col-span-2 flex flex-wrap gap-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="evFinalizado" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                <span class="text-sm font-bold text-gray-800">🏁 Evento Finalizado (Solo lectura)</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="evOculto" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                <span class="text-sm font-bold text-gray-800">👁️ Evento Oculto (Ocultar en inicio)</span>
+              </label>
+            </div>
+
             <div class="md:col-span-2">
               <label class="block text-sm font-semibold text-gray-700 mb-1">Descripción:</label>
               <textarea id="evDesc" rows="3" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Detalles del evento..."></textarea>
@@ -98,10 +111,10 @@
             <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
               <tr>
                 <th class="p-3">Nombre</th>
+                <th class="p-3">Estado</th>
                 <th class="p-3">Fecha y Hora</th>
                 <th class="p-3">Color</th>
                 <th class="p-3">Imagen</th>
-                <th class="p-3">Coordenadas</th>
                 <th class="p-3 text-right">Acciones</th>
               </tr>
             </thead>
@@ -113,14 +126,12 @@
       <div id="seccionDetalleEvento" class="hidden bg-white p-6 sm:p-8 rounded-xl shadow-sm border-2 border-primary space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
           <h2 id="detalleEventoNombre" class="text-2xl font-bold text-primary m-0">--</h2>
-          <!-- SISTEMA DE PESTAÑAS DE GESTIÓN -->
           <div class="flex flex-wrap gap-2">
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-primary text-white shadow-sm" data-target="tabStock">📦 Stock y Solicitudes</button>
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabVoluntarios">👥 Personal Voluntario</button>
           </div>
         </div>
 
-        <!-- PESTAÑA 1: STOCK Y SOLICITUDES -->
         <div id="tabStock" class="tab-content space-y-8">
           <div>
             <h3 class="text-lg font-bold text-gray-900 mb-4">1. Control de Stock de Tallas</h3>
@@ -176,7 +187,6 @@
           </div>
         </div>
 
-        <!-- PESTAÑA 2: PERSONAL VOLUNTARIO -->
         <div id="tabVoluntarios" class="tab-content hidden space-y-6">
           <h3 class="text-lg font-bold text-gray-900">Gestión de Personal Voluntario</h3>
 
@@ -233,7 +243,6 @@
             </table>
           </div>
 
-          <!-- MAPA INTERACTIVO DE DOBLE PUNTO -->
           <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
             <div class="flex justify-between items-center mb-2">
               <h4 class="font-bold text-gray-800 text-sm">🗺️ Mapa de Ubicación: <span id="mapaVoluntarioTitulo" class="text-primary font-normal">Selecciona un voluntario</span></h4>
@@ -269,19 +278,14 @@
     let unsubVoluntariosAdmin = null;
     let solicitudesCache = [];
 
-    // LÓGICA DE PESTAÑAS (TABS)
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const targetId = e.currentTarget.getAttribute("data-target");
-
-        // Ocultar todos los contenidos y resetear estilos de botones
         document.querySelectorAll(".tab-content").forEach(content => content.classList.add("hidden"));
         document.querySelectorAll(".tab-btn").forEach(b => {
           b.classList.remove("bg-primary", "text-white", "shadow-sm");
           b.classList.add("bg-gray-100", "text-gray-600", "hover:bg-gray-200");
         });
-
-        // Activar la pestaña seleccionada
         document.getElementById(targetId).classList.remove("hidden");
         e.currentTarget.classList.remove("bg-gray-100", "text-gray-600", "hover:bg-gray-200");
         e.currentTarget.classList.add("bg-primary", "text-white", "shadow-sm");
@@ -291,9 +295,7 @@
     function formatearFecha(fechaStr) {
       if (!fechaStr) return 'N/A';
       const partes = fechaStr.split('-');
-      if (partes.length === 3) {
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      }
+      if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
       return fechaStr;
     }
 
@@ -349,7 +351,9 @@
         descripcion: document.getElementById("evDesc").value.trim(),
         imagen: imagenUrl,
         latitud: document.getElementById("evLat").value.trim(),
-        longitud: document.getElementById("evLng").value.trim()
+        longitud: document.getElementById("evLng").value.trim(),
+        finalizado: document.getElementById("evFinalizado").checked,
+        oculto: document.getElementById("evOculto").checked
       };
 
       try {
@@ -371,6 +375,8 @@
       document.getElementById("eventoForm").reset();
       document.getElementById("eventoIdEdit").value = "";
       document.getElementById("evColor").value = "#5da999";
+      document.getElementById("evFinalizado").checked = false;
+      document.getElementById("evOculto").checked = false;
       document.getElementById("formEventoTitle").textContent = "Crear Nuevo Evento";
       document.getElementById("btnCancelarEditEvento").classList.add("hidden");
     }
@@ -386,14 +392,20 @@
           const fechaFormateada = formatearFecha(data.fecha);
           const horaTexto = data.hora ? ` (${data.hora})` : '';
 
+          const badgesHtml = `
+            ${data.finalizado ? '<span class="px-2 py-0.5 text-[10px] bg-red-100 text-red-700 font-bold rounded">🏁 FINALIZADO</span>' : ''}
+            ${data.oculto ? '<span class="px-2 py-0.5 text-[10px] bg-gray-200 text-gray-700 font-bold rounded">👁️ OCULTO</span>' : ''}
+            ${!data.finalizado && !data.oculto ? '<span class="px-2 py-0.5 text-[10px] bg-green-100 text-green-700 font-bold rounded">✅ ACTIVO</span>' : ''}
+          `;
+
           const tr = document.createElement("tr");
           tr.className = "hover:bg-gray-50 border-b border-gray-100";
           tr.innerHTML = `
             <td class="p-3 font-semibold text-gray-900">${data.nombre}</td>
+            <td class="p-3"><div class="flex flex-wrap gap-1">${badgesHtml}</div></td>
             <td class="p-3 text-gray-500">${fechaFormateada}${horaTexto}</td>
             <td class="p-3"><span class="inline-block w-6 h-6 rounded border border-gray-300" style="background-color: ${data.color || '#5da999'};"></span></td>
             <td class="p-3"><img src="${data.imagen || ''}" class="w-12 h-8 object-cover rounded border border-gray-200"></td>
-            <td class="p-3 text-xs text-gray-500">${data.latitud && data.longitud ? data.latitud + ', ' + data.longitud : 'Sin coords'}</td>
             <td class="p-3 text-right space-x-1">
               <button class="btn-primary text-xs py-1 px-2 btn-gestionar" data-id="${id}">Gestionar</button>
               <button class="btn-secondary text-xs py-1 px-2 btn-editar-ev" data-id="${id}">Editar</button>
@@ -428,6 +440,8 @@
             document.getElementById("evImagenUrl").value = data.imagen || "";
             document.getElementById("evLat").value = data.latitud || "";
             document.getElementById("evLng").value = data.longitud || "";
+            document.getElementById("evFinalizado").checked = Boolean(data.finalizado);
+            document.getElementById("evOculto").checked = Boolean(data.oculto);
 
             document.getElementById("formEventoTitle").textContent = "Editar Evento: " + data.nombre;
             document.getElementById("btnCancelarEditEvento").classList.remove("hidden");
@@ -454,7 +468,6 @@
       seccionDetalleEvento.classList.remove("hidden");
       seccionDetalleEvento.scrollIntoView({ behavior: 'smooth' });
 
-      // 1. STOCK DE TALLAS
       if (unsubStockAdmin) unsubStockAdmin();
       const tablaStockAdmin = document.getElementById("tablaStockAdmin");
 
@@ -497,7 +510,6 @@
         });
       });
 
-      // 2. SOLICITUDES DE CLIENTES
       if (unsubSolicitudesAdmin) unsubSolicitudesAdmin();
       const tablaSolicitudesAdmin = document.getElementById("tablaSolicitudesAdmin");
 
@@ -513,13 +525,12 @@
 		
           solicitudesCache.push({ id, ...data, fechaFormat, confirmado: estaConfirmado });
 
-          // BOTÓN DE WHATSAPP CON TEXTO DE RESGUARDO PERSONALIZADO
           let btnWhatsAppLinkHtml = `<span class="text-xs text-gray-300">—</span>`;
           const numTelLimpio = (data.telefono || '').replace(/\D/g, '');
 
           if (numTelLimpio) {
             const numWa = numTelLimpio.startsWith("34") ? numTelLimpio : `34${numTelLimpio}`;
-            const baseUrl = window.location.origin + window.location.pathname.replace("admin.html", "validar.html");
+            const baseUrl = window.location.origin + window.location.pathname.replace("admin_2.html", "validar.html");
             const linkValidacion = `${baseUrl}?id=${id}&evento=${eventoActualId}`;
             
             const textoMensaje = `Este es el enlace del resguardo de inscripción "${eventoActualNombre}" ábrelo y enseña el QR al llegar al evento: ${linkValidacion}`;
@@ -593,7 +604,6 @@
         });
       });
 
-      // 3. PERSONAL VOLUNTARIO
       if (unsubVoluntariosAdmin) unsubVoluntariosAdmin();
       const tablaVoluntariosAdmin = document.getElementById("tablaVoluntariosAdmin");
 
@@ -667,7 +677,6 @@
       });
     }
 
-    // FORMULARIO VOLUNTARIOS
     document.getElementById("voluntarioForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!eventoActualId) return;
@@ -706,7 +715,6 @@
 
     document.getElementById("btnCancelarVoluntario").addEventListener("click", resetFormVoluntario);
 
-    // MAPA DOBLE MARCADOR (Designado vs Real corregido)
     function mostrarMapaVoluntario(data) {
       document.getElementById("mapaVoluntarioTitulo").textContent = `${data.nombre} ${data.apellidos}`;
       const mapaContainer = document.getElementById("voluntarioMapaContainer");
