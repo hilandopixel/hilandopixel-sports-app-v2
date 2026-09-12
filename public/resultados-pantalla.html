@@ -2,14 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=512px, initial-scale=1.0">
+    <meta name="viewport" content="width=512, initial-scale=1.0">
     <title>Resultados del Evento</title>
     <style>
+        /* Bloqueo estricto de dimensiones para contenedor de 512x1536 */
+        html {
+            width: 512px;
+            height: 1536px;
+            background-color: #f8f9fa;
+        }
+
         body { 
             font-family: system-ui, -apple-system, sans-serif; 
             padding: 12px; 
             background-color: #f8f9fa;
-            margin: 0 auto;
+            margin: 0;
             width: 512px;
             min-width: 512px;
             max-width: 512px;
@@ -291,7 +298,6 @@
             gap: 4px;
         }
 
-        /* Estilo para las líneas de valores puros en formato tarjeta */
         .card-value-line {
             font-size: 0.85em;
             color: #212529;
@@ -913,7 +919,6 @@
             return isNaN(num) ? -1 : num;
         }
 
-        /* Renderizado en formato Card mostrando estrictamente solo los valores */
         function renderizarTabla() {
             const contenedor = document.getElementById('contenedor-tabla');
             if (!contenedor) return;
