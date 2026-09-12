@@ -9,23 +9,29 @@
             font-family: system-ui, -apple-system, sans-serif; 
             padding: 20px; 
             background-color: #f8f9fa;
+            margin: 0;
         }
 
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        /* Estilos del contenedor de la imagen */
+        .header-container h2 {
+            margin: 0;
+            color: #212529;
+        }
+
         .banner-imagen {
             width: 100%;
             max-height: 250px;
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: block;
         }
 
         #contenedor-tabla { 
@@ -50,158 +56,155 @@
         }
 
         th { 
-            background: #0d6efd; 
+            background-color: #0d6efd; 
             color: white; 
+            font-weight: 600;
         }
 
         tr:nth-child(even) {
             background-color: #f8f9fa;
         }
+
+        .estado {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <!-- IMAGEN ANTES DE LA TABLA -->
-    <!-- Puedes reemplazar la URL de 'src' por tu propia imagen local o remota -->
+
+    <div class="header-container">
+        <h2>Clasificación en Directo</h2>
+        <span id="estado" class="estado">Cargando...</span>
+    </div>
+
     <img 
         class="banner-imagen" 
         src="https://masatletismocrono.com/wp-content/uploads/header-bg.jpg" 
         alt="Cabecera Evento Deportivo"
         onerror="this.src='https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80'"
     >
-    <div class="header-container">
-        <h2>Clasificación en Directo</h2>
-        <span id="estado">Cargando...</span>
-    </div>
 
-
-
-    <!-- CONTENEDOR DE LA TABLA -->
     <div id="contenedor-tabla">Cargando datos...</div>
 
-<script>
-    let segundosRestantes = 10;
-    let ultimaHoraActualizacion = '--:--:--';
-    let cargando = false;
+    <script>
+        let segundosRestantes = 30;
+        let ultimaHoraActualizacion = '--:--:--';
+        let cargando = false;
 
-    async function cargarDatos() {
-        if (cargando) return;
-        cargando = true;
+        async function cargarDatos() {
+    if (cargando) return;
+    cargando = true;
 
-        const contenedor = document.getElementById('contenedor-tabla');
-        const estado = document.getElementById('estado');
+    const contenedor = document.getElementById('contenedor-tabla');
+    const estado = document.getElementById('estado');
 
-        // 1. Mostrar inmediatamente el mensaje "Actualizando..."
+    if (estado) estado.textContent = 'Actualizando...';
+
+    try {
+        const response = await fetch('/api/get-csv-internal');
+
+        // Si la respuesta no es OK (HTTP 404, 500, etc.) o no es JSON:
+        if (!response.ok) {
+            const textoError = await response.text();
+            throw new Error(`Servidor devolvió HTTP ${response.status}: ${textoError.substring(0, 150)}...`);
+        }
+
+        const data = await response.json();
+
+        generarTabla(data);
+
+        ultimaHoraActualizacion = new Date().toLocaleTimeString();
+        segundosRestantes = 30;
+        cargando = false;
+
+        actualizarTextoEstado();
+
+    } catch (error) {
+        console.error('Error al actualizar datos:', error);
+        cargando = false;
+
+        if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
+            contenedor.innerHTML = `<p style="color:red; font-weight:bold;">Error en la carga: ${error.message}</p>`;
+        }
         if (estado) {
-            estado.textContent = 'Actualizando...';
+            estado.textContent = 'Error al actualizar. Reintentando en breve...';
         }
-
-        try {
-            // Forzamos la petición ignorando la caché del navegador
-            const response = await fetch(`/api/get-csv?t=${Date.now()}`, {
-                cache: 'no-store'
-            });
-
-            if (!response.ok) throw new Error('Error al conectar con la API');
-
-            const filas = await response.json();
-            generarTabla(filas);
-
-            // 2. Guardar la nueva hora y reiniciar variables al completar la carga
-            ultimaHoraActualizacion = new Date().toLocaleTimeString();
-            segundosRestantes = 30;
-            cargando = false;
-
-            actualizarTextoEstado();
-
-        } catch (error) {
-            console.error(error);
-            cargando = false;
-
-            if (contenedor && contenedor.innerHTML.includes('Cargando')) {
-                contenedor.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
-            }
-            if (estado) {
-                estado.textContent = 'Error al actualizar. Reintentando en breve...';
+    }
+}
+        function actualizarTextoEstado() {
+            const estado = document.getElementById('estado');
+            if (estado && !cargando) {
+                estado.textContent = `Última actualización: ${ultimaHoraActualizacion} | Próxima actualización en ${segundosRestantes}s`;
             }
         }
-    }
 
-    function actualizarTextoEstado() {
-        const estado = document.getElementById('estado');
-        if (estado && !cargando) {
-            // Texto formateado sustituyendo la palabra 'refresco' por 'actualización'
-            estado.textContent = `Última actualización: ${ultimaHoraActualizacion} | Próxima actualización en ${segundosRestantes}s`;
-        }
-    }
+        setInterval(() => {
+            if (cargando) return;
 
-    // Temporizador segundo a segundo
-    setInterval(() => {
-        if (cargando) return; // Si está descargando datos, detiene el contador
+            segundosRestantes--;
 
-        segundosRestantes--;
+            if (segundosRestantes <= 0) {
+                cargarDatos();
+            } else {
+                actualizarTextoEstado();
+            }
+        }, 1000);
 
-        if (segundosRestantes <= 0) {
-            cargarDatos();
-        } else {
-            actualizarTextoEstado();
-        }
-    }, 1000);
+        function tiempoASegundos(tiempoStr) {
+            if (!tiempoStr) return -1;
+            const str = tiempoStr.toString().trim();
+            const partes = str.split(':').map(Number);
 
-    function tiempoASegundos(tiempoStr) {
-        if (!tiempoStr) return -1;
-        const str = tiempoStr.toString().trim();
-        const partes = str.split(':').map(Number);
-
-        if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
-        if (partes.length === 2) return (partes[0] * 60) + partes[1];
-        
-        const num = parseFloat(str);
-        return isNaN(num) ? -1 : num;
-    }
-
-    function generarTabla(filas) {
-        const contenedor = document.getElementById('contenedor-tabla');
-        if (!contenedor) return;
-
-        if (!filas || filas.length === 0) {
-            contenedor.innerHTML = '<p>No hay datos disponibles.</p>';
-            return;
+            if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
+            if (partes.length === 2) return (partes[0] * 60) + partes[1];
+            
+            const num = parseFloat(str);
+            return isNaN(num) ? -1 : num;
         }
 
-        const cabeceras = filas[0];
-        let datos = filas.slice(1);
+        function generarTabla(filas) {
+            const contenedor = document.getElementById('contenedor-tabla');
+            if (!contenedor) return;
 
-        const idxTiempo = cabeceras.findIndex(h => 
-            h.trim().toLowerCase().includes('tiempo') || 
-            h.trim().toLowerCase().includes('time') ||
-            h.trim().toLowerCase().includes('marca')
-        );
+            if (!filas || filas.length === 0) {
+                contenedor.innerHTML = '<p>No hay datos disponibles.</p>';
+                return;
+            }
 
-        if (idxTiempo !== -1) {
-            datos.sort((a, b) => {
-                const segA = tiempoASegundos(a[idxTiempo]);
-                const segB = tiempoASegundos(b[idxTiempo]);
-                return segB - segA;
+            const cabeceras = filas[0];
+            let datos = filas.slice(1);
+
+            const idxTiempo = cabeceras.findIndex(h => 
+                h.trim().toLowerCase().includes('tiempo') || 
+                h.trim().toLowerCase().includes('time') ||
+                h.trim().toLowerCase().includes('marca')
+            );
+
+            if (idxTiempo !== -1) {
+                datos.sort((a, b) => {
+                    const segA = tiempoASegundos(a[idxTiempo]);
+                    const segB = tiempoASegundos(b[idxTiempo]);
+                    return segB - segA;
+                });
+            }
+
+            let html = '<table><thead><tr>';
+            cabeceras.forEach(col => { html += `<th>${col}</th>`; });
+            html += '</tr></thead><tbody>';
+
+            datos.forEach(fila => {
+                html += '<tr>';
+                fila.forEach(celda => { html += `<td>${celda || ''}</td>`; });
+                html += '</tr>';
             });
+
+            html += '</tbody></table>';
+            contenedor.innerHTML = html;
         }
 
-        let html = '<table><thead><tr>';
-        cabeceras.forEach(col => { html += `<th>${col}</th>`; });
-        html += '</tr></thead><tbody>';
-
-        datos.forEach(fila => {
-            html += '<tr>';
-            fila.forEach(celda => { html += `<td>${celda || ''}</td>`; });
-            html += '</tr>';
-        });
-
-        html += '</tbody></table>';
-        contenedor.innerHTML = html;
-    }
-
-    // Carga inicial al abrir la página
-    cargarDatos();
-</script>
-
+        cargarDatos();
+    </script>
 </body>
 </html>
