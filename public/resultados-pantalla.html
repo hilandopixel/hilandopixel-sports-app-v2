@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=512, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Resultados del Evento</title>
     <style>
-        /* Bloqueo total exterior para compatibilidad con Kibuu */
         html, body {
             width: 100%;
             height: 100%;
@@ -19,7 +18,6 @@
             font-family: system-ui, -apple-system, sans-serif;
         }
 
-        /* Lienzo estricto de 512x1536 píxeles */
         .screen-canvas {
             width: 512px;
             min-width: 512px;
@@ -29,7 +27,7 @@
             max-height: 1536px;
             padding: 14px;
             box-sizing: border-box;
-            background-color: #f8f9fa;
+            background-color: #f8f9fa; /* Color por defecto, se reemplazará por Firebase */
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -81,24 +79,26 @@
             margin-bottom: 8px;
         }
 
-        /* Carrusel ajustado para aprovechar el ancho del lienzo exacto */
         .carrusel-contenedor {
             position: relative;
             width: 100%;
-            height: 250px;
+            height: 512px;
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #e9ecef;
             flex-shrink: 0;
             box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .carrusel-imagen {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center center;
             position: absolute;
             top: 0;
             left: 0;
@@ -378,10 +378,8 @@
     </style>
 </head>
 <body>
-    <!-- Contenedor Maestro Escalonado -->
     <div class="screen-canvas" id="kibuu-canvas">
         <div class="header-container">
-            <h2 id="tituloResultado">Cargando...</h2>
             <div class="header-actions">
                 <button id="btnLogout" class="btn-logout">🚪 Salir</button>
             </div>
@@ -458,6 +456,8 @@
         </div>
 
         <div>
+                        <h2 id="tituloResultado">Cargando...</h2>
+
             <div id="estado-chips-container" class="estado-chips-container">
                 <span class="estado-chip" id="chip-estado-conexion">Iniciando...</span>
             </div>
@@ -467,7 +467,6 @@
     </div>
 
     <script>
-        // Sistema de auto-escalado forzado para pantallas digitales como Kibuu
         function escalarLienzo() {
             const canvas = document.getElementById('kibuu-canvas');
             const windowAncho = window.innerWidth;
@@ -553,7 +552,14 @@
                         const eventoDocSnap = await getDoc(eventoDocRef);
                         
                         if (eventoDocSnap.exists()) {
-                            nombreEvento += eventoDocSnap.data().nombre || '';
+                            const datosEvento = eventoDocSnap.data();
+                            nombreEvento += datosEvento.nombre || '';
+                            
+                            // Reemplazar el background de screen-canvas con el color guardado en el evento (ej: campo colorFondo o backgroundColor)
+                            const colorEvento = datosEvento.color;
+                            if (colorEvento) {
+                                document.getElementById('kibuu-canvas').style.backgroundColor = colorEvento;
+                            }
                         }
 
                         refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
