@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=512, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Resultados del Evento</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         html, body {
             width: 100%;
@@ -383,6 +384,45 @@
 
         <div id="panel-preferencias">
             <h3>⚙️ Panel de Configuración</h3>
+            <div class="campo-grupo">
+                <label for="input-res-nombre">Nombre del Resultado:</label>
+                <input type="text" id="input-res-nombre" class="input-columnas" placeholder="Nombre de la sección">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-res-slug">ID del Resultado (Slug):</label>
+                <input type="text" id="input-res-slug" class="input-columnas" placeholder="identificador-slug">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-res-fecha">Fecha:</label>
+                <input type="date" id="input-res-fecha" class="input-columnas">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-res-tipo">Tipo:</label>
+                <select id="select-res-tipo" class="select-orden">
+                    <option value="CSV">CSV</option>
+                    <option value="JSON">JSON</option>
+                </select>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-res-enlace">Enlace del Resultado (URL):</label>
+                <input type="url" id="input-res-enlace" class="input-columnas" placeholder="https://...">
+            </div>
+
+            <div class="campo-grupo" style="margin-top: 10px;">
+                <label for="input-url-qr">URL QR de Resultados:</label>
+                <div class="input-group">
+                    <input type="url" id="input-url-qr" class="input-columnas" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-intervalo-refresco">Refresco (segundos):</label>
+                <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
+            </div>
 
             <div class="gestor-imagenes-container">
                 <div class="opciones-subida-grid">
@@ -405,11 +445,6 @@
             </div>
 
             <div class="panel-columnas-container">
-                <div class="campo-grupo">
-                    <label for="input-intervalo-refresco">Refresco (segundos):</label>
-                    <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
-                </div>
-
                 <div class="campo-grupo">
                     <label for="input-tiempo-carrusel">Tiempo imagen carrusel (segundos):</label>
                     <input type="number" id="input-tiempo-carrusel" class="input-numero" min="1" max="60" value="2">
@@ -453,12 +488,14 @@
         </div>
 
         <div>
+           <div id="contenedor-qr-resultado" style="display: flex; justify-content: center; margin: 10px 0;"></div>
+
             <h2 id="tituloResultado">Cargando...</h2>
+
             <div id="estado-chips-container" class="estado-chips-container">
                 <span class="estado-chip" id="chip-estado-conexion">Iniciando...</span>
             </div>
         </div>
-        
         <div id="contenedor-tabla">Cargando datos...</div>
     </div>
 
@@ -540,6 +577,7 @@
 
         let inputFocoClave = null;
         let posicionCursor = 0;
+        let urlQrResultados = '';
 
         async function obtenerConfiguracionFirebase() {
             try {
@@ -601,10 +639,29 @@
                 }
 
                 configuracionResultado = docSnap.data();
+                urlQrResultados = configuracionResultado.url_qr_resultados || '';
+                const inputQrEl = document.getElementById('input-url-qr');
+                if (inputQrEl) {
+                    inputQrEl.value = urlQrResultados;
+                }
+                renderizarQrResultado();
+                document.getElementById('input-url-qr').addEventListener('input', (e) => {
+                    urlQrResultados = e.target.value.trim();
+                    renderizarQrResultado(); // Actualiza el QR en pantalla dinámicamente al editar
+                });
+
+
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
                 document.getElementById('tituloResultado').textContent = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
                 document.title = configuracionResultado.nombre || 'Resultados';
+
+                document.getElementById('input-res-nombre').value = configuracionResultado.nombre || '';
+                document.getElementById('input-res-slug').value = idResultadoParam || '';
+                document.getElementById('input-res-fecha').value = configuracionResultado.fecha || '';
+                document.getElementById('select-res-tipo').value = configuracionResultado.tipo || 'CSV';
+                document.getElementById('input-res-enlace').value = configuracionResultado.enlace || '';
+
 
                 const imgsSnap = await getDocs(collection(refResultadoDocActual, 'imagenes_cabecera'));
                 listaImagenes = [];
@@ -683,13 +740,18 @@
             try {
                 const tiempoSecs = parseInt(document.getElementById('input-tiempo-carrusel').value, 10) || 2;
                 const datosAActualizar = {
+                    nombre: document.getElementById('input-res-nombre').value.trim(),
+                    fecha: document.getElementById('input-res-fecha').value,
+                    tipo: document.getElementById('select-res-tipo').value,
+                    enlace: document.getElementById('input-res-enlace').value.trim(),
                     columnasMostrar: columnasVisiblesUser,
                     ordenVisual: ordenColumnasUser,
                     columnaOrden: columnaOrdenadaClave,
                     sentidoOrden: ordenAscendente ? 'asc' : 'desc',
                     mostrarFiltros: mostrarFiltros,
                     intervaloRefresco: intervaloSegundosConfig,
-                    tiempoImagenCarrusel: tiempoSecs
+                    tiempoImagenCarrusel: tiempoSecs,
+                    url_qr_resultados: urlQrResultados
                 };
 
                 await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
@@ -1086,6 +1148,28 @@
         async function init() {
             if (await obtenerConfiguracionFirebase()) await cargarDatos();
         }
+
+        function renderizarQrResultado() {
+    const contenedorQr = document.getElementById('contenedor-qr-resultado');
+    if (!contenedorQr) return;
+
+    contenedorQr.innerHTML = '';
+
+    if (!urlQrResultados) {
+        contenedorQr.style.display = 'none';
+        return;
+    }
+
+    contenedorQr.style.display = 'flex';
+    new QRCode(contenedorQr, {
+        text: urlQrResultados,
+        width: 128,
+        height: 128,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
 
         init();
     </script>

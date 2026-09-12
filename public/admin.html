@@ -260,6 +260,10 @@
                   <button type="button" id="btnValidarEnlace" class="btn-primary text-xs whitespace-nowrap px-4">🔍 Validar y Detectar Columnas</button>
                 </div>
               </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-gray-700 mb-1">URL QR Resultados (Opcional):</label>
+              <input type="url" id="resUrlQr" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="https://...">
+            </div>
             </div>
 
             <!-- CONFIGURACIÓN INTERACTIVA DE COLUMNAS -->
@@ -355,5 +359,33 @@
       }
     });
   </script>
+
+  <!-- MODAL QR DE RESULTADOS -->
+<div id="modalQrResultados" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full space-y-4 text-center relative">
+    <button type="button" id="cerrarModalQr" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold text-lg">✕</button>
+    
+    <div>
+      <h3 id="modalQrEventoNombre" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">--</h3>
+      <h2 id="modalQrResultadoNombre" class="text-xl font-bold text-gray-900 mt-1">--</h2>
+    </div>
+
+    <div class="flex justify-center p-4 bg-gray-50 rounded-lg border border-gray-100">
+      <div id="contenedorQrCanvas" class="bg-white p-2 shadow-sm rounded"></div>
+    </div>
+
+    <div class="text-xs font-mono text-gray-600 break-all bg-gray-50 p-2 rounded border">
+      <span id="modalQrUrlTexto">--</span>
+    </div>
+
+    <div class="flex gap-2 pt-2">
+      <button type="button" id="btnImprimirQr" class="btn-primary flex-1 text-xs py-2">🖨️ Imprimir</button>
+      <button type="button" id="btnDescargarPdfQr" class="btn-secondary flex-1 text-xs py-2">📥 Descargar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- Librería externa ligera para generar QR (QRCode.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>

@@ -146,11 +146,12 @@ export function cargarResultadosEvento(eventoId) {
         <td class="p-3 font-bold text-gray-900">${data.nombre}</td>
         <td class="p-3 font-mono text-xs text-gray-500">${resId}</td>
         <td class="p-3 text-right space-x-1">
-          <a href="resultados?evento=${eventoId}&resultado=${resId}" target="_blank" class="btn-primary text-xs py-1 px-2 inline-block">Ver enlace</a>
-          <button class="btn-secondary text-xs py-1 px-2 btn-editar-res" data-id="${resId}">Editar</button>
-          <button class="btn-danger text-xs py-1 px-2 btn-del-res" data-id="${resId}">Borrar</button>
+            <button class="btn-secondary text-xs py-1 px-2 btn-generar-qr" data-id="${resId}" data-nombre="${data.nombre}" data-urlqr="${data.url_qr_resultados || ''}">Generar QR</button>
+            <a href="resultados-pantalla.html?evento=${eventoId}&resultado=${resId}" target="_blank" class="btn-primary text-xs py-1 px-2 inline-block">Ver enlace</a>
+            <button class="btn-secondary text-xs py-1 px-2 btn-editar-res" data-id="${resId}">Editar</button>
+            <button class="btn-danger text-xs py-1 px-2 btn-del-res" data-id="${resId}">Borrar</button>
         </td>
-      `;
+        `;
       tabla.appendChild(tr);
     });
 
@@ -167,6 +168,7 @@ export function cargarResultadosEvento(eventoId) {
         document.getElementById("resFecha").value = data.fecha || "";
         document.getElementById("resTipo").value = data.tipo || "CSV";
         document.getElementById("resEnlace").value = data.enlace || "";
+        document.getElementById("resUrlQr").value = data.url_qr_resultados || ""; // <-- Añadido
         document.getElementById("resTiempoCarrusel").value = data.tiempoImagenCarrusel || 2; // <-- Añadido
 
 // Al guardar resultado
@@ -216,6 +218,7 @@ async function guardarResultado(e) {
     fecha: document.getElementById("resFecha").value,
     tipo: document.getElementById("resTipo").value,
     enlace: document.getElementById("resEnlace").value.trim(),
+    url_qr_resultados: document.getElementById("resUrlQr").value.trim(), // <-- Añadido
     columnasMostrar: adminColumnasVisibles,
     ordenVisual: adminOrdenColumnas,
     directo: true,
@@ -235,3 +238,47 @@ async function guardarResultado(e) {
     alert("Error guardando el resultado: " + err.message);
   }
 }
+
+// Lógica del Modal QR
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.classList.contains("btn-generar-qr")) {
+    const resNombre = e.target.getAttribute("data-nombre");
+    const urlQr = e.target.getAttribute("data-urlqr");
+    const eventoNombreEl = document.getElementById("detalleEventoNombre");
+    const eventoNombre = eventoNombreEl ? eventoNombreEl.textContent.replace("Gestión: ", "") : "Evento";
+
+    if (!urlQr) {
+      return alert("⚠️ Esta sección de resultados no tiene configurada ninguna 'URL QR Resultados'. Edítala para añadirla.");
+    }
+
+    document.getElementById("modalQrEventoNombre").textContent = eventoNombre;
+    document.getElementById("modalQrResultadoNombre").textContent = resNombre;
+    document.getElementById("modalQrUrlTexto").textContent = urlQr;
+
+    const contenedorQr = document.getElementById("contenedorQrCanvas");
+    contenedorQr.innerHTML = "";
+    
+    new QRCode(contenedorQr, {
+      text: urlQr,
+      width: 180,
+      height: 180,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById("modalQrResultados").classList.remove("hidden");
+  }
+});
+
+document.getElementById("cerrarModalQr").addEventListener("click", () => {
+  document.getElementById("modalQrResultados").classList.add("hidden");
+});
+
+document.getElementById("btnImprimirQr").addEventListener("click", () => {
+  window.print();
+});
+
+document.getElementById("btnDescargarPdfQr").addEventListener("click", () => {
+  window.print(); // Impresión nativa optimizada a PDF mediante el diálogo del navegador
+});
