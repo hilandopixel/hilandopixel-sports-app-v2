@@ -1,4 +1,4 @@
-import { db } from '../../../firebase.config.js';
+import { db } from '/firebase.config.js';
 import { collection, doc, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { eventoActualId } from './admin-eventos.js';
 

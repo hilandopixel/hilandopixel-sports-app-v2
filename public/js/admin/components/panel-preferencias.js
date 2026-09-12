@@ -1,4 +1,5 @@
-import { db } from '../../../../firebase.config.js';
+import { db } from '/firebase.config.js';
+import { comprimirImagen } from '/js/utils.js';
 import { collection, doc, setDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 class PanelPreferencias extends HTMLElement {
@@ -318,18 +319,19 @@ class PanelPreferencias extends HTMLElement {
         const inputFile = shadow.getElementById('input-file-imagen');
         if (inputFile && !inputFile.dataset.bound) {
             inputFile.dataset.bound = "true";
-            inputFile.addEventListener('change', (e) => {
+            inputFile.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    this.listaImagenes.push(event.target.result);
-                    this.renderizarVistasPrevias();
-                    if (inputFile) {
-                        inputFile.value = '';
-                    }
-                };
-                reader.readAsDataURL(file);
+                
+                // Comprimimos la imagen antes de añadirla a la lista
+                const imagenComprimidaBase64 = await comprimirImagen(file, 1200, 0.7);
+                
+                this.listaImagenes.push(imagenComprimidaBase64);
+                this.renderizarVistasPrevias();
+                
+                if (inputFile) {
+                    inputFile.value = '';
+                }
             });
         }
 
@@ -350,43 +352,35 @@ class PanelPreferencias extends HTMLElement {
             btn.textContent = "⏳ Guardando...";
 
             try {
-                const resData = {
-                    nombre: datos.nombre,
-                    fecha: datos.fecha,
-                    tipo: datos.tipo,
-                    enlace: datos.enlace,
-                    url_qr_resultados: datos.url_qr_resultados,
-                    columnasMostrar: datos.columnasMostrar,
-                    ordenVisual: datos.ordenVisual,
-                    columnaOrden: datos.columnaOrden,
-                    sentidoOrden: datos.sentidoOrden,
-                    mostrarFiltros: datos.mostrarFiltros,
-                    directo: true,
-                    intervaloRefresco: datos.intervaloRefresco,
-                    tiempoImagenCarrusel: datos.tiempoImagenCarrusel,
-                    imagenes: this.listaImagenes
-                };
+                        const resData = {
+                        nombre: datos.nombre,
+                        fecha: datos.fecha,
+                        tipo: datos.tipo,
+                        enlace: datos.enlace,
+                        url_qr_resultados: datos.url_qr_resultados,
+                        columnasMostrar: datos.columnasMostrar,
+                        ordenVisual: datos.ordenVisual,
+                        columnaOrden: datos.columnaOrden,
+                        sentidoOrden: datos.sentidoOrden,
+                        mostrarFiltros: datos.mostrarFiltros,
+                        directo: true,
+                        intervaloRefresco: datos.intervaloRefresco,
+                        tiempoImagenCarrusel: datos.tiempoImagenCarrusel,
+                        imagenes: [] // Dejamos el array del documento principal vacío o solo con URLs HTTP ligeras, evitando cadenas Base64 masivas
+                    };
 
-                const nuevoDocRef = doc(db, "eventos", this.eventoId, "resultados", nuevoId);
-                
-                // Si cambió el slug original, limpiamos el anterior si fuese necesario (opcional)
-                if (this.resultadoId && this.resultadoId !== nuevoId) {
-                    await deleteDoc(doc(db, "eventos", this.eventoId, "resultados", this.resultadoId));
-                }
+                    // Guardamos las imágenes de manera independiente y fraccionada en la subcolección 'imagenes_cabecera'
+                    const subColRef = collection(db, "eventos", this.eventoId, "resultados", nuevoId, "imagenes_cabecera");
+                    const prevImgs = await getDocs(subColRef);
+                    for (const docItem of prevImgs.docs) {
+                        await deleteDoc(docItem.ref);
+                    }
 
-                await setDoc(nuevoDocRef, resData, { merge: true });
-
-                // Subcolección de imágenes de cabecera
-                const subColRef = collection(db, "eventos", this.eventoId, "resultados", nuevoId, "imagenes_cabecera");
-                const prevImgs = await getDocs(subColRef);
-                for (const docItem of prevImgs.docs) {
-                    await deleteDoc(docItem.ref);
-                }
-
-                for (let i = 0; i < this.listaImagenes.length; i++) {
-                    const imgDocRef = doc(subColRef, `img_${i + 1}`);
-                    await setDoc(imgDocRef, { url: this.listaImagenes[i], orden: i + 1 });
-                }
+                    for (let i = 0; i < this.listaImagenes.length; i++) {
+                        const imgDocRef = doc(subColRef, `img_${i + 1}`);
+                        // Cada imagen en su propio documento de subcolección evita reventar el límite del documento principal
+                        await setDoc(imgDocRef, { url: this.listaImagenes[i], orden: i + 1 });
+                    }
 
                 this.resultadoId = nuevoId;
                 alert("✅ ¡Sección de resultados guardada correctamente en Firebase!");
