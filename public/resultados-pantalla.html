@@ -75,6 +75,74 @@
             transform: scale(1.2);
         }
 
+        /* Gestor Dinámico de Imágenes */
+        .gestor-imagenes-container {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .opciones-subida-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .opciones-subida-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lista-imagenes-previa {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .item-imagen-previa {
+            position: relative;
+            width: 80px;
+            height: 50px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ced4da;
+        }
+
+        .item-imagen-previa img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-eliminar-img {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(220, 53, 69, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .btn-eliminar-img:hover {
+            background: #dc3545;
+        }
+
         /* Panel de Configuración */
         .panel-columnas-container {
             background: #ffffff;
@@ -99,7 +167,6 @@
             color: #495057;
         }
 
-        /* Contenedores de botones (Chips/Multiselect) */
         .chips-container {
             display: flex;
             flex-wrap: wrap;
@@ -134,17 +201,30 @@
             border-color: #198754;
         }
 
-        .orden-select-container {
+        .orden-select-container, .input-group {
             display: flex;
             gap: 8px;
         }
 
-        .select-orden {
+        .select-orden, .input-columnas {
             padding: 8px 12px;
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 0.9em;
             background-color: #ffffff;
+        }
+
+        .input-file-custom {
+            padding: 5px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.85em;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+        .input-columnas {
+            flex: 1;
         }
 
         .select-orden {
@@ -171,6 +251,22 @@
         .checkbox-container label {
             cursor: pointer;
             user-select: none;
+        }
+
+        .btn-accion {
+            padding: 8px 14px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-accion:hover {
+            background-color: #0b5ed7;
         }
 
         .btn-limpiar {
@@ -257,40 +353,58 @@
         <span id="estado" class="estado">Cargando...</span>
     </div>
 
-    <!-- Carrusel de imágenes -->
-    <div class="carrusel-contenedor">
-        <img class="carrusel-imagen activa" src="https://masatletismocrono.com/wp-content/uploads/header-bg.jpg" alt="Evento 1" onerror="this.src='https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80'">
-        <img class="carrusel-imagen" src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80" alt="Evento 2">
-        <img class="carrusel-imagen" src="https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?auto=format&fit=crop&w=1200&q=80" alt="Evento 3">
-        <img class="carrusel-imagen" src="https://images.unsplash.com/photo-1471295253337-4ce8380237c8?auto=format&fit=crop&w=1200&q=80" alt="Evento 4">
-
+    <!-- CARRUSEL DINÁMICO DE IMÁGENES -->
+    <div class="carrusel-contenedor" id="carrusel-contenedor">
         <div class="carrusel-indicadores" id="carrusel-dots"></div>
     </div>
 
-    <!-- PANEL DE CONFIGURACIÓN -->
+    <!-- PANEL DE GESTIÓN DE IMÁGENES DEL CARRUSEL (URL + ARCHIVO LOCAL) -->
+    <div class="gestor-imagenes-container">
+        <div class="opciones-subida-grid">
+            <!-- Opción 1: Añadir por URL -->
+            <div class="campo-grupo">
+                <label for="input-url-imagen">Añadir imagen por URL:</label>
+                <div class="input-group">
+                    <input type="text" 
+                           id="input-url-imagen" 
+                           class="input-columnas" 
+                           placeholder="https://ejemplo.com/mi-imagen.jpg">
+                    <button class="btn-accion" onclick="agregarImagenPorURL()">Añadir URL</button>
+                </div>
+            </div>
+
+            <!-- Opción 2: Añadir desde el dispositivo -->
+            <div class="campo-grupo">
+                <label for="input-file-imagen">Añadir desde tu dispositivo (archivo local):</label>
+                <input type="file" 
+                       id="input-file-imagen" 
+                       class="input-file-custom" 
+                       accept="image/*" 
+                       onchange="agregarImagenDesdeArchivo(event)">
+            </div>
+        </div>
+
+        <div class="campo-grupo">
+            <label>Imágenes actuales en el carrusel:</label>
+            <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
+        </div>
+    </div>
+
+    <!-- PANEL DE CONFIGURACIÓN DE TABLA Y COLUMNAS -->
     <div class="panel-columnas-container">
-        <!-- SELECCIÓN DINÁMICA DE COLUMNAS VISIBLES -->
         <div class="campo-grupo">
             <label>Columnas a mostrar:</label>
-            <div id="container-chips-visibles" class="chips-container">
-                <!-- Se puebla dinámicamente desde el JSON -->
-            </div>
+            <div id="container-chips-visibles" class="chips-container"></div>
             <button class="btn-limpiar" onclick="seleccionarTodasVisibles()">Mostrar todas</button>
         </div>
 
-        <!-- SELECCIÓN Y ORDENACIÓN DINÁMICA DE POSICIONES -->
         <div class="campo-grupo">
             <label>Orden de visualización horizontal (haz clic para añadir a la secuencia):</label>
-            <div id="container-chips-orden-elegido" class="chips-container">
-                <!-- Muestra la secuencia elegida activa -->
-            </div>
-            <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;">
-                <!-- Columnas restantes para añadir -->
-            </div>
+            <div id="container-chips-orden-elegido" class="chips-container"></div>
+            <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
             <button class="btn-limpiar" onclick="restablecerOrdenColumnas()">Restablecer orden inicial</button>
         </div>
 
-        <!-- SELECTS PARA ORDENACIÓN DE DATOS POR FILA -->
         <div class="campo-grupo">
             <label for="select-columna-orden">Ordenar datos por:</label>
             <div class="orden-select-container">
@@ -304,7 +418,6 @@
             </div>
         </div>
 
-        <!-- CHECKBOX PARA MOSTRAR/OCULTAR FILTROS -->
         <div class="checkbox-container">
             <input type="checkbox" 
                    id="checkbox-mostrar-filtros" 
@@ -317,50 +430,132 @@
     <div id="contenedor-tabla">Cargando datos...</div>
 
     <script>
-        // --- CONFIGURACIÓN DEL CARRUSEL ---
+        // ==========================================
+        // GESTIÓN DINÁMICA DEL CARRUSEL E IMÁGENES
+        // ==========================================
         const TIEMPO_CARRUSEL_MS = 2000;
         let indiceImagenActual = 0;
-        let imagenesCarrusel = [];
-        let dotsCarrusel = [];
         let intervaloCarrusel = null;
 
-        function iniciarCarrusel() {
-            imagenesCarrusel = document.querySelectorAll('.carrusel-imagen');
-            const contenedorDots = document.getElementById('carrusel-dots');
+        // Lista dinámica de imágenes (soporta URLs HTTP y Data URLs en Base64)
+        let listaImagenes = [
+            'https://masatletismocrono.com/wp-content/uploads/header-bg.jpg',
+            'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1471295253337-4ce8380237c8?auto=format&fit=crop&w=1200&q=80'
+        ];
 
-            if (imagenesCarrusel.length === 0) return;
+        function renderizarCarrusel() {
+            const contenedor = document.getElementById('carrusel-contenedor');
+            if (!contenedor) return;
 
-            imagenesCarrusel.forEach((_, idx) => {
-                const dot = document.createElement('div');
-                dot.classList.add('dot');
-                if (idx === 0) dot.classList.add('activo');
-                dot.addEventListener('click', () => cambiarImagenCarrusel(idx));
-                contenedorDots.appendChild(dot);
+            if (intervaloCarrusel) clearInterval(intervaloCarrusel);
+
+            if (listaImagenes.length === 0) {
+                contenedor.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:#6c757d;">No hay imágenes cargadas en el carrusel</div>';
+                renderizarVistasPrevias();
+                return;
+            }
+
+            if (indiceImagenActual >= listaImagenes.length) {
+                indiceImagenActual = 0;
+            }
+
+            let htmlImgs = '';
+            listaImagenes.forEach((url, idx) => {
+                const esActiva = (idx === indiceImagenActual) ? 'activa' : '';
+                htmlImgs += `<img class="carrusel-imagen ${esActiva}" src="${url}" alt="Foto ${idx + 1}">`;
             });
 
-            dotsCarrusel = document.querySelectorAll('.dot');
-            intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+            htmlImgs += '<div class="carrusel-indicadores" id="carrusel-dots">';
+            listaImagenes.forEach((_, idx) => {
+                const esActivo = (idx === indiceImagenActual) ? 'activo' : '';
+                htmlImgs += `<div class="dot ${esActivo}" onclick="cambiarImagenCarrusel(${idx})"></div>`;
+            });
+            htmlImgs += '</div>';
+
+            contenedor.innerHTML = htmlImgs;
+            renderizarVistasPrevias();
+
+            if (listaImagenes.length > 1) {
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+            }
+        }
+
+        function renderizarVistasPrevias() {
+            const containerPrevias = document.getElementById('container-previa-imagenes');
+            if (!containerPrevias) return;
+
+            let htmlPrevias = '';
+            listaImagenes.forEach((url, idx) => {
+                htmlPrevias += `
+                    <div class="item-imagen-previa">
+                        <img src="${url}" alt="Miniatura ${idx + 1}">
+                        <button class="btn-eliminar-img" title="Eliminar del carrusel" onclick="eliminarImagenCarrusel(${idx})">✕</button>
+                    </div>`;
+            });
+            containerPrevias.innerHTML = htmlPrevias;
+        }
+
+        function agregarImagenPorURL() {
+            const input = document.getElementById('input-url-imagen');
+            if (!input) return;
+
+            const url = input.value.trim();
+            if (!url) return;
+
+            listaImagenes.push(url);
+            input.value = '';
+            renderizarCarrusel();
+        }
+
+        // Cargar imagen local seleccionada mediante el File Reader API (convertida a Base64)
+        function agregarImagenDesdeArchivo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                listaImagenes.push(base64Image);
+                event.target.value = ''; // Limpiar el input file
+                renderizarCarrusel();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function eliminarImagenCarrusel(index) {
+            listaImagenes.splice(index, 1);
+            renderizarCarrusel();
         }
 
         function cambiarImagenCarrusel(nuevoIndice) {
-            imagenesCarrusel[indiceImagenActual].classList.remove('activa');
-            if (dotsCarrusel[indiceImagenActual]) dotsCarrusel[indiceImagenActual].classList.remove('activo');
+            const imagenes = document.querySelectorAll('.carrusel-imagen');
+            const dots = document.querySelectorAll('.dot');
+
+            if (imagenes[indiceImagenActual]) imagenes[indiceImagenActual].classList.remove('activa');
+            if (dots[indiceImagenActual]) dots[indiceImagenActual].classList.remove('activo');
 
             indiceImagenActual = nuevoIndice;
 
-            imagenesCarrusel[indiceImagenActual].classList.add('activa');
-            if (dotsCarrusel[indiceImagenActual]) dotsCarrusel[indiceImagenActual].classList.add('activo');
+            if (imagenes[indiceImagenActual]) imagenes[indiceImagenActual].classList.add('activa');
+            if (dots[indiceImagenActual]) dots[indiceImagenActual].classList.add('activo');
 
-            clearInterval(intervaloCarrusel);
-            intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+            if (intervaloCarrusel) clearInterval(intervaloCarrusel);
+            if (listaImagenes.length > 1) {
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+            }
         }
 
         function siguienteImagenCarrusel() {
-            let siguienteIdx = (indiceImagenActual + 1) % imagenesCarrusel.length;
+            if (listaImagenes.length <= 1) return;
+            let siguienteIdx = (indiceImagenActual + 1) % listaImagenes.length;
             cambiarImagenCarrusel(siguienteIdx);
         }
 
-        // --- LÓGICA DE TABLA, FILTROS Y ORDEN ---
+        // ==========================================
+        // LÓGICA DE TABLA, FILTROS Y REFRESCO LIVE
+        // ==========================================
         let segundosRestantes = 30;
         let ultimaHoraActualizacion = '--:--:--';
         let cargando = false;
@@ -402,14 +597,11 @@
 
                 if (resJSON.datos && resJSON.datos.length > 0) {
                     datosObjetos = resJSON.datos;
-                    
-                    // 1. Guardar las columnas extraídas del JSON
                     const primerasColumnas = Object.keys(datosObjetos[0]);
                     
-                    // Si es la primera carga, inicializamos las estructuras globales
                     if (columnasGlobales.length === 0) {
                         columnasGlobales = primerasColumnas;
-                        columnasVisiblesUser = [...columnasGlobales]; // Todas visibles por defecto
+                        columnasVisiblesUser = [...columnasGlobales];
                     } else {
                         columnasGlobales = primerasColumnas;
                     }
@@ -424,7 +616,6 @@
                         ordenAscendente = false; 
                     }
 
-                    // 2. Poblar los controles dinámicos de UI
                     poblarSelectColumnasOrden();
                     poblarChipsVisibilidad();
                     poblarChipsOrdenSecuencia();
@@ -451,7 +642,6 @@
             }
         }
 
-        // --- RENDERIZADORES DE INTERFAZ DINÁMICA ---
         function poblarSelectColumnasOrden() {
             const selectCol = document.getElementById('select-columna-orden');
             if (!selectCol) return;
@@ -488,7 +678,6 @@
             const containerDisponibles = document.getElementById('container-chips-orden-disponibles');
             if (!containerElegidos || !containerDisponibles) return;
 
-            // Renderizar elegidos
             let htmlElegidos = '';
             ordenColumnasUser.forEach((clave, index) => {
                 htmlElegidos += `<div class="chip-btn orden-tag" onclick="removerDeOrden('${clave}')">
@@ -497,7 +686,6 @@
             });
             containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.8em; color:#888;">Ningún orden personalizado (usando orden nativo)</span>';
 
-            // Renderizar disponibles
             let htmlDisponibles = '';
             columnasGlobales.forEach(clave => {
                 if (!ordenColumnasUser.includes(clave)) {
@@ -509,7 +697,6 @@
             containerDisponibles.innerHTML = htmlDisponibles;
         }
 
-        // --- ACCIONES DE VISIBILIDAD Y ORDENACION DE COLUMNAS ---
         function toggleVisibilidadColumna(clave) {
             if (columnasVisiblesUser.includes(clave)) {
                 columnasVisiblesUser = columnasVisiblesUser.filter(c => c !== clave);
@@ -616,10 +803,8 @@
                 return;
             }
 
-            // 1. Filtrar visibilidad básica
             let columnasFiltradas = columnasGlobales.filter(clave => columnasVisiblesUser.includes(clave));
 
-            // 2. Reordenar las columnas filtradas según el multiselect secuencial
             let columnasFinales = [];
             if (ordenColumnasUser.length > 0) {
                 ordenColumnasUser.forEach(clave => {
@@ -642,7 +827,6 @@
                 return;
             }
 
-            // 3. Filtrar los datos por filas
             let datosProcesados = datosObjetos.filter(item => {
                 return Object.keys(filtrosPorColumna).every(clave => {
                     const textoFiltro = filtrosPorColumna[clave];
@@ -652,7 +836,6 @@
                 });
             });
 
-            // 4. Ordenar filas
             if (columnaOrdenadaClave) {
                 const esColumnaTiempo = columnaOrdenadaClave.trim().toLowerCase().includes('tiempo') ||
                                         columnaOrdenadaClave.trim().toLowerCase().includes('time') ||
@@ -681,7 +864,6 @@
                 });
             }
 
-            // 5. Renderizar HTML
             let html = '<table><thead><tr>';
 
             columnasFinales.forEach(clave => {
@@ -734,7 +916,8 @@
             }
         }
 
-        iniciarCarrusel();
+        // Carga inicial
+        renderizarCarrusel();
         cargarDatos();
     </script>
 </body>
