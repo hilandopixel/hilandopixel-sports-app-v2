@@ -10,49 +10,58 @@ service cloud.firestore {
       // Solo usuarios autenticados (Admin) pueden crear, editar o borrar eventos
       allow write: if request.auth != null;
 
-// 🔑 REGLA AÑADIDA: Permitir lectura y creación de sorteos a usuarios autenticados
+      // 🔑 Subcolección: SORTEOS
       match /sorteos/{idSorteo} {
         allow read, create, update: if request.auth != null;
       }
 
-      // Subcolección: STOCK
-      match /stock/{tallaId} {
-        // Lectura pública para cargar tallas disponibles
+      // 🏆 Subcolección RESULTADOS
+      match /resultados/{resultadoId} {
+        // Lectura pública para mostrar clasificaciones en resultados.html o evento.html
         allow read: if true;
         
-        // Permitir actualizar stock si es una reserva pública O si es Admin
+        // Crear, actualizar o eliminar resultados solo Admin
+        allow write: if request.auth != null;
+
+        // 🖼️ Subcolección IMAGENES_CABECERA
+        match /imagenes_cabecera/{imgId} {
+          allow read: if true;
+          allow write: if request.auth != null;
+        }
+      }
+
+      // Subcolección: STOCK
+      match /stock/{tallaId} {
+        allow read: if true;
         allow update: if true;
-        
-        // Crear o borrar tallas solo Admin
         allow create, delete: if request.auth != null;
       }
 
-      // Reglas para la colección 'voluntarios'
+      // Subcolección: PERSONAL (Voluntarios)
       match /personal/{personalId} {
-        // Permite leer y escribir (crear, actualizar, eliminar) 
-        // únicamente si el usuario está autenticado.
         allow read, update, write: if request.auth != null;
       }
 
       // Subcolección: SOLICITUDES
       match /solicitudes/{solicitudId} {
-        // Permitir crear solicitudes desde la web pública (reserva)
         allow create: if true;
-
-        // Permitir actualizar la solicitud (para adjuntar el QR en la reserva o validar asistencia)
-        // Si el usuario no está autenticado, solo permite la actualización durante la creación (Base64 QR)
         allow update: if request.auth != null || resource.data.qrCode == null;
-
-        // Lectura de solicitudes solo para Admin o para validación
         allow read: if true;
-
-        // Borrar solicitudes solo Admin
         allow delete: if request.auth != null;
       }
     }
 
-    // Permitir consultas de grupo de colecciones (Collection Group Query) para validar.html
+    // 🔓 REGLAS GLOBALES (Collection Group Queries): Lectura pública requerida
     match /{path=**}/solicitudes/{solicitudId} {
+      allow read: if true;
+    }
+
+    // Permitir la búsqueda de resultados cuando no se especifica el ID del evento en la URL
+    match /{path=**}/resultados/{resultadoId} {
+      allow read: if true;
+    }
+
+    match /{path=**}/imagenes_cabecera/{imgId} {
       allow read: if true;
     }
   }

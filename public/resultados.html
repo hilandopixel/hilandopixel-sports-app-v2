@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados del Evento</title>
+    <style>
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            padding: 20px; 
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-container h2 {
+            margin: 0;
+            color: #212529;
+        }
+
+        /* Carrusel */
+        .carrusel-contenedor {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #e9ecef;
+        }
+
+        .carrusel-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .carrusel-imagen.activa {
+            opacity: 1;
+        }
+
+        .carrusel-indicadores {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.activo {
+            background-color: #ffffff;
+            transform: scale(1.2);
+        }
+
+        /* Gestor Dinámico de Imágenes */
+        .gestor-imagenes-container {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .opciones-subida-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .opciones-subida-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lista-imagenes-previa {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .item-imagen-previa {
+            position: relative;
+            width: 80px;
+            height: 50px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ced4da;
+        }
+
+        .item-imagen-previa img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-eliminar-img {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(220, 53, 69, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .btn-eliminar-img:hover {
+            background: #dc3545;
+        }
+
+        /* Panel de Configuración */
+        .panel-columnas-container {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .campo-grupo label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip-btn {
+            padding: 6px 12px;
+            font-size: 0.82em;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+            color: #495057;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .chip-btn:hover {
+            border-color: #0d6efd;
+        }
+
+        .chip-btn.activo {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+
+        .chip-btn.orden-tag {
+            background-color: #198754;
+            color: white;
+            border-color: #198754;
+        }
+
+        .orden-select-container, .input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .select-orden, .input-columnas, .input-numero {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9em;
+            background-color: #ffffff;
+        }
+
+        .input-numero {
+            width: 120px;
+        }
+
+        .input-file-custom {
+            padding: 5px 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.85em;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+        .input-columnas {
+            flex: 1;
+        }
+
+        .select-orden {
+            flex: 1;
+        }
+
+        .select-sentido {
+            width: 150px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .checkbox-container label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-accion {
+            padding: 8px 14px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-accion:hover {
+            background-color: #0b5ed7;
+        }
+
+        .btn-guardar {
+            padding: 10px 20px;
+            background-color: #198754;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
+        }
+
+        .btn-guardar:hover {
+            background-color: #157347;
+        }
+
+        .btn-limpiar {
+            padding: 4px 10px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: background-color 0.2s;
+            align-self: flex-start;
+        }
+
+        .btn-limpiar:hover {
+            background-color: #5a6268;
+        }
+
+        /* Tabla */
+        #contenedor-tabla { 
+            width: 100%; 
+            overflow-x: auto; 
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+
+        th, td { 
+            border: 1px solid #e9ecef; 
+            padding: 8px 10px; 
+            text-align: left; 
+        }
+
+        th { 
+            background-color: #0d6efd; 
+            color: white; 
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background-color: #0b5ed7;
+        }
+
+        .input-filtro {
+            width: 100%;
+            padding: 4px 6px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .estado {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .indicador-orden {
+            font-size: 0.8em;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <div>
+            <h2 id="tituloResultado">Cargando Resultado...</h2>
+            <span id="estado" class="estado">Inicializando...</span>
+        </div>
+        <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
+    </div>
+
+    <!-- CARRUSEL DINÁMICO DE IMÁGENES -->
+    <div class="carrusel-contenedor" id="carrusel-contenedor">
+        <div class="carrusel-indicadores" id="carrusel-dots"></div>
+    </div>
+
+    <!-- PANEL DE GESTIÓN DE IMÁGENES -->
+    <div class="gestor-imagenes-container">
+        <div class="opciones-subida-grid">
+            <div class="campo-grupo">
+                <label for="input-url-imagen">Añadir imagen por URL:</label>
+                <div class="input-group">
+                    <input type="text" 
+                           id="input-url-imagen" 
+                           class="input-columnas" 
+                           placeholder="https://ejemplo.com/mi-imagen.jpg">
+                    <button class="btn-accion" id="btnAgregarUrl">Añadir URL</button>
+                </div>
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-file-imagen">Añadir desde tu dispositivo:</label>
+                <input type="file" 
+                       id="input-file-imagen" 
+                       class="input-file-custom" 
+                       accept="image/*">
+            </div>
+        </div>
+
+        <div class="campo-grupo">
+            <label>Imágenes en el carrusel:</label>
+            <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
+        </div>
+    </div>
+
+    <!-- PANEL DE CONFIGURACIÓN -->
+    <div class="panel-columnas-container">
+        <div class="campo-grupo">
+            <label for="input-intervalo-refresco">Intervalo de refresco (en segundos):</label>
+            <input type="number" 
+                   id="input-intervalo-refresco" 
+                   class="input-numero" 
+                   min="5" 
+                   max="600" 
+                   value="30">
+        </div>
+
+        <div class="campo-grupo">
+            <label>Columnas a mostrar:</label>
+            <div id="container-chips-visibles" class="chips-container"></div>
+            <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
+        </div>
+
+        <div class="campo-grupo">
+            <label>Orden de visualización horizontal (haz clic para añadir a la secuencia):</label>
+            <div id="container-chips-orden-elegido" class="chips-container"></div>
+            <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
+            <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden inicial</button>
+        </div>
+
+        <div class="campo-grupo">
+            <label for="select-columna-orden">Ordenar datos por:</label>
+            <div class="orden-select-container">
+                <select id="select-columna-orden" class="select-orden">
+                    <option value="">Cargando columnas...</option>
+                </select>
+                <select id="select-sentido-orden" class="select-orden select-sentido">
+                    <option value="desc" selected>Descendente</option>
+                    <option value="asc">Ascendente</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="checkbox-mostrar-filtros" checked>
+            <label for="checkbox-mostrar-filtros">Mostrar fila de filtros por columna</label>
+        </div>
+    </div>
+
+    <div id="contenedor-tabla">Cargando datos...</div>
+
+    <script type="module">
+        import { db } from './firebase.config.js';
+        import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, collectionGroup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ==========================================
+        // PARÁMETROS URL Y VARIABLES DE REFERENCIA
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const idResultadoParam = urlParams.get('idResultado') || urlParams.get('id');
+        const eventoIdParam = urlParams.get('evento');
+
+        let configuracionResultado = null;
+        let urlCSVoJSON = '';
+        let refResultadoDocActual = null;
+
+        // ==========================================
+        // ESTADO GLOBAL
+        // ==========================================
+        const TIEMPO_CARRUSEL_MS = 2000;
+        let indiceImagenActual = 0;
+        let intervaloCarrusel = null;
+        let listaImagenes = [];
+
+        let intervaloSegundosConfig = 30; // Tiempo total de refresco en segundos
+        let segundosRestantes = 30;
+        let ultimaHoraActualizacion = '--:--:--';
+        let cargando = false;
+
+        let datosObjetos = [];
+        let columnasGlobales = [];
+        let columnasVisiblesUser = []; 
+        let ordenColumnasUser = []; 
+        let mostrarFiltros = true; 
+        let columnaOrdenadaClave = '';
+        let ordenAscendente = false; 
+        let filtrosPorColumna = {};
+
+        let inputFocoClave = null;
+        let posicionCursor = 0;
+
+        // ==========================================
+        // CONSULTA DE CONFIGURACIÓN DE FIREBASE
+        // ==========================================
+        async function obtenerConfiguracionFirebase() {
+            const estado = document.getElementById('estado');
+            if (!idResultadoParam) {
+                if (estado) estado.textContent = 'Error: No se ha especificado idResultado en la URL.';
+                document.getElementById('contenedor-tabla').innerHTML = '<p style="color:red;">Error: Falta el parámetro <b>?idResultado=...</b> en la URL.</p>';
+                return false;
+            }
+
+            try {
+                let docSnap = null;
+
+                if (eventoIdParam) {
+                    refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
+                    docSnap = await getDoc(refResultadoDocActual);
+
+                    if (!docSnap.exists()) {
+                        const subColRef = collection(db, 'eventos', eventoIdParam, 'resultados');
+                        const subColSnap = await getDocs(subColRef);
+                        const docEncontrado = subColSnap.docs.find(d => d.id === idResultadoParam || d.data().idCustom === idResultadoParam);
+                        if (docEncontrado) {
+                            docSnap = docEncontrado;
+                            refResultadoDocActual = docEncontrado.ref;
+                        }
+                    }
+                } else {
+                    const qGroup = query(collectionGroup(db, 'resultados'));
+                    const querySnap = await getDocs(qGroup);
+                    const docEncontrado = querySnap.docs.find(d => d.id === idResultadoParam);
+                    if (docEncontrado) {
+                        docSnap = docEncontrado;
+                        refResultadoDocActual = docEncontrado.ref;
+                    }
+                }
+
+                if (!docSnap || !docSnap.exists()) {
+                    throw new Error(`No se encontró la configuración para el resultado "${idResultadoParam}".`);
+                }
+
+                configuracionResultado = docSnap.data();
+                urlCSVoJSON = configuracionResultado.enlace || '';
+
+                document.getElementById('tituloResultado').textContent = configuracionResultado.nombre || idResultadoParam;
+                document.title = configuracionResultado.nombre || 'Resultados';
+
+                // Cargar imágenes de la subcolección interna imagenes_cabecera
+                const imgsSnap = await getDocs(collection(refResultadoDocActual, 'imagenes_cabecera'));
+                listaImagenes = [];
+                imgsSnap.forEach(imgDoc => {
+                    if (imgDoc.data().url) listaImagenes.push(imgDoc.data().url);
+                });
+
+                if (listaImagenes.length === 0 && configuracionResultado.imagenes) {
+                    listaImagenes = Array.isArray(configuracionResultado.imagenes) ? configuracionResultado.imagenes : [];
+                }
+
+                // Cargar tiempo de refresco configurado en Firebase (por defecto 30 segundos)
+                if (configuracionResultado.intervaloRefresco) {
+                    intervaloSegundosConfig = parseInt(configuracionResultado.intervaloRefresco, 10) || 30;
+                }
+                document.getElementById('input-intervalo-refresco').value = intervaloSegundosConfig;
+                segundosRestantes = intervaloSegundosConfig;
+
+                if (configuracionResultado.columnasMostrar && Array.isArray(configuracionResultado.columnasMostrar)) {
+                    columnasVisiblesUser = configuracionResultado.columnasMostrar;
+                }
+                if (configuracionResultado.ordenVisual && Array.isArray(configuracionResultado.ordenVisual)) {
+                    ordenColumnasUser = configuracionResultado.ordenVisual;
+                }
+                if (configuracionResultado.columnaOrden) {
+                    columnaOrdenadaClave = configuracionResultado.columnaOrden;
+                }
+                if (configuracionResultado.sentidoOrden) {
+                    ordenAscendente = (configuracionResultado.sentidoOrden === 'asc');
+                }
+                if (typeof configuracionResultado.mostrarFiltros === 'boolean') {
+                    mostrarFiltros = configuracionResultado.mostrarFiltros;
+                    document.getElementById('checkbox-mostrar-filtros').checked = mostrarFiltros;
+                }
+
+                renderizarCarrusel();
+                return true;
+            } catch (err) {
+                console.error("Error al obtener la configuración desde Firebase:", err);
+                if (estado) estado.textContent = 'Error al cargar la configuración de Firebase.';
+                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-weight:bold;">${err.message}</p>`;
+                return false;
+            }
+        }
+
+        // Event listener para actualización inmediata al cambiar el input del intervalo
+        document.getElementById('input-intervalo-refresco').addEventListener('change', (e) => {
+            const val = parseInt(e.target.value, 10);
+            if (!isNaN(val) && val >= 5) {
+                intervaloSegundosConfig = val;
+                segundosRestantes = Math.min(segundosRestantes, intervaloSegundosConfig);
+                actualizarTextoEstado();
+            }
+        });
+
+        // ==========================================
+        // GUARDAR PREFERENCIAS EN FIRESTORE
+        // ==========================================
+        document.getElementById('btnGuardarPreferencias').addEventListener('click', async () => {
+            if (!refResultadoDocActual) return alert("No hay una referencia válida a la base de datos.");
+
+            const btn = document.getElementById('btnGuardarPreferencias');
+            btn.disabled = true;
+            btn.textContent = "⏳ Guardando...";
+
+            try {
+                const datosAActualizar = {
+                    columnasMostrar: columnasVisiblesUser,
+                    ordenVisual: ordenColumnasUser,
+                    columnaOrden: columnaOrdenadaClave,
+                    sentidoOrden: ordenAscendente ? 'asc' : 'desc',
+                    mostrarFiltros: mostrarFiltros,
+                    intervaloRefresco: intervaloSegundosConfig
+                };
+
+                await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
+
+                const subColRef = collection(refResultadoDocActual, 'imagenes_cabecera');
+                const prevImgs = await getDocs(subColRef);
+                for (const docItem of prevImgs.docs) {
+                    await deleteDoc(docItem.ref);
+                }
+
+                for (let i = 0; i < listaImagenes.length; i++) {
+                    const imgDocRef = doc(subColRef, `img_${i + 1}`);
+                    await setDoc(imgDocRef, { url: listaImagenes[i], orden: i + 1 });
+                }
+
+                alert("✅ ¡Preferencias guardadas con éxito en Firebase!");
+            } catch (err) {
+                console.error("Error al guardar preferencias:", err);
+                alert("❌ Error al guardar las preferencias: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "💾 Guardar Preferencias";
+            }
+        });
+
+        // ==========================================
+        // LÓGICA DEL CARRUSEL E IMÁGENES
+        // ==========================================
+        function renderizarCarrusel() {
+            const contenedor = document.getElementById('carrusel-contenedor');
+            if (!contenedor) return;
+
+            if (intervaloCarrusel) clearInterval(intervaloCarrusel);
+
+            if (listaImagenes.length === 0) {
+                contenedor.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:#6c757d;">No hay imágenes cargadas en el carrusel</div>';
+                renderizarVistasPrevias();
+                return;
+            }
+
+            if (indiceImagenActual >= listaImagenes.length) {
+                indiceImagenActual = 0;
+            }
+
+            let htmlImgs = '';
+            listaImagenes.forEach((url, idx) => {
+                const esActiva = (idx === indiceImagenActual) ? 'activa' : '';
+                htmlImgs += `<img class="carrusel-imagen ${esActiva}" src="${url}" alt="Foto ${idx + 1}">`;
+            });
+
+            htmlImgs += '<div class="carrusel-indicadores" id="carrusel-dots">';
+            listaImagenes.forEach((_, idx) => {
+                const esActivo = (idx === indiceImagenActual) ? 'activo' : '';
+                htmlImgs += `<div class="dot ${esActivo}" data-idx="${idx}"></div>`;
+            });
+            htmlImgs += '</div>';
+
+            contenedor.innerHTML = htmlImgs;
+
+            contenedor.querySelectorAll('.dot').forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const idx = parseInt(e.target.getAttribute('data-idx'), 10);
+                    cambiarImagenCarrusel(idx);
+                });
+            });
+
+            renderizarVistasPrevias();
+
+            if (listaImagenes.length > 1) {
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+            }
+        }
+
+        function renderizarVistasPrevias() {
+            const containerPrevias = document.getElementById('container-previa-imagenes');
+            if (!containerPrevias) return;
+
+            let htmlPrevias = '';
+            listaImagenes.forEach((url, idx) => {
+                htmlPrevias += `
+                    <div class="item-imagen-previa">
+                        <img src="${url}" alt="Miniatura ${idx + 1}">
+                        <button class="btn-eliminar-img" title="Eliminar del carrusel" data-idx="${idx}">✕</button>
+                    </div>`;
+            });
+            containerPrevias.innerHTML = htmlPrevias;
+
+            containerPrevias.querySelectorAll('.btn-eliminar-img').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(e.target.getAttribute('data-idx'), 10);
+                    listaImagenes.splice(idx, 1);
+                    renderizarCarrusel();
+                });
+            });
+        }
+
+        document.getElementById('btnAgregarUrl').addEventListener('click', () => {
+            const input = document.getElementById('input-url-imagen');
+            if (!input) return;
+            const url = input.value.trim();
+            if (!url) return;
+            listaImagenes.push(url);
+            input.value = '';
+            renderizarCarrusel();
+        });
+
+        document.getElementById('input-file-imagen').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                listaImagenes.push(e.target.result);
+                event.target.value = '';
+                renderizarCarrusel();
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function cambiarImagenCarrusel(nuevoIndice) {
+            const imagenes = document.querySelectorAll('.carrusel-imagen');
+            const dots = document.querySelectorAll('.dot');
+
+            if (imagenes[indiceImagenActual]) imagenes[indiceImagenActual].classList.remove('activa');
+            if (dots[indiceImagenActual]) dots[indiceImagenActual].classList.remove('activo');
+
+            indiceImagenActual = nuevoIndice;
+
+            if (imagenes[indiceImagenActual]) imagenes[indiceImagenActual].classList.add('activa');
+            if (dots[indiceImagenActual]) dots[indiceImagenActual].classList.add('activo');
+
+            if (intervaloCarrusel) clearInterval(intervaloCarrusel);
+            if (listaImagenes.length > 1) {
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+            }
+        }
+
+        function siguienteImagenCarrusel() {
+            if (listaImagenes.length <= 1) return;
+            let siguienteIdx = (indiceImagenActual + 1) % listaImagenes.length;
+            cambiarImagenCarrusel(siguienteIdx);
+        }
+
+        // ==========================================
+        // CARGA DE DATOS DESDE LA API CSV-TO-JSON
+        // ==========================================
+        async function cargarDatos() {
+            if (cargando || !urlCSVoJSON) return;
+            cargando = true;
+
+            const contenedor = document.getElementById('contenedor-tabla');
+            const estado = document.getElementById('estado');
+
+            if (estado) estado.textContent = 'Actualizando...';
+
+            try {
+                const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(urlCSVoJSON)}`;
+                const response = await fetch(apiEndpoint);
+                const contentType = response.headers.get('content-type');
+                
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('La API no devolvió un JSON válido.');
+                }
+
+                const resJSON = await response.json();
+
+                if (!response.ok || !resJSON.ok) {
+                    throw new Error(resJSON.error || `Error HTTP ${response.status}`);
+                }
+
+                if (resJSON.datos && resJSON.datos.length > 0) {
+                    datosObjetos = resJSON.datos;
+                    const primerasColumnas = Object.keys(datosObjetos[0]);
+                    
+                    if (columnasGlobales.length === 0) {
+                        columnasGlobales = primerasColumnas;
+                        if (columnasVisiblesUser.length === 0) {
+                            columnasVisiblesUser = [...columnasGlobales];
+                        }
+                    } else {
+                        columnasGlobales = primerasColumnas;
+                    }
+
+                    if (!columnaOrdenadaClave) {
+                        columnaOrdenadaClave = columnasGlobales.find(clave => 
+                            clave.trim().toLowerCase().includes('tiempo') || 
+                            clave.trim().toLowerCase().includes('time') ||
+                            clave.trim().toLowerCase().includes('marca')
+                        ) || columnasGlobales[0];
+                    }
+
+                    poblarSelectColumnasOrden();
+                    poblarChipsVisibilidad();
+                    poblarChipsOrdenSecuencia();
+                }
+
+                renderizarTabla();
+
+                ultimaHoraActualizacion = new Date().toLocaleTimeString();
+                segundosRestantes = intervaloSegundosConfig;
+                cargando = false;
+
+                actualizarTextoEstado();
+
+            } catch (error) {
+                console.error('Error al actualizar datos:', error);
+                cargando = false;
+
+                if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
+                    contenedor.innerHTML = `<p style="color:red; font-weight:bold;">Error en la carga: ${error.message}</p>`;
+                }
+                if (estado) {
+                    estado.textContent = 'Error al actualizar. Reintentando en breve...';
+                }
+            }
+        }
+
+        function poblarSelectColumnasOrden() {
+            const selectCol = document.getElementById('select-columna-orden');
+            if (!selectCol) return;
+
+            let htmlOptions = '';
+            columnasGlobales.forEach(clave => {
+                const selected = (clave === columnaOrdenadaClave) ? 'selected' : '';
+                htmlOptions += `<option value="${clave}" ${selected}>${clave}</option>`;
+            });
+            selectCol.innerHTML = htmlOptions;
+
+            const selectSentido = document.getElementById('select-sentido-orden');
+            if (selectSentido) {
+                selectSentido.value = ordenAscendente ? 'asc' : 'desc';
+            }
+        }
+
+        function poblarChipsVisibilidad() {
+            const container = document.getElementById('container-chips-visibles');
+            if (!container) return;
+
+            let html = '';
+            columnasGlobales.forEach(clave => {
+                const esActiva = columnasVisiblesUser.includes(clave);
+                html += `<div class="chip-btn ${esActiva ? 'activo' : ''}" data-clave="${clave}">
+                            ${esActiva ? '✓ ' : '+ '}${clave}
+                         </div>`;
+            });
+            container.innerHTML = html;
+
+            container.querySelectorAll('.chip-btn').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    const clave = e.currentTarget.getAttribute('data-clave');
+                    toggleVisibilidadColumna(clave);
+                });
+            });
+        }
+
+        function poblarChipsOrdenSecuencia() {
+            const containerElegidos = document.getElementById('container-chips-orden-elegido');
+            const containerDisponibles = document.getElementById('container-chips-orden-disponibles');
+            if (!containerElegidos || !containerDisponibles) return;
+
+            let htmlElegidos = '';
+            ordenColumnasUser.forEach((clave, index) => {
+                htmlElegidos += `<div class="chip-btn orden-tag" data-clave="${clave}">
+                                    ${index + 1}. ${clave} ✕
+                                 </div>`;
+            });
+            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.8em; color:#888;">Ningún orden personalizado (usando orden nativo)</span>';
+
+            containerElegidos.querySelectorAll('.chip-btn').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    const clave = e.currentTarget.getAttribute('data-clave');
+                    removerDeOrden(clave);
+                });
+            });
+
+            let htmlDisponibles = '';
+            columnasGlobales.forEach(clave => {
+                if (!ordenColumnasUser.includes(clave)) {
+                    htmlDisponibles += `<div class="chip-btn" data-clave="${clave}">
+                                            + ${clave}
+                                        </div>`;
+                }
+            });
+            containerDisponibles.innerHTML = htmlDisponibles;
+
+            containerDisponibles.querySelectorAll('.chip-btn').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    const clave = e.currentTarget.getAttribute('data-clave');
+                    agregarAOrden(clave);
+                });
+            });
+        }
+
+        function toggleVisibilidadColumna(clave) {
+            if (columnasVisiblesUser.includes(clave)) {
+                columnasVisiblesUser = columnasVisiblesUser.filter(c => c !== clave);
+            } else {
+                columnasVisiblesUser.push(clave);
+            }
+            poblarChipsVisibilidad();
+            renderizarTabla();
+        }
+
+        document.getElementById('btnMostrarTodasCols').addEventListener('click', () => {
+            columnasVisiblesUser = [...columnasGlobales];
+            poblarChipsVisibilidad();
+            renderizarTabla();
+        });
+
+        function agregarAOrden(clave) {
+            ordenColumnasUser.push(clave);
+            poblarChipsOrdenSecuencia();
+            renderizarTabla();
+        }
+
+        function removerDeOrden(clave) {
+            ordenColumnasUser = ordenColumnasUser.filter(c => c !== clave);
+            poblarChipsOrdenSecuencia();
+            renderizarTabla();
+        }
+
+        document.getElementById('btnRestablecerOrdenCols').addEventListener('click', () => {
+            ordenColumnasUser = [];
+            poblarChipsOrdenSecuencia();
+            renderizarTabla();
+        });
+
+        document.getElementById('select-columna-orden').addEventListener('change', (e) => {
+            columnaOrdenadaClave = e.target.value;
+            renderizarTabla();
+        });
+
+        document.getElementById('select-sentido-orden').addEventListener('change', (e) => {
+            ordenAscendente = (e.target.value === 'asc');
+            renderizarTabla();
+        });
+
+        document.getElementById('checkbox-mostrar-filtros').addEventListener('change', (e) => {
+            mostrarFiltros = e.target.checked;
+            renderizarTabla();
+        });
+
+        function actualizarTextoEstado() {
+            const estado = document.getElementById('estado');
+            if (estado && !cargando) {
+                const directoTexto = configuracionResultado?.directo ? '⚡ En directo | ' : '';
+                estado.textContent = `${directoTexto}Última actualización: ${ultimaHoraActualizacion} | Próxima actualización en ${segundosRestantes}s`;
+            }
+        }
+
+        setInterval(() => {
+            if (cargando) return;
+            if (configuracionResultado && configuracionResultado.directo === false) return;
+
+            segundosRestantes--;
+            if (segundosRestantes <= 0) {
+                cargarDatos();
+            } else {
+                actualizarTextoEstado();
+            }
+        }, 1000);
+
+        function tiempoASegundos(tiempoStr) {
+            if (!tiempoStr) return -1;
+            const str = tiempoStr.toString().trim();
+            const partes = str.split(':').map(Number);
+
+            if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
+            if (partes.length === 2) return (partes[0] * 60) + partes[1];
+            
+            const num = parseFloat(str);
+            return isNaN(num) ? -1 : num;
+        }
+
+        function renderizarTabla() {
+            const contenedor = document.getElementById('contenedor-tabla');
+            if (!contenedor) return;
+
+            if (!datosObjetos || datosObjetos.length === 0) {
+                contenedor.innerHTML = '<p>No hay datos disponibles.</p>';
+                return;
+            }
+
+            let columnasFiltradas = columnasGlobales.filter(clave => columnasVisiblesUser.includes(clave));
+
+            let columnasFinales = [];
+            if (ordenColumnasUser.length > 0) {
+                ordenColumnasUser.forEach(clave => {
+                    if (columnasFiltradas.includes(clave)) {
+                        columnasFinales.push(clave);
+                    }
+                });
+
+                columnasFiltradas.forEach(clave => {
+                    if (!columnasFinales.includes(clave)) {
+                        columnasFinales.push(clave);
+                    }
+                });
+            } else {
+                columnasFinales = columnasFiltradas;
+            }
+
+            if (columnasFinales.length === 0) {
+                contenedor.innerHTML = '<p style="color: #6c757d; font-style: italic;">No hay columnas visibles seleccionadas.</p>';
+                return;
+            }
+
+            let datosProcesados = datosObjetos.filter(item => {
+                return Object.keys(filtrosPorColumna).every(clave => {
+                    const textoFiltro = filtrosPorColumna[clave];
+                    if (!textoFiltro) return true;
+                    const valCelda = (item[clave] !== null && item[clave] !== undefined) ? item[clave].toString().toLowerCase() : '';
+                    return valCelda.includes(textoFiltro);
+                });
+            });
+
+            if (columnaOrdenadaClave) {
+                const esColumnaTiempo = columnaOrdenadaClave.trim().toLowerCase().includes('tiempo') ||
+                                        columnaOrdenadaClave.trim().toLowerCase().includes('time') ||
+                                        columnaOrdenadaClave.trim().toLowerCase().includes('marca');
+
+                datosProcesados.sort((a, b) => {
+                    let valA = a[columnaOrdenadaClave] ?? '';
+                    let valB = b[columnaOrdenadaClave] ?? '';
+
+                    let comp = 0;
+                    if (esColumnaTiempo) {
+                        const segA = tiempoASegundos(valA);
+                        const segB = tiempoASegundos(valB);
+                        comp = segA - segB;
+                    } else {
+                        const numA = parseFloat(valA);
+                        const numB = parseFloat(valB);
+                        if (!isNaN(numA) && !isNaN(numB)) {
+                            comp = numA - numB;
+                        } else {
+                            comp = valA.toString().localeCompare(valB.toString());
+                        }
+                    }
+
+                    return ordenAscendente ? comp : -comp;
+                });
+            }
+
+            let html = '<table><thead><tr>';
+
+            columnasFinales.forEach(clave => {
+                let indicador = '';
+                if (clave === columnaOrdenadaClave) {
+                    indicador = ordenAscendente ? ' ▲' : ' ▼';
+                }
+                html += `<th data-clave="${clave}">
+                            ${clave}<span class="indicador-orden">${indicador}</span>
+                         </th>`;
+            });
+            html += '</tr>';
+
+            if (mostrarFiltros) {
+                html += '<tr>';
+                columnasFinales.forEach(clave => {
+                    const valActual = filtrosPorColumna[clave] || '';
+                    html += `<th>
+                                <input type="text" 
+                                       id="filtro-col-${clave}"
+                                       data-clave="${clave}"
+                                       class="input-filtro" 
+                                       placeholder="Filtrar..." 
+                                       value="${valActual}">
+                             </th>`;
+                });
+                html += '</tr>';
+            }
+
+            html += '</thead><tbody>';
+
+            datosProcesados.forEach(item => {
+                html += '<tr>';
+                columnasFinales.forEach(clave => {
+                    html += `<td>${item[clave] ?? ''}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            contenedor.innerHTML = html;
+
+            contenedor.querySelectorAll('th[data-clave]').forEach(th => {
+                th.addEventListener('click', (e) => {
+                    const clave = e.currentTarget.getAttribute('data-clave');
+                    if (columnaOrdenadaClave === clave) {
+                        ordenAscendente = !ordenAscendente;
+                    } else {
+                        columnaOrdenadaClave = clave;
+                        ordenAscendente = true;
+                    }
+                    poblarSelectColumnasOrden();
+                    renderizarTabla();
+                });
+            });
+
+            contenedor.querySelectorAll('.input-filtro').forEach(input => {
+                input.addEventListener('click', (e) => e.stopPropagation());
+                input.addEventListener('input', (e) => {
+                    const clave = e.target.getAttribute('data-clave');
+                    inputFocoClave = clave;
+                    posicionCursor = e.target.selectionStart;
+                    filtrosPorColumna[clave] = e.target.value.toLowerCase();
+                    renderizarTabla();
+                });
+            });
+
+            if (mostrarFiltros && inputFocoClave) {
+                const inputActivo = document.getElementById(`filtro-col-${inputFocoClave}`);
+                if (inputActivo) {
+                    inputActivo.focus();
+                    inputActivo.setSelectionRange(posicionCursor, posicionCursor);
+                }
+            }
+        }
+
+        // ==========================================
+        // INICIALIZACIÓN DE LA PÁGINA
+        // ==========================================
+        async function init() {
+            const exito = await obtenerConfiguracionFirebase();
+            if (exito) {
+                await cargarDatos();
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
