@@ -467,7 +467,7 @@
         // PARÁMETROS URL Y VARIABLES DE REFERENCIA
         // ==========================================
         const urlParams = new URLSearchParams(window.location.search);
-        const idResultadoParam = urlParams.get('idResultado') || urlParams.get('id');
+        const idResultadoParam = urlParams.get('resultado') || urlParams.get('id');
         const eventoIdParam = urlParams.get('evento');
 
         let configuracionResultado = null;
@@ -475,14 +475,14 @@
         let refResultadoDocActual = null;
 
         // ==========================================
-        // ESTADO GLOBAL
+        // ESTADO GLOBAL (Declaración completa sin errores)
         // ==========================================
         const TIEMPO_CARRUSEL_MS = 2000;
         let indiceImagenActual = 0;
         let intervaloCarrusel = null;
         let listaImagenes = [];
 
-        let intervaloSegundosConfig = 30; // Tiempo total de refresco en segundos
+        let intervaloSegundosConfig = 30; 
         let segundosRestantes = 30;
         let ultimaHoraActualizacion = '--:--:--';
         let cargando = false;
@@ -504,23 +504,28 @@
         // ==========================================
         async function obtenerConfiguracionFirebase() {
             const estado = document.getElementById('estado');
-            if (!idResultadoParam) {
-                if (estado) estado.textContent = 'Error: No se ha especificado idResultado en la URL.';
-                document.getElementById('contenedor-tabla').innerHTML = '<p style="color:red;">Error: Falta el parámetro <b>?idResultado=...</b> en la URL.</p>';
-                return false;
-            }
-
+            
             try {
                 let docSnap = null;
 
-                if (eventoIdParam) {
-                    refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
-                    docSnap = await getDoc(refResultadoDocActual);
+                if (idResultadoParam) {
+                    if (eventoIdParam) {
+                        refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
+                        docSnap = await getDoc(refResultadoDocActual);
 
-                    if (!docSnap.exists()) {
-                        const subColRef = collection(db, 'eventos', eventoIdParam, 'resultados');
-                        const subColSnap = await getDocs(subColRef);
-                        const docEncontrado = subColSnap.docs.find(d => d.id === idResultadoParam || d.data().idCustom === idResultadoParam);
+                        if (!docSnap.exists()) {
+                            const subColRef = collection(db, 'eventos', eventoIdParam, 'resultados');
+                            const subColSnap = await getDocs(subColRef);
+                            const docEncontrado = subColSnap.docs.find(d => d.id === idResultadoParam || d.data().idCustom === idResultadoParam);
+                            if (docEncontrado) {
+                                docSnap = docEncontrado;
+                                refResultadoDocActual = docEncontrado.ref;
+                            }
+                        }
+                    } else {
+                        const qGroup = query(collectionGroup(db, 'resultados'));
+                        const querySnap = await getDocs(qGroup);
+                        const docEncontrado = querySnap.docs.find(d => d.id === idResultadoParam);
                         if (docEncontrado) {
                             docSnap = docEncontrado;
                             refResultadoDocActual = docEncontrado.ref;
@@ -529,21 +534,20 @@
                 } else {
                     const qGroup = query(collectionGroup(db, 'resultados'));
                     const querySnap = await getDocs(qGroup);
-                    const docEncontrado = querySnap.docs.find(d => d.id === idResultadoParam);
-                    if (docEncontrado) {
-                        docSnap = docEncontrado;
-                        refResultadoDocActual = docEncontrado.ref;
+                    if (!querySnap.empty) {
+                        docSnap = querySnap.docs[0];
+                        refResultadoDocActual = docSnap.ref;
                     }
                 }
 
                 if (!docSnap || !docSnap.exists()) {
-                    throw new Error(`No se encontró la configuración para el resultado "${idResultadoParam}".`);
+                    throw new Error(`No se encontró la configuración de resultados. Asegúrate de acceder mediante parámetros válidos.`);
                 }
 
                 configuracionResultado = docSnap.data();
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
-                document.getElementById('tituloResultado').textContent = configuracionResultado.nombre || idResultadoParam;
+                document.getElementById('tituloResultado').textContent = configuracionResultado.nombre || 'Resultado';
                 document.title = configuracionResultado.nombre || 'Resultados';
 
                 // Cargar imágenes de la subcolección interna imagenes_cabecera
@@ -557,7 +561,7 @@
                     listaImagenes = Array.isArray(configuracionResultado.imagenes) ? configuracionResultado.imagenes : [];
                 }
 
-                // Cargar tiempo de refresco configurado en Firebase (por defecto 30 segundos)
+                // Cargar tiempo de refresco
                 if (configuracionResultado.intervaloRefresco) {
                     intervaloSegundosConfig = parseInt(configuracionResultado.intervaloRefresco, 10) || 30;
                 }
@@ -591,7 +595,6 @@
             }
         }
 
-        // Event listener para actualización inmediata al cambiar el input del intervalo
         document.getElementById('input-intervalo-refresco').addEventListener('change', (e) => {
             const val = parseInt(e.target.value, 10);
             if (!isNaN(val) && val >= 5) {
@@ -793,13 +796,11 @@
                     datosObjetos = resJSON.datos;
                     const primerasColumnas = Object.keys(datosObjetos[0]);
                     
-                    if (columnasGlobales.length === 0) {
-                        columnasGlobales = primerasColumnas;
-                        if (columnasVisiblesUser.length === 0) {
-                            columnasVisiblesUser = [...columnasGlobales];
-                        }
-                    } else {
-                        columnasGlobales = primerasColumnas;
+                    columnasGlobales = primerasColumnas;
+
+                    // Si Firebase no trajo columnas configuradas previamente, se muestran todas
+                    if (columnasVisiblesUser.length === 0) {
+                        columnasVisiblesUser = [...columnasGlobales];
                     }
 
                     if (!columnaOrdenadaClave) {
@@ -810,6 +811,7 @@
                         ) || columnasGlobales[0];
                     }
 
+                    // Se sincronizan los paneles y chips correctamente una vez cargadas las columnas
                     poblarSelectColumnasOrden();
                     poblarChipsVisibilidad();
                     poblarChipsOrdenSecuencia();

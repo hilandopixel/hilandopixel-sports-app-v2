@@ -41,75 +41,13 @@
         <button id="btnLogout" class="btn-danger text-xs py-1 px-3">Cerrar Sesión</button>
       </div>
 
-      <!-- FORMULARIO EVENTO -->
-      <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200">
-        <h3 id="formEventoTitle" class="text-xl font-bold text-gray-900 mb-6">Crear Nuevo Evento</h3>
-        <form id="eventoForm" class="space-y-4">
-          <input type="hidden" id="eventoIdEdit">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">ID del Evento (Slug URL):</label>
-              <input type="text" id="evSlug" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="maraton-nocturna-2026">
-              <span class="text-[11px] text-gray-500">Si modificas este ID en un evento existente, la colección cambiará de identificador.</span>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Evento:</label>
-              <input type="text" id="evNombre" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="Ej: Maratón Nocturna 2026">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Fecha del Evento:</label>
-              <input type="date" id="evFecha" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Hora del Evento:</label>
-              <input type="time" id="evHora" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Color Primario del Evento:</label>
-              <div class="flex items-center gap-2">
-                <input type="color" id="evColor" value="#5da999" class="h-10 w-16 border border-gray-300 rounded-md p-1 cursor-pointer">
-                <span class="text-xs text-gray-500">Color personalizado para evento.html</span>
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Coordenadas (Lat, Lng):</label>
-              <div class="flex gap-2">
-                <input type="text" id="evLat" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lat: 36.7212">
-                <input type="text" id="evLng" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lng: -4.4212">
-              </div>
-            </div>
-
-            <div class="md:col-span-2 flex flex-wrap gap-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="evFinalizado" class="w-4 h-4 text-primary rounded focus:ring-primary">
-                <span class="text-sm font-bold text-gray-800">🏁 Evento Finalizado (Solo lectura)</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="evOculto" class="w-4 h-4 text-primary rounded focus:ring-primary">
-                <span class="text-sm font-bold text-gray-800">👁️ Evento Oculto (Ocultar en inicio)</span>
-              </label>
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Descripción:</label>
-              <textarea id="evDesc" rows="3" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Detalles del evento..."></textarea>
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Imagen de Portada:</label>
-              <input type="file" id="evImagenFile" accept="image/*" class="w-full text-sm text-gray-500 mb-2">
-              <input type="url" id="evImagenUrl" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="o pega una URL de imagen directamente...">
-            </div>
-          </div>
-          <div class="flex gap-3 pt-2">
-            <button type="submit" id="btnGuardarEvento" class="btn-primary">Guardar Evento</button>
-            <button type="button" id="btnCancelarEditEvento" class="btn-danger hidden">Cancelar Edición</button>
-          </div>
-        </form>
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-900">Listado General de Eventos</h2>
+        <button id="btnNuevoEventoGlobal" class="btn-primary text-sm">➕ Crear Nuevo Evento</button>
       </div>
 
       <!-- TABLA EVENTOS REGISTRADOS -->
       <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <h3 class="text-xl font-bold text-gray-900 mb-4">Eventos Registrados</h3>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-gray-600">
             <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
@@ -126,19 +64,85 @@
         </div>
       </div>
 
-      <!-- SECCIÓN DETALLE EVENTO -->
+      <!-- SECCIÓN DETALLE Y GESTIÓN DEL EVENTO SELECCIONADO -->
       <div id="seccionDetalleEvento" class="hidden bg-white p-6 sm:p-8 rounded-xl shadow-sm border-2 border-primary space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
           <h2 id="detalleEventoNombre" class="text-2xl font-bold text-primary m-0">--</h2>
           <div class="flex flex-wrap gap-2">
-            <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-primary text-white shadow-sm" data-target="tabStock">📦 Stock y Solicitudes</button>
+            <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-primary text-white shadow-sm" data-target="tabDetalles">📝 Detalles</button>
+            <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabStock">📦 Stock y Solicitudes</button>
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabVoluntarios">👥 Personal Voluntario</button>
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabResultados">🏆 Resultados</button>
           </div>
         </div>
 
-        <!-- TAB STOCK -->
-        <div id="tabStock" class="tab-content space-y-8">
+        <!-- TAB DETALLES DEL EVENTO -->
+        <div id="tabDetalles" class="tab-content space-y-6">
+          <h3 id="formEventoTitle" class="text-lg font-bold text-gray-900">Configuración y Detalles del Evento</h3>
+          <form id="eventoForm" class="space-y-4">
+            <input type="hidden" id="eventoIdEdit">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">ID del Evento (Slug URL):</label>
+                <input type="text" id="evSlug" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="maraton-nocturna-2026">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Evento:</label>
+                <input type="text" id="evNombre" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="Ej: Maratón Nocturna 2026">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Fecha del Evento:</label>
+                <input type="date" id="evFecha" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Hora del Evento:</label>
+                <input type="time" id="evHora" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Color Primario del Evento:</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="evColor" value="#5da999" class="h-10 w-16 border border-gray-300 rounded-md p-1 cursor-pointer">
+                  <span class="text-xs text-gray-500">Color personalizado para evento.html</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Coordenadas (Lat, Lng):</label>
+                <div class="flex gap-2">
+                  <input type="text" id="evLat" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lat: 36.7212">
+                  <input type="text" id="evLng" class="w-1/2 border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Lng: -4.4212">
+                </div>
+              </div>
+
+              <div class="md:col-span-2 flex flex-wrap gap-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="evFinalizado" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                  <span class="text-sm font-bold text-gray-800">🏁 Evento Finalizado (Solo lectura)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="evOculto" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                  <span class="text-sm font-bold text-gray-800">👁️ Evento Oculto (Ocultar en inicio)</span>
+                </label>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Descripción:</label>
+                <textarea id="evDesc" rows="3" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Detalles del evento..."></textarea>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Imagen de Portada:</label>
+                <input type="file" id="evImagenFile" accept="image/*" class="w-full text-sm text-gray-500 mb-2">
+                <input type="url" id="evImagenUrl" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="o pega una URL de imagen directamente...">
+              </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+              <button type="submit" id="btnGuardarEvento" class="btn-primary">💾 Guardar Cambios del Evento</button>
+            </div>
+          </form>
+        </div>
+
+
+      <!-- TAB STOCK -->
+        <div id="tabStock" class="tab-content hidden space-y-8">
           <div>
             <h3 class="text-lg font-bold text-gray-900 mb-4">1. Control de Stock de Tallas</h3>
             <form id="stockForm" class="flex flex-wrap sm:flex-nowrap gap-3 items-end mb-4">
@@ -152,27 +156,22 @@
               </div>
               <button type="submit" class="btn-primary text-sm w-full sm:w-auto">Añadir/Modificar</button>
             </form>
-
             <div class="overflow-x-auto">
               <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
-                  <tr>
-                    <th class="p-3">Talla</th>
-                    <th class="p-3">Unidades</th>
-                    <th class="p-3 text-right">Acciones</th>
-                  </tr>
+                  <tr><th class="p-3">Talla</th><th class="p-3">Unidades</th><th class="p-3 text-right">Acciones</th></tr>
                 </thead>
                 <tbody id="tablaStockAdmin" class="divide-y divide-gray-100"></tbody>
               </table>
             </div>
           </div>
 
+          <!-- 👈 AÑADIR ESTA SECCIÓN DE SOLICITUDES -->
           <div class="pt-6 border-t border-gray-200">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-bold text-gray-900">2. Solicitudes de Clientes</h3>
               <button id="btnExportarCSV" class="btn-primary text-xs">📥 Exportar CSV</button>
             </div>
-
             <div class="overflow-x-auto">
               <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
@@ -199,51 +198,16 @@
           <form id="voluntarioForm" class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4">
             <input type="hidden" id="voluntarioIdEdit">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre:</label>
-                <input type="text" id="volNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="Nombre">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Apellidos:</label>
-                <input type="text" id="volApellidos" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="Apellidos">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Teléfono:</label>
-                <input type="tel" id="volTelefono" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="600000000">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Tel. Emergencia:</label>
-                <input type="tel" id="volTelEmergencia" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="600000000">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre Responsable:</label>
-                <input type="text" id="volResponsable" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required placeholder="Responsable a cargo">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Coord. Designadas (Lat, Lng):</label>
-                <input type="text" id="volCoordDesignada" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: 36.7212, -4.4212">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Coord. Real (Lat, Lng):</label>
-                <input type="text" id="volCoordReal" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: 36.7220, -4.4200">
-              </div>
+              <div><label class="block text-xs font-semibold text-gray-700 mb-1">Nombre:</label><input type="text" id="volNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required></div>
+              <div><label class="block text-xs font-semibold text-gray-700 mb-1">Apellidos:</label><input type="text" id="volApellidos" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required></div>
+              <div><label class="block text-xs font-semibold text-gray-700 mb-1">Teléfono:</label><input type="tel" id="volTelefono" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required></div>
             </div>
-            <div class="flex gap-2 pt-2">
-              <button type="submit" class="btn-primary text-xs py-2">Guardar Voluntario</button>
-              <button type="button" id="btnCancelarVoluntario" class="btn-secondary text-xs py-2 hidden">Cancelar</button>
-            </div>
+            <button type="submit" class="btn-primary text-xs py-2">Guardar Voluntario</button>
           </form>
-
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
-                <tr>
-                  <th class="p-3">Voluntario</th>
-                  <th class="p-3">Teléfonos</th>
-                  <th class="p-3">Responsable</th>
-                  <th class="p-3">Ubicaciones</th>
-                  <th class="p-3 text-right">Acciones</th>
-                </tr>
+                <tr><th class="p-3">Voluntario</th><th class="p-3">Teléfonos</th><th class="p-3 text-right">Acciones</th></tr>
               </thead>
               <tbody id="tablaVoluntariosAdmin" class="divide-y divide-gray-100"></tbody>
             </table>
@@ -253,10 +217,10 @@
         <!-- TAB RESULTADOS -->
         <div id="tabResultados" class="tab-content hidden space-y-6">
           <div class="flex justify-between items-center">
-            <h3 class="text-lg font-bold text-gray-900">Secciones de Resultados del Evento</h3>
+            <h3 class="text-lg font-bold text-gray-900">Secciones de Resultados</h3>
             <button id="btnNuevaSeccionResultado" class="btn-primary text-xs">➕ Añadir Sección Resultados</button>
           </div>
-
+          <!-- FORMULARIO RESULTADOS -->
           <!-- FORMULARIO RESULTADOS -->
           <form id="resultadoForm" class="hidden bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-4">
             <h4 id="resFormTitle" class="font-bold text-gray-900 text-base">Configurar Sección de Resultado</h4>
@@ -265,92 +229,54 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre del Resultado:</label>
-                <input type="text" id="resNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: Clasificación General 10K" required>
+                <input type="text" id="resNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">ID del Resultado (Slug Autogenerado):</label>
-                <input type="text" id="resIdCustom" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white bg-gray-50" placeholder="slug-evento-nombre-resultado" required>
-                <span class="text-[10px] text-gray-500">Formato automático: [slug-evento]-[nombre-resultado]</span>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">ID del Resultado (Slug):</label>
+                <input type="text" id="resIdCustom" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Fecha del Resultado:</label>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Fecha:</label>
                 <input type="date" id="resFecha" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Tipo de Resultado:</label>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Tipo:</label>
                 <select id="resTipo" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
                   <option value="CSV">CSV</option>
                   <option value="JSON">JSON</option>
-                  <option value="PDF">PDF (Descarga directa)</option>
                 </select>
               </div>
               <div class="md:col-span-2">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Enlace del Resultado (URL del archivo / API):</label>
-                <input type="url" id="resEnlace" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="https://ejemplo.com/datos.csv" required>
-              </div>
-            </div>
-
-            <!-- GESTOR DE IMÁGENES CABECERA -->
-            <div class="p-4 bg-white rounded-lg border border-gray-200 space-y-3">
-              <label class="block text-xs font-bold text-gray-800">🖼️ Gestión Dinámica de Imágenes (carrusel de la cabecera):</label>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Enlace del Resultado (URL del CSV):</label>
                 <div class="flex gap-2">
-                  <input type="url" id="inputUrlImgHeader" class="w-full border border-gray-300 rounded-md p-2 text-xs" placeholder="Añadir URL de imagen (http...)">
-                  <button type="button" id="btnAddUrlImg" class="btn-secondary text-xs py-1 px-3 whitespace-nowrap">Añadir URL</button>
+                  <input type="url" id="resEnlace" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="https://..." required>
+                  <button type="button" id="btnValidarEnlace" class="btn-primary text-xs whitespace-nowrap px-4">🔍 Validar y Detectar Columnas</button>
                 </div>
-                <div>
-                  <input type="file" id="inputFileImgHeader" accept="image/*" class="w-full text-xs text-gray-500 border border-gray-300 rounded-md p-1.5 bg-white cursor-pointer">
-                </div>
-              </div>
-
-              <div id="containerPreviasRes" class="flex flex-wrap gap-2 pt-2 min-h-[50px] bg-gray-50 p-2 rounded border border-gray-200">
-                <span class="text-xs text-gray-400 italic">No hay imágenes en la lista.</span>
               </div>
             </div>
 
-            <!-- OPCIONES LIVE, INTERVALO Y VISTA -->
+            <!-- CONFIGURACIÓN INTERACTIVA DE COLUMNAS -->
             <div class="p-4 bg-white rounded-lg border border-gray-200 space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="resDirecto" class="w-4 h-4 text-primary rounded focus:ring-primary" checked>
-                  <span class="text-sm font-bold text-gray-800">⚡ Activar Resultados en Directo</span>
-                </label>
-
-                <div>
-                  <label class="block text-xs font-semibold text-gray-700 mb-1">Intervalo de Refresco en Directo (segundos):</label>
-                  <input type="number" id="resIntervalo" min="5" max="600" value="30" class="w-full border border-gray-300 rounded-md p-2 text-xs bg-white" placeholder="Ej: 30">
+              <h5 class="text-xs font-bold text-gray-800 uppercase tracking-wide">⚙️ Configuración Visual de Columnas (Detectadas del CSV)</h5>
+              
+              <div class="campo-grupo">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Columnas a mostrar (clic para activar/desactivar):</label>
+                <div id="admin-container-chips-visibles" class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded border min-h-[40px]">
+                  <span class="text-xs text-gray-400 italic">Valida una URL de CSV arriba para cargar las columnas...</span>
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-gray-100">
-                <div>
-                  <label class="block text-xs font-semibold text-gray-700 mb-1">Columnas a mostrar (vacio = todas):</label>
-                  <input type="text" id="resColumnasMostrar" class="w-full border border-gray-300 rounded-md p-2 text-xs bg-white" placeholder="Ej: Pos, Dorsal, Nombre, Tiempo">
+              <div class="campo-grupo">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Orden de visualización horizontal (clic para añadir/quitar secuencia):</label>
+                <div id="admin-container-chips-orden-elegido" class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded border min-h-[40px] mb-2">
+                  <span class="text-xs text-gray-400 italic">Ningún orden personalizado...</span>
                 </div>
-                <div>
-                  <label class="block text-xs font-semibold text-gray-700 mb-1">Orden de visualización:</label>
-                  <input type="text" id="resOrdenVis" class="w-full border border-gray-300 rounded-md p-2 text-xs bg-white" placeholder="Ej: Tiempo, Pos, Nombre">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-gray-700 mb-1">Ordenación inicial de datos:</label>
-                  <div class="flex gap-2">
-                    <input type="text" id="resOrdenCol" class="w-2/3 border border-gray-300 rounded-md p-2 text-xs bg-white" placeholder="Columna (Ej: Tiempo)">
-                    <select id="resOrdenSentido" class="w-1/3 border border-gray-300 rounded-md p-2 text-xs bg-white">
-                      <option value="desc">Descendente</option>
-                      <option value="asc">Ascendente</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pt-2 border-t border-gray-100">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="resMostrarFiltros" class="w-4 h-4 text-primary rounded focus:ring-primary" checked>
-                  <span class="text-xs font-semibold text-gray-700">Mostrar fila de inputs para filtrado por columna</span>
-                </label>
+                <div id="admin-container-chips-orden-disponibles" class="flex flex-wrap gap-2"></div>
               </div>
             </div>
+
+            <!-- GESTOR DE IMÁGENES CABECERA Y DEMÁS CONFIGS -->
+            <!-- (Mantén aquí el resto de tus inputs de intervalo, directo, etc.) -->
 
             <div class="flex gap-2 pt-2">
               <button type="submit" class="btn-primary text-xs py-2">Guardar Sección de Resultado</button>
@@ -358,18 +284,17 @@
             </div>
           </form>
 
-          <!-- TABLA RESULTADOS ADMIN -->
+          <!-- POPUP DE CARGA -->
+          <div id="loadingPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-xl shadow-lg flex items-center gap-3">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span class="text-sm font-bold text-gray-800">Descargando y procesando CSV...</span>
+            </div>
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
-                <tr>
-                  <th class="p-3">Nombre</th>
-                  <th class="p-3">ID / Slug</th>
-                  <th class="p-3">Tipo</th>
-                  <th class="p-3">Fecha</th>
-                  <th class="p-3 text-center">Refresco</th>
-                  <th class="p-3 text-right">Acciones</th>
-                </tr>
+                <tr><th class="p-3">Nombre</th><th class="p-3">ID / Slug</th><th class="p-3 text-right">Acciones</th></tr>
               </thead>
               <tbody id="tablaResultadosAdmin" class="divide-y divide-gray-100"></tbody>
             </table>
@@ -381,66 +306,17 @@
   </main>
 
   <script type="module">
-    import { db, auth } from './firebase.config.js';
-    import { collection, doc, getDoc, onSnapshot, setDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { auth } from './firebase.config.js';
     import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { initAdminEventos, activarPestana } from './js/admin/admin-eventos.js';
+    import { initAdminResultados } from './js/admin/admin-resultados.js';
 
-    const loginSection = document.getElementById("loginSection");
-    const adminContent = document.getElementById("adminContent");
-    const tablaEventos = document.getElementById("tablaEventos");
-    const seccionDetalleEvento = document.getElementById("seccionDetalleEvento");
-
-    let eventoActualId = null;
-    let unsubResultadosAdmin = null;
-    let listaImagenesMemoria = [];
-
-    // NAVEGACIÓN PESTAÑAS
+    // Manejo global de Pestañas
     document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const targetId = e.currentTarget.getAttribute("data-target");
-        document.querySelectorAll(".tab-content").forEach(content => content.classList.add("hidden"));
-        document.querySelectorAll(".tab-btn").forEach(b => {
-          b.classList.remove("bg-primary", "text-white", "shadow-sm");
-          b.classList.add("bg-gray-100", "text-gray-600", "hover:bg-gray-200");
-        });
-        document.getElementById(targetId).classList.remove("hidden");
-        e.currentTarget.classList.remove("bg-gray-100", "text-gray-600", "hover:bg-gray-200");
-        e.currentTarget.classList.add("bg-primary", "text-white", "shadow-sm");
-      });
+      btn.addEventListener("click", (e) => activarPestana(e.currentTarget.getAttribute("data-target")));
     });
 
-    function formatearFecha(fechaStr) {
-      if (!fechaStr) return 'N/A';
-      const partes = fechaStr.split('-');
-      if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      return fechaStr;
-    }
-
-    // UTILIDAD SLUG GENERATOR
-    function generarSlugTexto(str) {
-      return str
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
-        .replace(/[^a-z0-9\s-]/g, "") // Eliminar caracteres especiales
-        .trim()
-        .replace(/\s+/g, "-");
-    }
-
-    // GENERAR SLUG DE RESULTADO AL ESCRIBIR SU NOMBRE
-    document.getElementById("resNombre").addEventListener("input", (e) => {
-      if (!eventoActualId) return;
-      const idOriginal = document.getElementById("resIdOriginal").value;
-      
-      // Auto-generar slug si se está creando una nueva sección
-      if (!idOriginal) {
-        const slugNombreRes = generarSlugTexto(e.target.value);
-        const slugCompleto = slugNombreRes ? `${eventoActualId}-${slugNombreRes}` : eventoActualId;
-        document.getElementById("resIdCustom").value = slugCompleto;
-      }
-    });
-
-    // AUTENTICACIÓN
+    // Auth
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       try {
@@ -456,374 +332,15 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         document.getElementById("adminEmailText").textContent = user.email;
-        loginSection.classList.add("hidden");
-        adminContent.classList.remove("hidden");
-        cargarEventos();
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("adminContent").classList.remove("hidden");
+        
+        // Inicializar Módulos
+        initAdminEventos();
+        initAdminResultados();
       } else {
-        loginSection.classList.remove("hidden");
-        adminContent.classList.add("hidden");
-      }
-    });
-
-    async function obtenerImagenURL() {
-      const fileInput = document.getElementById("evImagenFile");
-      const urlInput = document.getElementById("evImagenUrl").value.trim();
-
-      if (fileInput.files && fileInput.files[0]) {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
-          reader.readAsDataURL(fileInput.files[0]);
-        });
-      }
-      return urlInput;
-    }
-
-    async function copiarSubcoleccion(refOrigen, refDestino, nombreSubcol) {
-      const snap = await getDocs(collection(refOrigen, nombreSubcol));
-      for (const docSnap of snap.docs) {
-        await setDoc(doc(refDestino, nombreSubcol, docSnap.id), docSnap.data());
-        if (nombreSubcol === 'resultados') {
-          const subImgsSnap = await getDocs(collection(docSnap.ref, 'imagenes_cabecera'));
-          for (const imgDoc of subImgsSnap.docs) {
-            await setDoc(doc(refDestino, 'resultados', docSnap.id, 'imagenes_cabecera', imgDoc.id), imgDoc.data());
-          }
-        }
-      }
-    }
-
-    // GUARDAR O EDICIÓN DE ID DE EVENTO
-    document.getElementById("eventoForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const oldId = document.getElementById("eventoIdEdit").value;
-      const newId = generarSlugTexto(document.getElementById("evSlug").value);
-      const imagenUrl = await obtenerImagenURL();
-
-      if (!newId) return alert("El ID (Slug) del evento no puede estar vacío.");
-
-      const eventoData = {
-        nombre: document.getElementById("evNombre").value.trim(),
-        slug: newId,
-        fecha: document.getElementById("evFecha").value,
-        hora: document.getElementById("evHora").value,
-        color: document.getElementById("evColor").value,
-        descripcion: document.getElementById("evDesc").value.trim(),
-        imagen: imagenUrl,
-        latitud: document.getElementById("evLat").value.trim(),
-        longitud: document.getElementById("evLng").value.trim(),
-        finalizado: document.getElementById("evFinalizado").checked,
-        oculto: document.getElementById("evOculto").checked
-      };
-
-      try {
-        if (oldId && oldId !== newId) {
-          const oldRef = doc(db, "eventos", oldId);
-          const newRef = doc(db, "eventos", newId);
-
-          await setDoc(newRef, eventoData);
-          await copiarSubcoleccion(oldRef, newRef, 'resultados');
-          await copiarSubcoleccion(oldRef, newRef, 'stock');
-          await copiarSubcoleccion(oldRef, newRef, 'personal');
-          await copiarSubcoleccion(oldRef, newRef, 'solicitudes');
-          await deleteDoc(oldRef);
-
-          if (eventoActualId === oldId) {
-            eventoActualId = newId;
-            seleccionarEventoParaGestion(newId, eventoData.nombre);
-          }
-          alert(`Evento migrado correctamente al nuevo ID: "${newId}".`);
-        } else {
-          const refDoc = doc(db, "eventos", newId);
-          await setDoc(refDoc, eventoData, { merge: true });
-          alert("Evento guardado correctamente.");
-        }
-        resetFormEvento();
-      } catch (err) {
-        alert("Error guardando el evento: " + err.message);
-      }
-    });
-
-    function resetFormEvento() {
-      document.getElementById("eventoForm").reset();
-      document.getElementById("eventoIdEdit").value = "";
-      document.getElementById("evColor").value = "#5da999";
-      document.getElementById("evFinalizado").checked = false;
-      document.getElementById("evOculto").checked = false;
-      document.getElementById("formEventoTitle").textContent = "Crear Nuevo Evento";
-      document.getElementById("btnCancelarEditEvento").classList.add("hidden");
-    }
-
-    document.getElementById("btnCancelarEditEvento").addEventListener("click", resetFormEvento);
-
-    // LISTAR EVENTOS
-    function cargarEventos() {
-      onSnapshot(collection(db, "eventos"), (snapshot) => {
-        tablaEventos.innerHTML = "";
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const id = docSnap.id;
-          const fechaFormateada = formatearFecha(data.fecha);
-
-          const badgesHtml = `
-            ${data.finalizado ? '<span class="px-2 py-0.5 text-[10px] bg-red-100 text-red-700 font-bold rounded">🏁 FINALIZADO</span>' : ''}
-            ${data.oculto ? '<span class="px-2 py-0.5 text-[10px] bg-gray-200 text-gray-700 font-bold rounded">👁️ OCULTO</span>' : ''}
-            ${!data.finalizado && !data.oculto ? '<span class="px-2 py-0.5 text-[10px] bg-green-100 text-green-700 font-bold rounded">✅ ACTIVO</span>' : ''}
-          `;
-
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-gray-50 border-b border-gray-100";
-          tr.innerHTML = `
-            <td class="p-3 font-mono text-xs font-bold text-gray-600">${id}</td>
-            <td class="p-3 font-semibold text-gray-900">${data.nombre}</td>
-            <td class="p-3"><div class="flex flex-wrap gap-1">${badgesHtml}</div></td>
-            <td class="p-3 text-gray-500">${fechaFormateada}</td>
-            <td class="p-3 text-right space-x-1">
-              <button class="btn-primary text-xs py-1 px-2 btn-gestionar" data-id="${id}">Gestionar</button>
-              <button class="btn-secondary text-xs py-1 px-2 btn-editar-ev" data-id="${id}">Editar</button>
-              <button class="btn-danger text-xs py-1 px-2 btn-borrar-ev" data-id="${id}">Borrar</button>
-            </td>
-          `;
-          tablaEventos.appendChild(tr);
-        });
-
-        document.querySelectorAll(".btn-gestionar").forEach((btn) => {
-          btn.addEventListener("click", (e) => {
-            const id = e.target.getAttribute("data-id");
-            const evDoc = snapshot.docs.find(d => d.id === id);
-            if (evDoc) seleccionarEventoParaGestion(id, evDoc.data().nombre);
-          });
-        });
-
-        document.querySelectorAll(".btn-editar-ev").forEach((btn) => {
-          btn.addEventListener("click", (e) => {
-            const id = e.target.getAttribute("data-id");
-            const evDoc = snapshot.docs.find(d => d.id === id);
-            if (!evDoc) return;
-            const data = evDoc.data();
-
-            document.getElementById("eventoIdEdit").value = id;
-            document.getElementById("evSlug").value = id;
-            document.getElementById("evNombre").value = data.nombre || "";
-            document.getElementById("evFecha").value = data.fecha || "";
-            document.getElementById("evHora").value = data.hora || "";
-            document.getElementById("evColor").value = data.color || "#5da999";
-            document.getElementById("evDesc").value = data.descripcion || "";
-            document.getElementById("evImagenUrl").value = data.imagen || "";
-            document.getElementById("evLat").value = data.latitud || "";
-            document.getElementById("evLng").value = data.longitud || "";
-            document.getElementById("evFinalizado").checked = Boolean(data.finalizado);
-            document.getElementById("evOculto").checked = Boolean(data.oculto);
-
-            document.getElementById("formEventoTitle").textContent = "Editar Evento: " + data.nombre;
-            document.getElementById("btnCancelarEditEvento").classList.remove("hidden");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          });
-        });
-
-        document.querySelectorAll(".btn-borrar-ev").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.getAttribute("data-id");
-            if (confirm("⚠️ ¿Estás seguro de ELIMINAR todo el evento?")) {
-              await deleteDoc(doc(db, "eventos", id));
-              if (eventoActualId === id) seccionDetalleEvento.classList.add("hidden");
-            }
-          });
-        });
-      });
-    }
-
-    function seleccionarEventoParaGestion(eventoId, eventoNombre) {
-      eventoActualId = eventoId;
-      document.getElementById("detalleEventoNombre").textContent = "Gestión: " + eventoNombre;
-      seccionDetalleEvento.classList.remove("hidden");
-
-      if (unsubResultadosAdmin) unsubResultadosAdmin();
-      const tablaResultadosAdmin = document.getElementById("tablaResultadosAdmin");
-
-      unsubResultadosAdmin = onSnapshot(collection(db, "eventos", eventoId, "resultados"), (snapshot) => {
-        tablaResultadosAdmin.innerHTML = "";
-        if (snapshot.empty) {
-          tablaResultadosAdmin.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 text-xs">No hay secciones de resultados registradas.</td></tr>`;
-          return;
-        }
-
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const resId = docSnap.id;
-          const refrescoTexto = data.directo ? `⚡ ${data.intervaloRefresco || 30}s` : '❌ Desactivado';
-
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-gray-50 border-b border-gray-100";
-          tr.innerHTML = `
-            <td class="p-3 font-bold text-gray-900">${data.nombre}</td>
-            <td class="p-3 font-mono text-xs text-gray-500">${resId}</td>
-            <td class="p-3"><span class="px-2 py-0.5 text-xs font-bold bg-blue-100 text-blue-700 rounded">${data.tipo}</span></td>
-            <td class="p-3 text-xs text-gray-500">${formatearFecha(data.fecha)}</td>
-            <td class="p-3 text-center text-xs font-semibold">${refrescoTexto}</td>
-            <td class="p-3 text-right space-x-1">
-              <button class="btn-secondary text-xs py-1 px-2 btn-editar-res" data-id="${resId}">Editar</button>
-              <button class="btn-danger text-xs py-1 px-2 btn-del-res" data-id="${resId}">Borrar</button>
-            </td>
-          `;
-          tablaResultadosAdmin.appendChild(tr);
-        });
-
-        document.querySelectorAll(".btn-editar-res").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.getAttribute("data-id");
-            const resDoc = snapshot.docs.find(d => d.id === id);
-            if (!resDoc) return;
-            const data = resDoc.data();
-
-            document.getElementById("resIdOriginal").value = id;
-            document.getElementById("resNombre").value = data.nombre || "";
-            document.getElementById("resIdCustom").value = id;
-            document.getElementById("resFecha").value = data.fecha || "";
-            document.getElementById("resTipo").value = data.tipo || "CSV";
-            document.getElementById("resEnlace").value = data.enlace || "";
-            document.getElementById("resDirecto").checked = Boolean(data.directo);
-            document.getElementById("resIntervalo").value = data.intervaloRefresco || 30;
-            document.getElementById("resColumnasMostrar").value = (data.columnasMostrar || []).join(', ');
-            document.getElementById("resOrdenVis").value = (data.ordenVisual || []).join(', ');
-            document.getElementById("resOrdenCol").value = data.columnaOrden || "";
-            document.getElementById("resOrdenSentido").value = data.sentidoOrden || "desc";
-            document.getElementById("resMostrarFiltros").checked = data.mostrarFiltros !== false;
-
-            const imgsSnap = await getDocs(collection(db, "eventos", eventoActualId, "resultados", id, "imagenes_cabecera"));
-            listaImagenesMemoria = [];
-            imgsSnap.forEach(imgDoc => listaImagenesMemoria.push(imgDoc.data().url));
-            renderizarMiniaturasMemoria();
-
-            document.getElementById("resFormTitle").textContent = "Editar Sección: " + data.nombre;
-            document.getElementById("resultadoForm").classList.remove("hidden");
-          });
-        });
-
-        document.querySelectorAll(".btn-del-res").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.getAttribute("data-id");
-            if (confirm(`¿Eliminar la sección "${id}"?`)) {
-              await deleteDoc(doc(db, "eventos", eventoActualId, "resultados", id));
-            }
-          });
-        });
-      });
-    }
-
-    // GESTIÓN DE IMÁGENES
-    document.getElementById("btnAddUrlImg").addEventListener("click", () => {
-      const input = document.getElementById("inputUrlImgHeader");
-      const url = input.value.trim();
-      if (!url) return;
-      listaImagenesMemoria.push(url);
-      input.value = "";
-      renderizarMiniaturasMemoria();
-    });
-
-    document.getElementById("inputFileImgHeader").addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        listaImagenesMemoria.push(evt.target.result);
-        e.target.value = "";
-        renderizarMiniaturasMemoria();
-      };
-      reader.readAsDataURL(file);
-    });
-
-    function renderizarMiniaturasMemoria() {
-      const container = document.getElementById("containerPreviasRes");
-      if (listaImagenesMemoria.length === 0) {
-        container.innerHTML = `<span class="text-xs text-gray-400 italic">No hay imágenes en la lista.</span>`;
-        return;
-      }
-
-      let html = "";
-      listaImagenesMemoria.forEach((url, idx) => {
-        html += `
-          <div class="relative w-20 h-12 rounded overflow-hidden border border-gray-300">
-            <img src="${url}" class="w-full h-full object-cover">
-            <button type="button" onclick="window.delImgMemoria(${idx})" class="absolute top-0.5 right-0.5 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">✕</button>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-    }
-
-    window.delImgMemoria = function(idx) {
-      listaImagenesMemoria.splice(idx, 1);
-      renderizarMiniaturasMemoria();
-    };
-
-    document.getElementById("btnNuevaSeccionResultado").addEventListener("click", () => {
-      resetFormResultado();
-      document.getElementById("resultadoForm").classList.remove("hidden");
-    });
-
-    document.getElementById("btnCancelarResultado").addEventListener("click", resetFormResultado);
-
-    function resetFormResultado() {
-      document.getElementById("resultadoForm").reset();
-      document.getElementById("resIdOriginal").value = "";
-      document.getElementById("resIntervalo").value = 30;
-      listaImagenesMemoria = [];
-      renderizarMiniaturasMemoria();
-      document.getElementById("resultadoForm").classList.add("hidden");
-    }
-
-    // GUARDAR O EDICIÓN DE RESULTADOS CON SLUG LIMPIO
-    document.getElementById("resultadoForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!eventoActualId) return;
-
-      const idOriginal = document.getElementById("resIdOriginal").value;
-      const rawSlugInput = document.getElementById("resIdCustom").value.trim();
-      const nuevoId = generarSlugTexto(rawSlugInput);
-
-      if (!nuevoId) return alert("El ID del resultado es obligatorio.");
-
-      const parseArray = (str) => str ? str.split(',').map(s => s.trim()).filter(Boolean) : [];
-
-      const resData = {
-        nombre: document.getElementById("resNombre").value.trim(),
-        fecha: document.getElementById("resFecha").value,
-        tipo: document.getElementById("resTipo").value,
-        enlace: document.getElementById("resEnlace").value.trim(),
-        directo: document.getElementById("resDirecto").checked,
-        intervaloRefresco: parseInt(document.getElementById("resIntervalo").value, 10) || 30,
-        columnasMostrar: parseArray(document.getElementById("resColumnasMostrar").value),
-        ordenVisual: parseArray(document.getElementById("resOrdenVis").value),
-        columnaOrden: document.getElementById("resOrdenCol").value.trim(),
-        sentidoOrden: document.getElementById("resOrdenSentido").value,
-        mostrarFiltros: document.getElementById("resMostrarFiltros").checked
-      };
-
-      try {
-        const nuevoDocRef = doc(db, "eventos", eventoActualId, "resultados", nuevoId);
-
-        if (idOriginal && idOriginal !== nuevoId) {
-          const originalDocRef = doc(db, "eventos", eventoActualId, "resultados", idOriginal);
-          await deleteDoc(originalDocRef);
-        }
-
-        await setDoc(nuevoDocRef, resData, { merge: true });
-
-        const subColRef = collection(nuevoDocRef, "imagenes_cabecera");
-        const prevImgs = await getDocs(subColRef);
-        for (const docItem of prevImgs.docs) {
-          await deleteDoc(docItem.ref);
-        }
-
-        for (let i = 0; i < listaImagenesMemoria.length; i++) {
-          const imgDocRef = doc(subColRef, `img_${i + 1}`);
-          await setDoc(imgDocRef, { url: listaImagenesMemoria[i], orden: i + 1 });
-        }
-
-        alert(`Sección de resultados guardada correctamente con el ID "${nuevoId}".`);
-        resetFormResultado();
-      } catch (err) {
-        alert("Error guardando el resultado: " + err.message);
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("adminContent").classList.add("hidden");
       }
     });
   </script>
