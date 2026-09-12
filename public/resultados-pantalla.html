@@ -2,16 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=512px, initial-scale=1.0">
     <title>Resultados del Evento</title>
     <style>
-        /* Ajuste estricto para contenedor vertical 512x1536 */
         body { 
             font-family: system-ui, -apple-system, sans-serif; 
             padding: 12px; 
             background-color: #f8f9fa;
-            margin: 0;
+            margin: 0 auto;
             width: 512px;
+            min-width: 512px;
+            max-width: 512px;
             min-height: 1536px;
             box-sizing: border-box;
             overflow-x: hidden;
@@ -22,14 +23,13 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            flex-wrap: wrap;
             gap: 8px;
         }
 
         .header-container h2 {
             margin: 0;
             color: #212529;
-            font-size: 1.2em;
+            font-size: 1.1em;
         }
 
         .header-actions {
@@ -38,34 +38,34 @@
             align-items: center;
         }
 
-        /* Sección Preferencias (Protegida) */
         #panel-preferencias {
-            display: none; /* Oculto por defecto hasta verificar autenticación */
+            display: none; 
             background: #ffffff;
-            padding: 14px;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             border: 2px dashed #198754;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         #panel-preferencias h3 {
             margin-top: 0;
             color: #198754;
-            font-size: 1em;
+            font-size: 0.95em;
             border-bottom: 1px solid #e9ecef;
             padding-bottom: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        /* Carrusel optimizado para pantallas verticales angostas */
         .carrusel-contenedor {
             position: relative;
             width: 100%;
-            height: 220px;
+            height: 200px;
             border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             background-color: #e9ecef;
         }
@@ -87,7 +87,7 @@
 
         .carrusel-indicadores {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -109,35 +109,33 @@
             transform: scale(1.2);
         }
 
-        /* Gestor Dinámico de Imágenes */
         .gestor-imagenes-container {
             background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .opciones-subida-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .lista-imagenes-previa {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 6px;
+            gap: 6px;
+            margin-top: 4px;
         }
 
         .item-imagen-previa {
             position: relative;
-            width: 70px;
-            height: 45px;
+            width: 60px;
+            height: 40px;
             border-radius: 4px;
             overflow: hidden;
             border: 1px solid #ced4da;
@@ -151,46 +149,39 @@
 
         .btn-eliminar-img {
             position: absolute;
-            top: 2px;
-            right: 2px;
+            top: 1px;
+            right: 1px;
             background: rgba(220, 53, 69, 0.85);
             color: white;
             border: none;
             border-radius: 50%;
             width: 16px;
             height: 16px;
-            font-size: 9px;
+            font-size: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1;
         }
 
-        .btn-eliminar-img:hover {
-            background: #dc3545;
-        }
-
-        /* Panel de Configuración */
         .panel-columnas-container {
             background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .campo-grupo {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .campo-grupo label {
-            font-size: 0.8em;
+            font-size: 0.78em;
             font-weight: 600;
             color: #495057;
         }
@@ -198,23 +189,18 @@
         .chips-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 4px;
         }
 
         .chip-btn {
-            padding: 5px 10px;
-            font-size: 0.78em;
-            border-radius: 16px;
+            padding: 4px 8px;
+            font-size: 0.75em;
+            border-radius: 14px;
             border: 1px solid #ced4da;
             background-color: #ffffff;
             color: #495057;
             cursor: pointer;
             user-select: none;
-            transition: all 0.2s ease;
-        }
-
-        .chip-btn:hover {
-            border-color: #0d6efd;
         }
 
         .chip-btn.activo {
@@ -236,271 +222,174 @@
         }
 
         .select-orden, .input-columnas, .input-numero {
-            padding: 6px 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.85em;
-            background-color: #ffffff;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .input-numero {
-            width: 100px;
-        }
-
-        .input-file-custom {
-            padding: 4px 8px;
+            padding: 6px 8px;
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 0.8em;
             background-color: #ffffff;
-            cursor: pointer;
             width: 100%;
             box-sizing: border-box;
         }
 
-        .select-sentido {
+        .input-file-custom {
+            padding: 4px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.78em;
+            background-color: #ffffff;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .checkbox-container {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 4px;
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            width: 15px;
-            height: 15px;
-            cursor: pointer;
+            gap: 6px;
+            margin-top: 2px;
         }
 
         .checkbox-container label {
             cursor: pointer;
-            user-select: none;
-            font-size: 0.85em;
+            font-size: 0.8em;
         }
 
-        .btn-accion {
-            padding: 6px 12px;
-            background-color: #0d6efd;
-            color: white;
+        .btn-accion, .btn-guardar, .btn-logout, .btn-limpiar {
+            padding: 6px 10px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.8em;
-            transition: background-color 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-accion:hover {
-            background-color: #0b5ed7;
-        }
-
-        .btn-guardar {
-            padding: 8px 16px;
-            background-color: #198754;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
             font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background-color 0.2s;
-            width: 100%;
         }
 
-        .btn-guardar:hover {
-            background-color: #157347;
-        }
+        .btn-accion { background-color: #0d6efd; color: white; }
+        .btn-guardar { background-color: #198754; color: white; width: 100%; margin-top: 4px; }
+        .btn-logout { background-color: #dc3545; color: white; display: none; }
+        .btn-limpiar { background-color: #6c757d; color: white; font-size: 0.7em; padding: 3px 6px; align-self: flex-start; }
 
-        .btn-logout {
-            display: none; 
-            padding: 6px 12px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8em;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .btn-logout:hover {
-            background-color: #bb2d3b;
-        }
-
-        .btn-limpiar {
-            padding: 4px 8px;
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7em;
-            transition: background-color 0.2s;
-            align-self: flex-start;
-        }
-
-        .btn-limpiar:hover {
-            background-color: #5a6268;
-        }
-
-        /* Tabla adaptada a anchura reducida */
         #contenedor-tabla { 
             width: 100%; 
-            overflow-x: auto; 
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            padding: 10px;
             box-sizing: border-box;
             margin-top: 10px;
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        th, td { 
-            border: 1px solid #e9ecef; 
-            padding: 6px 8px; 
-            text-align: left; 
-            font-size: 0.82em;
+        .resultado-card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        th { 
-            background-color: #0d6efd; 
-            color: white; 
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
+        /* Estilo para las líneas de valores puros en formato tarjeta */
+        .card-value-line {
+            font-size: 0.85em;
+            color: #212529;
+            word-break: break-word;
+            padding: 2px 0;
+            border-bottom: 1px solid #f8f9fa;
         }
 
-        th:hover {
-            background-color: #0b5ed7;
+        .card-value-line:last-child {
+            border-bottom: none;
+        }
+
+        .filtros-panel-movil {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .input-filtro {
             width: 100%;
-            padding: 3px 5px;
-            margin-top: 4px;
+            padding: 5px 8px;
             box-sizing: border-box;
             border: 1px solid #ced4da;
             border-radius: 4px;
-            font-size: 0.78em;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
+            font-size: 0.8em;
         }
 
         .estado-chips-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 6px;
+            gap: 5px;
+            margin-top: 4px;
         }
 
         .estado-chip {
-            padding: 3px 8px;
-            font-size: 0.75em;
-            border-radius: 10px;
+            padding: 3px 6px;
+            font-size: 0.72em;
+            border-radius: 8px;
             background-color: #e9ecef;
             color: #495057;
             font-weight: 500;
             border: 1px solid wheat;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
         }
 
-        .estado-chip.directo {
-            background-color: #d1e7dd;
-            color: #0f5132;
-            border-color: #badbcc;
-        }
-
-        .estado-chip.proxima {
-            background-color: wheat;
-            color: #0f5132;
-            border-color: wheat;
-        }
-
-        .indicador-orden {
-            font-size: 0.75em;
-            margin-left: 2px;
-        }
+        .estado-chip.directo { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc; }
+        .estado-chip.proxima { background-color: wheat; color: #0f5132; }
         
         #tituloResultado {
-            font-size: 1.15em;
-            margin-bottom: 4px;
-            margin-top: 10px;
+            font-size: 1.1em;
+            margin: 6px 0 2px 0;
         }
     </style>
 </head>
 <body>
 
     <div class="header-container">
+        <h2 id="tituloResultado">Cargando...</h2>
         <div class="header-actions">
-            <button id="btnLogout" class="btn-logout">🚪 Cerrar Sesión</button>
+            <button id="btnLogout" class="btn-logout">🚪 Salir</button>
         </div>
     </div>
 
-    <!-- CARRUSEL DINÁMICO DE IMÁGENES -->
     <div class="carrusel-contenedor" id="carrusel-contenedor">
         <div class="carrusel-indicadores" id="carrusel-dots"></div>
     </div>
 
-    <!-- SECCIÓN INDEPENDIENTE DE PREFERENCIAS (SOLO USUARIOS AUTENTICADOS) -->
     <div id="panel-preferencias">
-        <h3>⚙️ Panel de Preferencias y Configuración</h3>
+        <h3>⚙️ Panel de Configuración</h3>
 
-        <!-- GESTIÓN DE IMÁGENES -->
         <div class="gestor-imagenes-container">
             <div class="opciones-subida-grid">
                 <div class="campo-grupo">
-                    <label for="input-url-imagen">Añadir imagen por URL:</label>
+                    <label for="input-url-imagen">Imagen por URL:</label>
                     <div class="input-group">
-                        <input type="text" 
-                               id="input-url-imagen" 
-                               class="input-columnas" 
-                               placeholder="https://ejemplo.com/mi-imagen.jpg">
-                        <button class="btn-accion" id="btnAgregarUrl">Añadir URL</button>
+                        <input type="text" id="input-url-imagen" class="input-columnas" placeholder="https://...">
+                        <button class="btn-accion" id="btnAgregarUrl">Añadir</button>
                     </div>
                 </div>
-
                 <div class="campo-grupo">
-                    <label for="input-file-imagen">Añadir desde dispositivo:</label>
-                    <input type="file" 
-                           id="input-file-imagen" 
-                           class="input-file-custom" 
-                           accept="image/*">
+                    <label for="input-file-imagen">Desde dispositivo:</label>
+                    <input type="file" id="input-file-imagen" class="input-file-custom" accept="image/*">
                 </div>
             </div>
-
             <div class="campo-grupo">
-                <label>Imágenes en el carrusel:</label>
+                <label>Imágenes actuales:</label>
                 <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
             </div>
         </div>
 
-        <!-- PANEL DE CONFIGURACIÓN -->
         <div class="panel-columnas-container">
             <div class="campo-grupo">
-                <label for="input-intervalo-refresco">Intervalo de refresco (segundos):</label>
-                <input type="number" 
-                       id="input-intervalo-refresco" 
-                       class="input-numero" 
-                       min="5" 
-                       max="600" 
-                       value="30">
+                <label for="input-intervalo-refresco">Refresco (segundos):</label>
+                <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
             </div>
 
             <div class="campo-grupo">
@@ -517,12 +406,12 @@
             </div>
 
             <div class="campo-grupo">
-                <label for="select-columna-orden">Ordenar datos por:</label>
+                <label for="select-columna-orden">Ordenar filas por:</label>
                 <div class="orden-select-container">
                     <select id="select-columna-orden" class="select-orden">
-                        <option value="">Cargando columnas...</option>
+                        <option value="">Cargando...</option>
                     </select>
-                    <select id="select-sentido-orden" class="select-orden select-sentido">
+                    <select id="select-sentido-orden" class="select-orden">
                         <option value="desc" selected>Descendente</option>
                         <option value="asc">Ascendente</option>
                     </select>
@@ -531,22 +420,21 @@
 
             <div class="checkbox-container">
                 <input type="checkbox" id="checkbox-mostrar-filtros" checked>
-                <label for="checkbox-mostrar-filtros">Mostrar fila de filtros</label>
+                <label for="checkbox-mostrar-filtros">Mostrar filtros de búsqueda</label>
             </div>
         </div>
 
-        <!-- BOTÓN GUARDAR PREFERENCIAS -->
         <div>
-            <button id="btnGuardarPreferencias" class="btn-guardار">💾 Guardar Preferencias</button>
+            <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
         </div>
     </div>
 
     <div>
-        <h2 id="tituloResultado">Cargando Resultado...</h2>
         <div id="estado-chips-container" class="estado-chips-container">
-            <span class="estado-chip" id="chip-estado-conexion">Inicializando...</span>
+            <span class="estado-chip" id="chip-estado-conexion">Iniciando...</span>
         </div>
     </div>
+    
     <div id="contenedor-tabla">Cargando datos...</div>
 
     <script type="module">
@@ -554,9 +442,6 @@
         import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, collectionGroup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // ==========================================
-        // VERIFICACIÓN DE AUTENTICACIÓN Y LOGOUT
-        // ==========================================
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             const panelPrefs = document.getElementById('panel-preferencias');
@@ -576,13 +461,9 @@
                 window.location.reload();
             } catch (err) {
                 console.error("Error al cerrar sesión:", err);
-                alert("No se pudo cerrar sesión.");
             }
         });
 
-        // ==========================================
-        // PARÁMETROS URL Y VARIABLES DE REFERENCIA
-        // ==========================================
         const urlParams = new URLSearchParams(window.location.search);
         const idResultadoParam = urlParams.get('resultado') || urlParams.get('id');
         const eventoIdParam = urlParams.get('evento');
@@ -591,9 +472,6 @@
         let urlCSVoJSON = '';
         let refResultadoDocActual = null;
 
-        // ==========================================
-        // ESTADO GLOBAL
-        // ==========================================
         const TIEMPO_CARRUSEL_MS = 2000;
         let indiceImagenActual = 0;
         let intervaloCarrusel = null;
@@ -616,17 +494,12 @@
         let inputFocoClave = null;
         let posicionCursor = 0;
 
-        // ==========================================
-        // CONSULTA DE CONFIGURACIÓN DE FIREBASE
-        // ==========================================
         async function obtenerConfiguracionFirebase() {
-            const estado = document.getElementById('estado');
             try {
                 let docSnap = null;
                 let nombreEvento = 'Resultados: ';
                 if (idResultadoParam) {
                     if (eventoIdParam) {
-
                         const eventoDocRef = doc(db, 'eventos', eventoIdParam);
                         const eventoDocSnap = await getDoc(eventoDocRef);
                         
@@ -670,7 +543,7 @@
                 configuracionResultado = docSnap.data();
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
-                document.getElementById('tituloResultado').textContent = nombreEvento + " " + configuracionResultado.nombre || 'Resultado';
+                document.getElementById('tituloResultado').textContent = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
                 document.title = configuracionResultado.nombre || 'Resultados';
 
                 const imgsSnap = await getDocs(collection(refResultadoDocActual, 'imagenes_cabecera'));
@@ -709,9 +582,8 @@
                 renderizarCarrusel();
                 return true;
             } catch (err) {
-                console.error("Error al obtener la configuración desde Firebase:", err);
-                if (estado) estado.textContent = 'Error al cargar la configuración de Firebase.';
-                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-weight:bold;">${err.message}</p>`;
+                console.error("Error al obtener la configuración:", err);
+                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-size:0.85em;">${err.message}</p>`;
                 return false;
             }
         }
@@ -725,11 +597,8 @@
             }
         });
 
-        // ==========================================
-        // GUARDAR PREFERENCIAS EN FIRESTORE
-        // ==========================================
         document.getElementById('btnGuardarPreferencias').addEventListener('click', async () => {
-            if (!refResultadoDocActual) return alert("No hay una referencia válida a la base de datos.");
+            if (!refResultadoDocActual) return alert("Referencia no válida.");
 
             const btn = document.getElementById('btnGuardarPreferencias');
             btn.disabled = true;
@@ -758,19 +627,15 @@
                     await setDoc(imgDocRef, { url: listaImagenes[i], orden: i + 1 });
                 }
 
-                alert("✅ ¡Preferencias guardadas con éxito!");
+                alert("✅ ¡Preferencias guardadas!");
             } catch (err) {
-                console.error("Error al guardar preferencias:", err);
-                alert("❌ Error al guardar las preferencias: " + err.message);
+                alert("❌ Error: " + err.message);
             } finally {
                 btn.disabled = false;
                 btn.textContent = "💾 Guardar Preferencias";
             }
         });
 
-        // ==========================================
-        // LÓGICA DEL CARRUSEL E IMÁGENES
-        // ==========================================
         function renderizarCarrusel() {
             const contenedor = document.getElementById('carrusel-contenedor');
             if (!contenedor) return;
@@ -778,19 +643,17 @@
             if (intervaloCarrusel) clearInterval(intervaloCarrusel);
 
             if (listaImagenes.length === 0) {
-                contenedor.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:#6c757d; font-size: 0.85em;">Sin imágenes</div>';
+                contenedor.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:#6c757d; font-size:0.8em;">Sin imágenes</div>';
                 renderizarVistasPrevias();
                 return;
             }
 
-            if (indiceImagenActual >= listaImagenes.length) {
-                indiceImagenActual = 0;
-            }
+            if (indiceImagenActual >= listaImagenes.length) indiceImagenActual = 0;
 
             let htmlImgs = '';
             listaImagenes.forEach((url, idx) => {
                 const esActiva = (idx === indiceImagenActual) ? 'activa' : '';
-                htmlImgs += `<img class="carrusel-imagen ${esActiva}" src="${url}" alt="Foto ${idx + 1}">`;
+                htmlImgs += `<img class="carrusel-imagen ${esActiva}" src="${url}" alt="Foto">`;
             });
 
             htmlImgs += '<div class="carrusel-indicadores" id="carrusel-dots">';
@@ -804,8 +667,7 @@
 
             contenedor.querySelectorAll('.dot').forEach(dot => {
                 dot.addEventListener('click', (e) => {
-                    const idx = parseInt(e.target.getAttribute('data-idx'), 10);
-                    cambiarImagenCarrusel(idx);
+                    cambiarImagenCarrusel(parseInt(e.target.getAttribute('data-idx'), 10));
                 });
             });
 
@@ -824,16 +686,15 @@
             listaImagenes.forEach((url, idx) => {
                 htmlPrevias += `
                     <div class="item-imagen-previa">
-                        <img src="${url}" alt="Miniatura ${idx + 1}">
-                        <button class="btn-eliminar-img" title="Eliminar" data-idx="${idx}">✕</button>
+                        <img src="${url}">
+                        <button class="btn-eliminar-img" data-idx="${idx}">✕</button>
                     </div>`;
             });
             containerPrevias.innerHTML = htmlPrevias;
 
             containerPrevias.querySelectorAll('.btn-eliminar-img').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const idx = parseInt(e.target.getAttribute('data-idx'), 10);
-                    listaImagenes.splice(idx, 1);
+                    listaImagenes.splice(parseInt(e.target.getAttribute('data-idx'), 10), 1);
                     renderizarCarrusel();
                 });
             });
@@ -841,10 +702,8 @@
 
         document.getElementById('btnAgregarUrl').addEventListener('click', () => {
             const input = document.getElementById('input-url-imagen');
-            if (!input) return;
-            const url = input.value.trim();
-            if (!url) return;
-            listaImagenes.push(url);
+            if (!input || !input.value.trim()) return;
+            listaImagenes.push(input.value.trim());
             input.value = '';
             renderizarCarrusel();
         });
@@ -852,7 +711,6 @@
         document.getElementById('input-file-imagen').addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 listaImagenes.push(e.target.result);
@@ -865,7 +723,6 @@
         function cambiarImagenCarrusel(nuevoIndice) {
             const imagenes = document.querySelectorAll('.carrusel-imagen');
             const dots = document.querySelectorAll('.dot');
-
             if (imagenes[indiceImagenActual]) imagenes[indiceImagenActual].classList.remove('activa');
             if (dots[indiceImagenActual]) dots[indiceImagenActual].classList.remove('activo');
 
@@ -882,42 +739,25 @@
 
         function siguienteImagenCarrusel() {
             if (listaImagenes.length <= 1) return;
-            let siguienteIdx = (indiceImagenActual + 1) % listaImagenes.length;
-            cambiarImagenCarrusel(siguienteIdx);
+            cambiarImagenCarrusel((indiceImagenActual + 1) % listaImagenes.length);
         }
 
-        // ==========================================
-        // CARGA DE DATOS DESDE LA API CSV-TO-JSON
-        // ==========================================
         async function cargarDatos() {
             if (cargando || !urlCSVoJSON) return;
             cargando = true;
 
-            const contenedor = document.getElementById('contenedor-tabla');
-            const estado = document.getElementById('estado');
-
-            if (estado) estado.textContent = 'Actualizando...';
-
             try {
                 const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(urlCSVoJSON)}`;
                 const response = await fetch(apiEndpoint);
-                const contentType = response.headers.get('content-type');
-                
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('La API no devolvió un JSON válido.');
-                }
-
                 const resJSON = await response.json();
 
                 if (!response.ok || !resJSON.ok) {
-                    throw new Error(resJSON.error || `Error HTTP ${response.status}`);
+                    throw new Error(resJSON.error || `Error HTTP`);
                 }
 
                 if (resJSON.datos && resJSON.datos.length > 0) {
                     datosObjetos = resJSON.datos;
-                    const primerasColumnas = Object.keys(datosObjetos[0]);
-                    
-                    columnasGlobales = primerasColumnas;
+                    columnasGlobales = Object.keys(datosObjetos[0]);
 
                     if (columnasVisiblesUser.length === 0) {
                         columnasVisiblesUser = [...columnasGlobales];
@@ -941,57 +781,36 @@
                 ultimaHoraActualizacion = new Date().toLocaleTimeString();
                 segundosRestantes = intervaloSegundosConfig;
                 cargando = false;
-
                 actualizarTextoEstado();
 
             } catch (error) {
-                console.error('Error al actualizar datos:', error);
                 cargando = false;
-
-                if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
-                    contenedor.innerHTML = `<p style="color:red; font-weight:bold; font-size:0.85em;">Error: ${error.message}</p>`;
-                }
-                if (estado) {
-                    estado.textContent = 'Error al actualizar.';
-                }
+                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-size:0.8em;">Error: ${error.message}</p>`;
             }
         }
 
         function poblarSelectColumnasOrden() {
             const selectCol = document.getElementById('select-columna-orden');
             if (!selectCol) return;
-
             let htmlOptions = '';
             columnasGlobales.forEach(clave => {
-                const selected = (clave === columnaOrdenadaClave) ? 'selected' : '';
-                htmlOptions += `<option value="${clave}" ${selected}>${clave}</option>`;
+                htmlOptions += `<option value="${clave}" ${clave === columnaOrdenadaClave ? 'selected' : ''}>${clave}</option>`;
             });
             selectCol.innerHTML = htmlOptions;
-
-            const selectSentido = document.getElementById('select-sentido-orden');
-            if (selectSentido) {
-                selectSentido.value = ordenAscendente ? 'asc' : 'desc';
-            }
+            document.getElementById('select-sentido-orden').value = ordenAscendente ? 'asc' : 'desc';
         }
 
         function poblarChipsVisibilidad() {
             const container = document.getElementById('container-chips-visibles');
             if (!container) return;
-
             let html = '';
             columnasGlobales.forEach(clave => {
                 const esActiva = columnasVisiblesUser.includes(clave);
-                html += `<div class="chip-btn ${esActiva ? 'activo' : ''}" data-clave="${clave}">
-                            ${esActiva ? '✓ ' : '+ '}${clave}
-                         </div>`;
+                html += `<div class="chip-btn ${esActiva ? 'activo' : ''}" data-clave="${clave}">${esActiva ? '✓ ' : '+ '}${clave}</div>`;
             });
             container.innerHTML = html;
-
             container.querySelectorAll('.chip-btn').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    toggleVisibilidadColumna(clave);
-                });
+                chip.addEventListener('click', (e) => toggleVisibilidadColumna(e.currentTarget.getAttribute('data-clave')));
             });
         }
 
@@ -1002,43 +821,27 @@
 
             let htmlElegidos = '';
             ordenColumnasUser.forEach((clave, index) => {
-                htmlElegidos += `<div class="chip-btn orden-tag" data-clave="${clave}">
-                                    ${index + 1}. ${clave} ✕
-                                 </div>`;
+                htmlElegidos += `<div class="chip-btn orden-tag" data-clave="${clave}">${index + 1}. ${clave} ✕</div>`;
             });
-            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.75em; color:#888;">Orden predeterminado</span>';
-
+            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.7em; color:#888;">Orden nativo</span>';
             containerElegidos.querySelectorAll('.chip-btn').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    removerDeOrden(clave);
-                });
+                chip.addEventListener('click', (e) => removerDeOrden(e.currentTarget.getAttribute('data-clave')));
             });
 
             let htmlDisponibles = '';
             columnasGlobales.forEach(clave => {
                 if (!ordenColumnasUser.includes(clave)) {
-                    htmlDisponibles += `<div class="chip-btn" data-clave="${clave}">
-                                            + ${clave}
-                                        </div>`;
+                    htmlDisponibles += `<div class="chip-btn" data-clave="${clave}">+ ${clave}</div>`;
                 }
             });
             containerDisponibles.innerHTML = htmlDisponibles;
-
             containerDisponibles.querySelectorAll('.chip-btn').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    agregarAOrden(clave);
-                });
+                chip.addEventListener('click', (e) => agregarAOrden(e.currentTarget.getAttribute('data-clave')));
             });
         }
 
         function toggleVisibilidadColumna(clave) {
-            if (columnasVisiblesUser.includes(clave)) {
-                columnasVisiblesUser = columnasVisiblesUser.filter(c => c !== clave);
-            } else {
-                columnasVisiblesUser.push(clave);
-            }
+            columnasVisiblesUser = columnasVisiblesUser.includes(clave) ? columnasVisiblesUser.filter(c => c !== clave) : [...columnasVisiblesUser, clave];
             poblarChipsVisibilidad();
             renderizarTabla();
         }
@@ -1085,72 +888,52 @@
         function actualizarTextoEstado() {
             const container = document.getElementById('estado-chips-container');
             if (!container || cargando) return;
-
             const esDirecto = configuracionResultado?.directo !== false;
-            const modoTexto = esDirecto ? '⚡ En directo' : '⏸️ Pausado';
-            const claseDirecto = esDirecto ? 'directo' : '';
-
             container.innerHTML = `
-                <span class="estado-chip ${claseDirecto}">${modoTexto}</span>
+                <span class="estado-chip ${esDirecto ? 'directo' : ''}">${esDirecto ? '⚡ En directo' : '⏸️ Pausado'}</span>
                 <span class="estado-chip">🕒 ${ultimaHoraActualizacion}</span>
                 <span class="estado-chip proxima">⏱️ ${segundosRestantes}s</span>
             `;
         }
 
         setInterval(() => {
-            if (cargando) return;
-            if (configuracionResultado && configuracionResultado.directo === false) return;
-
+            if (cargando || (configuracionResultado && configuracionResultado.directo === false)) return;
             segundosRestantes--;
-            if (segundosRestantes <= 0) {
-                cargarDatos();
-            } else {
-                actualizarTextoEstado();
-            }
+            if (segundosRestantes <= 0) cargarDatos();
+            else actualizarTextoEstado();
         }, 1000);
 
         function tiempoASegundos(tiempoStr) {
             if (!tiempoStr) return -1;
             const str = tiempoStr.toString().trim();
             const partes = str.split(':').map(Number);
-
             if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
             if (partes.length === 2) return (partes[0] * 60) + partes[1];
-            
             const num = parseFloat(str);
             return isNaN(num) ? -1 : num;
         }
 
+        /* Renderizado en formato Card mostrando estrictamente solo los valores */
         function renderizarTabla() {
             const contenedor = document.getElementById('contenedor-tabla');
             if (!contenedor) return;
 
             if (!datosObjetos || datosObjetos.length === 0) {
-                contenedor.innerHTML = '<p style="font-size:0.85em;">No hay datos disponibles.</p>';
+                contenedor.innerHTML = '<p style="font-size:0.8em;">No hay datos.</p>';
                 return;
             }
 
             let columnasFiltradas = columnasGlobales.filter(clave => columnasVisiblesUser.includes(clave));
-
             let columnasFinales = [];
             if (ordenColumnasUser.length > 0) {
-                ordenColumnasUser.forEach(clave => {
-                    if (columnasFiltradas.includes(clave)) {
-                        columnasFinales.push(clave);
-                    }
-                });
-
-                columnasFiltradas.forEach(clave => {
-                    if (!columnasFinales.includes(clave)) {
-                        columnasFinales.push(clave);
-                    }
-                });
+                ordenColumnasUser.forEach(clave => { if (columnasFiltradas.includes(clave)) columnasFinales.push(clave); });
+                columnasFiltradas.forEach(clave => { if (!columnasFinales.includes(clave)) columnasFinales.push(clave); });
             } else {
                 columnasFinales = columnasFiltradas;
             }
 
             if (columnasFinales.length === 0) {
-                contenedor.innerHTML = '<p style="color: #6c757d; font-style: italic; font-size:0.8em;">Sin columnas visibles.</p>';
+                contenedor.innerHTML = '<p style="font-size:0.8em; color:#6c757d;">Sin columnas visibles.</p>';
                 return;
             }
 
@@ -1164,91 +947,44 @@
             });
 
             if (columnaOrdenadaClave) {
-                const esColumnaTiempo = columnaOrdenadaClave.trim().toLowerCase().includes('tiempo') ||
-                                        columnaOrdenadaClave.trim().toLowerCase().includes('time') ||
-                                        columnaOrdenadaClave.trim().toLowerCase().includes('marca');
-
+                const esCol = columnaOrdenadaClave.trim().toLowerCase().includes('tiempo') || columnaOrdenadaClave.trim().toLowerCase().includes('time') || columnaOrdenadaClave.trim().toLowerCase().includes('marca');
                 datosProcesados.sort((a, b) => {
                     let valA = a[columnaOrdenadaClave] ?? '';
                     let valB = b[columnaOrdenadaClave] ?? '';
-
                     let comp = 0;
-                    if (esColumnaTiempo) {
-                        const segA = tiempoASegundos(valA);
-                        const segB = tiempoASegundos(valB);
-                        comp = segA - segB;
+                    if (esCol) {
+                        comp = tiempoASegundos(valA) - tiempoASegundos(valB);
                     } else {
-                        const numA = parseFloat(valA);
-                        const numB = parseFloat(valB);
-                        if (!isNaN(numA) && !isNaN(numB)) {
-                            comp = numA - numB;
-                        } else {
-                            comp = valA.toString().localeCompare(valB.toString());
-                        }
+                        let numA = parseFloat(valA), numB = parseFloat(valB);
+                        comp = (!isNaN(numA) && !isNaN(numB)) ? numA - numB : valA.toString().localeCompare(valB.toString());
                     }
-
                     return ordenAscendente ? comp : -comp;
                 });
             }
 
-            let html = '<table><thead><tr>';
-
-            columnasFinales.forEach(clave => {
-                let indicador = '';
-                if (clave === columnaOrdenadaClave) {
-                    indicador = ordenAscendente ? ' ▲' : ' ▼';
-                }
-                html += `<th data-clave="${clave}">
-                            ${clave}<span class="indicador-orden">${indicador}</span>
-                         </th>`;
-            });
-            html += '</tr>';
+            let html = '';
 
             if (mostrarFiltros) {
-                html += '<tr>';
+                html += `<div class="filtros-panel-movil"><span style="font-size:0.75em; font-weight:bold; color:#495057;">🔍 Filtros rápidos:</span>`;
                 columnasFinales.forEach(clave => {
-                    const valActual = filtrosPorColumna[clave] || '';
-                    html += `<th>
-                                <input type="text" 
-                                       id="filtro-col-${clave}"
-                                       data-clave="${clave}"
-                                       class="input-filtro" 
-                                       placeholder="Filtrar..." 
-                                       value="${valActual}">
-                             </th>`;
+                    html += `<input type="text" data-clave="${clave}" class="input-filtro" placeholder="${clave}..." value="${filtrosPorColumna[clave] || ''}">`;
                 });
-                html += '</tr>';
+                html += `</div>`;
             }
 
-            html += '</thead><tbody>';
-
+            html += '<div class="cards-container">';
             datosProcesados.forEach(item => {
-                html += '<tr>';
+                html += '<div class="resultado-card">';
                 columnasFinales.forEach(clave => {
-                    html += `<td>${item[clave] ?? ''}</td>`;
+                    html += `<div class="card-value-line">${item[clave] ?? ''}</div>`;
                 });
-                html += '</tr>';
+                html += '</div>';
             });
+            html += '</div>';
 
-            html += '</tbody></table>';
             contenedor.innerHTML = html;
 
-            contenedor.querySelectorAll('th[data-clave]').forEach(th => {
-                th.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    if (columnaOrdenadaClave === clave) {
-                        ordenAscendente = !ordenAscendente;
-                    } else {
-                        columnaOrdenadaClave = clave;
-                        ordenAscendente = true;
-                    }
-                    poblarSelectColumnasOrden();
-                    renderizarTabla();
-                });
-            });
-
             contenedor.querySelectorAll('.input-filtro').forEach(input => {
-                input.addEventListener('click', (e) => e.stopPropagation());
                 input.addEventListener('input', (e) => {
                     const clave = e.target.getAttribute('data-clave');
                     inputFocoClave = clave;
@@ -1259,7 +995,7 @@
             });
 
             if (mostrarFiltros && inputFocoClave) {
-                const inputActivo = document.getElementById(`filtro-col-${inputFocoClave}`);
+                const inputActivo = contenedor.querySelector(`input[data-clave="${inputFocoClave}"]`);
                 if (inputActivo) {
                     inputActivo.focus();
                     inputActivo.setSelectionRange(posicionCursor, posicionCursor);
@@ -1267,14 +1003,8 @@
             }
         }
 
-        // ==========================================
-        // INICIALIZACIÓN DE LA PÁGINA
-        // ==========================================
         async function init() {
-            const exito = await obtenerConfiguracionFirebase();
-            if (exito) {
-                await cargarDatos();
-            }
+            if (await obtenerConfiguracionFirebase()) await cargarDatos();
         }
 
         init();
