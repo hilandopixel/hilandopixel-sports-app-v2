@@ -26,6 +26,32 @@
             color: #212529;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Sección Preferencias (Protegida) */
+        #panel-preferencias {
+            display: none; /* Oculto por defecto hasta verificar autenticación */
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 2px dashed #198754;
+        }
+
+        #panel-preferencias h3 {
+            margin-top: 0;
+            color: #198754;
+            font-size: 1.1em;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
         /* Carrusel */
         .carrusel-contenedor {
             position: relative;
@@ -79,7 +105,7 @@
 
         /* Gestor Dinámico de Imágenes */
         .gestor-imagenes-container {
-            background: #ffffff;
+            background: #f8f9fa;
             padding: 16px;
             border-radius: 8px;
             margin-bottom: 15px;
@@ -147,7 +173,7 @@
 
         /* Panel de Configuración */
         .panel-columnas-container {
-            background: #ffffff;
+            background: #f8f9fa;
             padding: 16px;
             border-radius: 8px;
             margin-bottom: 15px;
@@ -180,7 +206,7 @@
             font-size: 0.82em;
             border-radius: 20px;
             border: 1px solid #ced4da;
-            background-color: #f8f9fa;
+            background-color: #ffffff;
             color: #495057;
             cursor: pointer;
             user-select: none;
@@ -292,6 +318,23 @@
             background-color: #157347;
         }
 
+        .btn-logout {
+            display: none; /* Oculto por defecto hasta autenticarse */
+            padding: 8px 14px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn-logout:hover {
+            background-color: #bb2d3b;
+        }
+
         .btn-limpiar {
             padding: 4px 10px;
             background-color: #6c757d;
@@ -363,6 +406,38 @@
             font-weight: 500;
         }
 
+        .estado-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .estado-chip {
+            padding: 4px 10px;
+            font-size: 0.8em;
+            border-radius: 12px;
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 500;
+            border: 1px solid wheat;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .estado-chip.directo {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-color: #badbcc;
+        }
+
+        .estado-chip.proxima {
+            background-color: wheat;
+            color: #0f5132;
+            border-color: wheat;
+        }
+
         .indicador-orden {
             font-size: 0.8em;
             margin-left: 4px;
@@ -372,11 +447,9 @@
 <body>
 
     <div class="header-container">
-        <div>
-            <h2 id="tituloResultado">Cargando Resultado...</h2>
-            <span id="estado" class="estado">Inicializando...</span>
+        <div class="header-actions">
+            <button id="btnLogout" class="btn-logout">🚪 Cerrar Sesión</button>
         </div>
-        <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
     </div>
 
     <!-- CARRUSEL DINÁMICO DE IMÁGENES -->
@@ -384,84 +457,127 @@
         <div class="carrusel-indicadores" id="carrusel-dots"></div>
     </div>
 
-    <!-- PANEL DE GESTIÓN DE IMÁGENES -->
-    <div class="gestor-imagenes-container">
-        <div class="opciones-subida-grid">
-            <div class="campo-grupo">
-                <label for="input-url-imagen">Añadir imagen por URL:</label>
-                <div class="input-group">
-                    <input type="text" 
-                           id="input-url-imagen" 
-                           class="input-columnas" 
-                           placeholder="https://ejemplo.com/mi-imagen.jpg">
-                    <button class="btn-accion" id="btnAgregarUrl">Añadir URL</button>
+    <!-- SECCIÓN INDEPENDIENTE DE PREFERENCIAS (SOLO USUARIOS AUTENTICADOS) -->
+    <div id="panel-preferencias">
+        <h3>⚙️ Panel de Preferencias y Configuración</h3>
+
+        <!-- GESTIÓN DE IMÁGENES -->
+        <div class="gestor-imagenes-container">
+            <div class="opciones-subida-grid">
+                <div class="campo-grupo">
+                    <label for="input-url-imagen">Añadir imagen por URL:</label>
+                    <div class="input-group">
+                        <input type="text" 
+                               id="input-url-imagen" 
+                               class="input-columnas" 
+                               placeholder="https://ejemplo.com/mi-imagen.jpg">
+                        <button class="btn-accion" id="btnAgregarUrl">Añadir URL</button>
+                    </div>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="input-file-imagen">Añadir desde tu dispositivo:</label>
+                    <input type="file" 
+                           id="input-file-imagen" 
+                           class="input-file-custom" 
+                           accept="image/*">
                 </div>
             </div>
 
             <div class="campo-grupo">
-                <label for="input-file-imagen">Añadir desde tu dispositivo:</label>
-                <input type="file" 
-                       id="input-file-imagen" 
-                       class="input-file-custom" 
-                       accept="image/*">
+                <label>Imágenes en el carrusel:</label>
+                <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
             </div>
         </div>
 
-        <div class="campo-grupo">
-            <label>Imágenes en el carrusel:</label>
-            <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
-        </div>
-    </div>
+        <!-- PANEL DE CONFIGURACIÓN -->
+        <div class="panel-columnas-container">
+            <div class="campo-grupo">
+                <label for="input-intervalo-refresco">Intervalo de refresco (en segundos):</label>
+                <input type="number" 
+                       id="input-intervalo-refresco" 
+                       class="input-numero" 
+                       min="5" 
+                       max="600" 
+                       value="30">
+            </div>
 
-    <!-- PANEL DE CONFIGURACIÓN -->
-    <div class="panel-columnas-container">
-        <div class="campo-grupo">
-            <label for="input-intervalo-refresco">Intervalo de refresco (en segundos):</label>
-            <input type="number" 
-                   id="input-intervalo-refresco" 
-                   class="input-numero" 
-                   min="5" 
-                   max="600" 
-                   value="30">
-        </div>
+            <div class="campo-grupo">
+                <label>Columnas a mostrar:</label>
+                <div id="container-chips-visibles" class="chips-container"></div>
+                <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
+            </div>
 
-        <div class="campo-grupo">
-            <label>Columnas a mostrar:</label>
-            <div id="container-chips-visibles" class="chips-container"></div>
-            <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
-        </div>
+            <div class="campo-grupo">
+                <label>Orden de visualización horizontal (haz clic para añadir a la secuencia):</label>
+                <div id="container-chips-orden-elegido" class="chips-container"></div>
+                <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
+                <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden inicial</button>
+            </div>
 
-        <div class="campo-grupo">
-            <label>Orden de visualización horizontal (haz clic para añadir a la secuencia):</label>
-            <div id="container-chips-orden-elegido" class="chips-container"></div>
-            <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
-            <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden inicial</button>
-        </div>
+            <div class="campo-grupo">
+                <label for="select-columna-orden">Ordenar datos por:</label>
+                <div class="orden-select-container">
+                    <select id="select-columna-orden" class="select-orden">
+                        <option value="">Cargando columnas...</option>
+                    </select>
+                    <select id="select-sentido-orden" class="select-orden select-sentido">
+                        <option value="desc" selected>Descendente</option>
+                        <option value="asc">Ascendente</option>
+                    </select>
+                </div>
+            </div>
 
-        <div class="campo-grupo">
-            <label for="select-columna-orden">Ordenar datos por:</label>
-            <div class="orden-select-container">
-                <select id="select-columna-orden" class="select-orden">
-                    <option value="">Cargando columnas...</option>
-                </select>
-                <select id="select-sentido-orden" class="select-orden select-sentido">
-                    <option value="desc" selected>Descendente</option>
-                    <option value="asc">Ascendente</option>
-                </select>
+            <div class="checkbox-container">
+                <input type="checkbox" id="checkbox-mostrar-filtros" checked>
+                <label for="checkbox-mostrar-filtros">Mostrar fila de filtros por columna</label>
             </div>
         </div>
 
-        <div class="checkbox-container">
-            <input type="checkbox" id="checkbox-mostrar-filtros" checked>
-            <label for="checkbox-mostrar-filtros">Mostrar fila de filtros por columna</label>
+        <!-- BOTÓN GUARDAR PREFERENCIAS -->
+        <div>
+            <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
         </div>
     </div>
 
+    <div>
+        <h2 id="tituloResultado">Cargando Resultado...</h2>
+        <div id="estado-chips-container" class="estado-chips-container">
+            <span class="estado-chip" id="chip-estado-conexion">Inicializando...</span>
+        </div>
+    </div>
     <div id="contenedor-tabla">Cargando datos...</div>
 
     <script type="module">
         import { db } from './firebase.config.js';
         import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, collectionGroup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // ==========================================
+        // VERIFICACIÓN DE AUTENTICACIÓN Y LOGOUT
+        // ==========================================
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            const panelPrefs = document.getElementById('panel-preferencias');
+            const btnLogout = document.getElementById('btnLogout');
+            if (user) {
+                if (panelPrefs) panelPrefs.style.display = 'block';
+                if (btnLogout) btnLogout.style.display = 'inline-block';
+            } else {
+                if (panelPrefs) panelPrefs.style.display = 'none';
+                if (btnLogout) btnLogout.style.display = 'none';
+            }
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.reload();
+            } catch (err) {
+                console.error("Error al cerrar sesión:", err);
+                alert("No se pudo cerrar sesión.");
+            }
+        });
 
         // ==========================================
         // PARÁMETROS URL Y VARIABLES DE REFERENCIA
@@ -475,7 +591,7 @@
         let refResultadoDocActual = null;
 
         // ==========================================
-        // ESTADO GLOBAL (Declaración completa sin errores)
+        // ESTADO GLOBAL
         // ==========================================
         const TIEMPO_CARRUSEL_MS = 2000;
         let indiceImagenActual = 0;
@@ -504,15 +620,21 @@
         // ==========================================
         async function obtenerConfiguracionFirebase() {
             const estado = document.getElementById('estado');
-            
             try {
                 let docSnap = null;
-
+                let nombreEvento = 'Resultados: ';
                 if (idResultadoParam) {
                     if (eventoIdParam) {
+
+                        const eventoDocRef = doc(db, 'eventos', eventoIdParam);
+                        const eventoDocSnap = await getDoc(eventoDocRef);
+                        
+                        if (eventoDocSnap.exists()) {
+                            nombreEvento += eventoDocSnap.data().nombre || '';
+                        }
+
                         refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
                         docSnap = await getDoc(refResultadoDocActual);
-
                         if (!docSnap.exists()) {
                             const subColRef = collection(db, 'eventos', eventoIdParam, 'resultados');
                             const subColSnap = await getDocs(subColRef);
@@ -547,7 +669,7 @@
                 configuracionResultado = docSnap.data();
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
-                document.getElementById('tituloResultado').textContent = configuracionResultado.nombre || 'Resultado';
+                document.getElementById('tituloResultado').textContent = nombreEvento + " " + configuracionResultado.nombre || 'Resultado';
                 document.title = configuracionResultado.nombre || 'Resultados';
 
                 // Cargar imágenes de la subcolección interna imagenes_cabecera
@@ -798,7 +920,6 @@
                     
                     columnasGlobales = primerasColumnas;
 
-                    // Si Firebase no trajo columnas configuradas previamente, se muestran todas
                     if (columnasVisiblesUser.length === 0) {
                         columnasVisiblesUser = [...columnasGlobales];
                     }
@@ -811,7 +932,6 @@
                         ) || columnasGlobales[0];
                     }
 
-                    // Se sincronizan los paneles y chips correctamente una vez cargadas las columnas
                     poblarSelectColumnasOrden();
                     poblarChipsVisibilidad();
                     poblarChipsOrdenSecuencia();
@@ -964,11 +1084,18 @@
         });
 
         function actualizarTextoEstado() {
-            const estado = document.getElementById('estado');
-            if (estado && !cargando) {
-                const directoTexto = configuracionResultado?.directo ? '⚡ En directo | ' : '';
-                estado.textContent = `${directoTexto}Última actualización: ${ultimaHoraActualizacion} | Próxima actualización en ${segundosRestantes}s`;
-            }
+            const container = document.getElementById('estado-chips-container');
+            if (!container || cargando) return;
+
+            const esDirecto = configuracionResultado?.directo !== false;
+            const modoTexto = esDirecto ? '⚡ En directo' : '⏸️ Pausado';
+            const claseDirecto = esDirecto ? 'directo' : '';
+
+            container.innerHTML = `
+                <span class="estado-chip ${claseDirecto}">${modoTexto}</span>
+                <span class="estado-chip">🕒 Actualizado: ${ultimaHoraActualizacion}</span>
+                <span class="estado-chip proxima">⏱️ Próxima: ${segundosRestantes}s</span>
+            `;
         }
 
         setInterval(() => {

@@ -146,7 +146,7 @@ export function cargarResultadosEvento(eventoId) {
         <td class="p-3 font-bold text-gray-900">${data.nombre}</td>
         <td class="p-3 font-mono text-xs text-gray-500">${resId}</td>
         <td class="p-3 text-right space-x-1">
-          <a href="resultados.html?evento=${eventoId}&resultado=${resId}" target="_blank" class="btn-primary text-xs py-1 px-2 inline-block">Ver enlace</a>
+          <a href="resultados?evento=${eventoId}&resultado=${resId}" target="_blank" class="btn-primary text-xs py-1 px-2 inline-block">Ver enlace</a>
           <button class="btn-secondary text-xs py-1 px-2 btn-editar-res" data-id="${resId}">Editar</button>
           <button class="btn-danger text-xs py-1 px-2 btn-del-res" data-id="${resId}">Borrar</button>
         </td>
