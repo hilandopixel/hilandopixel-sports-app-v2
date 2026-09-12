@@ -5,33 +5,34 @@
     <meta name="viewport" content="width=512, initial-scale=1.0">
     <title>Resultados del Evento</title>
     <style>
-        /* Forzar dimensiones fijas exactas para evitar desbordamientos en iframe */
         html, body {
             width: 512px;
             height: 1536px;
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
             font-family: system-ui, -apple-system, sans-serif;
         }
 
-        .fixed-screen-wrapper {
+        .screen-canvas {
             width: 512px;
-            min-height: 1536px;
-            padding: 12px;
+            height: 1536px;
+            padding: 14px;
             box-sizing: border-box;
             background-color: #f8f9fa;
-            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
 
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .header-container h2 {
@@ -49,33 +50,37 @@
         #panel-preferencias {
             display: none; 
             background: #ffffff;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             border: 2px dashed #198754;
             box-sizing: border-box;
             width: 100%;
+            flex-shrink: 0;
         }
 
         #panel-preferencias h3 {
             margin-top: 0;
             color: #198754;
-            font-size: 0.95em;
+            font-size: 0.9em;
             border-bottom: 1px solid #e9ecef;
-            padding-bottom: 6px;
-            margin-bottom: 10px;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
         }
 
+        /* Carrusel ajustado a 512px de ancho exacto */
         .carrusel-contenedor {
             position: relative;
             width: 100%;
-            height: 200px;
+            height: 250px;
             border-radius: 8px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             background-color: #e9ecef;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
 
         .carrusel-imagen {
@@ -119,18 +124,18 @@
 
         .gestor-imagenes-container {
             background: #f8f9fa;
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .opciones-subida-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .lista-imagenes-previa {
@@ -142,8 +147,8 @@
 
         .item-imagen-previa {
             position: relative;
-            width: 60px;
-            height: 40px;
+            width: 50px;
+            height: 35px;
             border-radius: 4px;
             overflow: hidden;
             border: 1px solid #ced4da;
@@ -163,9 +168,9 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 8px;
+            width: 14px;
+            height: 14px;
+            font-size: 7px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -174,22 +179,22 @@
 
         .panel-columnas-container {
             background: #f8f9fa;
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .campo-grupo {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
         .campo-grupo label {
-            font-size: 0.78em;
+            font-size: 0.75em;
             font-weight: 600;
             color: #495057;
         }
@@ -201,9 +206,9 @@
         }
 
         .chip-btn {
-            padding: 4px 8px;
-            font-size: 0.75em;
-            border-radius: 14px;
+            padding: 3px 6px;
+            font-size: 0.72em;
+            border-radius: 12px;
             border: 1px solid #ced4da;
             background-color: #ffffff;
             color: #495057;
@@ -225,25 +230,25 @@
 
         .orden-select-container, .input-group {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-direction: column;
         }
 
         .select-orden, .input-columnas, .input-numero {
-            padding: 6px 8px;
+            padding: 5px 6px;
             border: 1px solid #ced4da;
             border-radius: 4px;
-            font-size: 0.8em;
+            font-size: 0.78em;
             background-color: #ffffff;
             width: 100%;
             box-sizing: border-box;
         }
 
         .input-file-custom {
-            padding: 4px;
+            padding: 3px;
             border: 1px solid #ced4da;
             border-radius: 4px;
-            font-size: 0.78em;
+            font-size: 0.75em;
             background-color: #ffffff;
             width: 100%;
             box-sizing: border-box;
@@ -258,49 +263,50 @@
 
         .checkbox-container label {
             cursor: pointer;
-            font-size: 0.8em;
+            font-size: 0.78em;
         }
 
         .btn-accion, .btn-guardar, .btn-logout, .btn-limpiar {
-            padding: 6px 10px;
+            padding: 5px 8px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.8em;
+            font-size: 0.78em;
             font-weight: bold;
         }
 
         .btn-accion { background-color: #0d6efd; color: white; }
-        .btn-guardar { background-color: #198754; color: white; width: 100%; margin-top: 4px; }
+        .btn-guardar { background-color: #198754; color: white; width: 100%; margin-top: 2px; }
         .btn-logout { background-color: #dc3545; color: white; display: none; }
-        .btn-limpiar { background-color: #6c757d; color: white; font-size: 0.7em; padding: 3px 6px; align-self: flex-start; }
+        .btn-limpiar { background-color: #6c757d; color: white; font-size: 0.68em; padding: 2px 5px; align-self: flex-start; }
 
         #contenedor-tabla { 
             width: 100%; 
             box-sizing: border-box;
-            margin-top: 10px;
+            margin-top: 8px;
+            flex-grow: 1;
         }
 
         .cards-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .resultado-card {
             background: #ffffff;
             border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 10px 12px;
+            border-radius: 6px;
+            padding: 8px 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
         .card-value-line {
-            font-size: 0.85em;
+            font-size: 0.82em;
             color: #212529;
             word-break: break-word;
             padding: 2px 0;
@@ -313,35 +319,37 @@
 
         .filtros-panel-movil {
             background: #ffffff;
-            padding: 10px;
+            padding: 8px;
             border-radius: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border: 1px solid #ced4da;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
+            flex-shrink: 0;
         }
 
         .input-filtro {
             width: 100%;
-            padding: 5px 8px;
+            padding: 4px 6px;
             box-sizing: border-box;
             border: 1px solid #ced4da;
             border-radius: 4px;
-            font-size: 0.8em;
+            font-size: 0.78em;
         }
 
         .estado-chips-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 4px;
+            gap: 4px;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
 
         .estado-chip {
-            padding: 3px 6px;
-            font-size: 0.72em;
-            border-radius: 8px;
+            padding: 2px 6px;
+            font-size: 0.7em;
+            border-radius: 6px;
             background-color: #e9ecef;
             color: #495057;
             font-weight: 500;
@@ -352,13 +360,13 @@
         .estado-chip.proxima { background-color: wheat; color: #0f5132; }
         
         #tituloResultado {
-            font-size: 1.1em;
-            margin: 6px 0 2px 0;
+            font-size: 1.05em;
+            margin: 4px 0 2px 0;
         }
     </style>
 </head>
 <body>
-    <div class="fixed-screen-wrapper">
+    <div class="screen-canvas">
         <div class="header-container">
             <h2 id="tituloResultado">Cargando...</h2>
             <div class="header-actions">
@@ -591,7 +599,7 @@
                 return true;
             } catch (err) {
                 console.error("Error al obtener la configuración:", err);
-                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-size:0.85em;">${err.message}</p>`;
+                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-size:0.8em;">${err.message}</p>`;
                 return false;
             }
         }
@@ -972,7 +980,7 @@
             let html = '';
 
             if (mostrarFiltros) {
-                html += `<div class="filtros-panel-movil"><span style="font-size:0.75em; font-weight:bold; color:#495057;">🔍 Filtros rápidos:</span>`;
+                html += `<div class="filtros-panel-movil"><span style="font-size:0.7em; font-weight:bold; color:#495057;">🔍 Filtros rápidos:</span>`;
                 columnasFinales.forEach(clave => {
                     html += `<input type="text" data-clave="${clave}" class="input-filtro" placeholder="${clave}..." value="${filtrosPorColumna[clave] || ''}">`;
                 });
