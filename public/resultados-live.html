@@ -51,7 +51,7 @@
 
         th, td { 
             border: 1px solid #e9ecef; 
-            padding: 10px 12px; 
+            padding: 8px 10px; 
             text-align: left; 
         }
 
@@ -59,6 +59,24 @@
             background-color: #0d6efd; 
             color: white; 
             font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* Estilos para los inputs de filtro por columna */
+        .input-filtro {
+            width: 100%;
+            padding: 4px 6px;
+            margin-top: 6px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.85em;
         }
 
         tr:nth-child(even) {
@@ -69,6 +87,11 @@
             font-size: 0.9em;
             color: #6c757d;
             font-weight: 500;
+        }
+
+        .indicador-orden {
+            font-size: 0.8em;
+            margin-left: 4px;
         }
     </style>
 </head>
@@ -87,124 +110,225 @@
     >
 
     <div id="contenedor-tabla">Cargando datos...</div>
+<script>
+    let segundosRestantes = 30;
+    let ultimaHoraActualizacion = '--:--:--';
+    let cargando = false;
 
-    <script>
-        let segundosRestantes = 30;
-        let ultimaHoraActualizacion = '--:--:--';
-        let cargando = false;
+    // Estado global
+    let datosOriginales = [];
+    let cabecerasGlobales = [];
+    let columnaOrdenadaIdx = -1;
+    let ordenAscendente = true;
+    let filtrosPorColumna = {};
 
-        async function cargarDatos() {
-    if (cargando) return;
-    cargando = true;
+    // Variables para preservar el foco durante la escritura
+    let inputFocoIdx = null;
+    let posicionCursor = 0;
 
-    const contenedor = document.getElementById('contenedor-tabla');
-    const estado = document.getElementById('estado');
+    async function cargarDatos() {
+        if (cargando) return;
+        cargando = true;
 
-    if (estado) estado.textContent = 'Actualizando...';
+        const contenedor = document.getElementById('contenedor-tabla');
+        const estado = document.getElementById('estado');
 
-    try {
-        const response = await fetch('/api/get-csv-internal');
+        if (estado) estado.textContent = 'Actualizando...';
 
-        // Si la respuesta no es OK (HTTP 404, 500, etc.) o no es JSON:
-        if (!response.ok) {
-            const textoError = await response.text();
-            throw new Error(`Servidor devolvió HTTP ${response.status}: ${textoError.substring(0, 150)}...`);
-        }
+        try {
+            const response = await fetch('/api/get-csv');
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('La API no devolvió JSON (Asegúrate de ejecutar con "npx vercel dev").');
+            }
 
-        const data = await response.json();
+            const data = await response.json();
 
-        generarTabla(data);
+            if (!response.ok) {
+                throw new Error(data.error || `Error HTTP ${response.status}`);
+            }
 
-        ultimaHoraActualizacion = new Date().toLocaleTimeString();
-        segundosRestantes = 30;
-        cargando = false;
+            if (data && data.length > 0) {
+                cabecerasGlobales = data[0];
+                datosOriginales = data.slice(1);
 
-        actualizarTextoEstado();
+                if (columnaOrdenadaIdx === -1) {
+                    columnaOrdenadaIdx = cabecerasGlobales.findIndex(h => 
+                        h.trim().toLowerCase().includes('tiempo') || 
+                        h.trim().toLowerCase().includes('time') ||
+                        h.trim().toLowerCase().includes('marca')
+                    );
+                    ordenAscendente = false;
+                }
+            }
 
-    } catch (error) {
-        console.error('Error al actualizar datos:', error);
-        cargando = false;
+            renderizarTabla();
 
-        if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
-            contenedor.innerHTML = `<p style="color:red; font-weight:bold;">Error en la carga: ${error.message}</p>`;
-        }
-        if (estado) {
-            estado.textContent = 'Error al actualizar. Reintentando en breve...';
+            ultimaHoraActualizacion = new Date().toLocaleTimeString();
+            segundosRestantes = 30;
+            cargando = false;
+
+            actualizarTextoEstado();
+
+        } catch (error) {
+            console.error('Error al actualizar datos:', error);
+            cargando = false;
+
+            if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
+                contenedor.innerHTML = `<p style="color:red; font-weight:bold;">Error en la carga: ${error.message}</p>`;
+            }
+            if (estado) {
+                estado.textContent = 'Error al actualizar. Reintentando en breve...';
+            }
         }
     }
-}
-        function actualizarTextoEstado() {
-            const estado = document.getElementById('estado');
-            if (estado && !cargando) {
-                estado.textContent = `Última actualización: ${ultimaHoraActualizacion} | Próxima actualización en ${segundosRestantes}s`;
-            }
+
+    function actualizarTextoEstado() {
+        const estado = document.getElementById('estado');
+        if (estado && !cargando) {
+            estado.textContent = `Última actualización: ${ultimaHoraActualizacion} | Próxima actualización en ${segundosRestantes}s`;
+        }
+    }
+
+    setInterval(() => {
+        if (cargando) return;
+        segundosRestantes--;
+
+        if (segundosRestantes <= 0) {
+            cargarDatos();
+        } else {
+            actualizarTextoEstado();
+        }
+    }, 1000);
+
+    function tiempoASegundos(tiempoStr) {
+        if (!tiempoStr) return -1;
+        const str = tiempoStr.toString().trim();
+        const partes = str.split(':').map(Number);
+
+        if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
+        if (partes.length === 2) return (partes[0] * 60) + partes[1];
+        
+        const num = parseFloat(str);
+        return isNaN(num) ? -1 : num;
+    }
+
+    function ordenarPorColumna(colIdx) {
+        if (columnaOrdenadaIdx === colIdx) {
+            ordenAscendente = !ordenAscendente;
+        } else {
+            columnaOrdenadaIdx = colIdx;
+            ordenAscendente = true;
+        }
+        renderizarTabla();
+    }
+
+    // Captura del filtro guardando el índice del input y la posición del cursor
+    function aplicarFiltro(colIdx, inputElem) {
+        inputFocoIdx = colIdx;
+        posicionCursor = inputElem.selectionStart;
+        filtrosPorColumna[colIdx] = inputElem.value.toLowerCase();
+        renderizarTabla();
+    }
+
+    function renderizarTabla() {
+        const contenedor = document.getElementById('contenedor-tabla');
+        if (!contenedor) return;
+
+        if (!datosOriginales || datosOriginales.length === 0) {
+            contenedor.innerHTML = '<p>No hay datos disponibles.</p>';
+            return;
         }
 
-        setInterval(() => {
-            if (cargando) return;
-
-            segundosRestantes--;
-
-            if (segundosRestantes <= 0) {
-                cargarDatos();
-            } else {
-                actualizarTextoEstado();
-            }
-        }, 1000);
-
-        function tiempoASegundos(tiempoStr) {
-            if (!tiempoStr) return -1;
-            const str = tiempoStr.toString().trim();
-            const partes = str.split(':').map(Number);
-
-            if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
-            if (partes.length === 2) return (partes[0] * 60) + partes[1];
-            
-            const num = parseFloat(str);
-            return isNaN(num) ? -1 : num;
-        }
-
-        function generarTabla(filas) {
-            const contenedor = document.getElementById('contenedor-tabla');
-            if (!contenedor) return;
-
-            if (!filas || filas.length === 0) {
-                contenedor.innerHTML = '<p>No hay datos disponibles.</p>';
-                return;
-            }
-
-            const cabeceras = filas[0];
-            let datos = filas.slice(1);
-
-            const idxTiempo = cabeceras.findIndex(h => 
-                h.trim().toLowerCase().includes('tiempo') || 
-                h.trim().toLowerCase().includes('time') ||
-                h.trim().toLowerCase().includes('marca')
-            );
-
-            if (idxTiempo !== -1) {
-                datos.sort((a, b) => {
-                    const segA = tiempoASegundos(a[idxTiempo]);
-                    const segB = tiempoASegundos(b[idxTiempo]);
-                    return segB - segA;
-                });
-            }
-
-            let html = '<table><thead><tr>';
-            cabeceras.forEach(col => { html += `<th>${col}</th>`; });
-            html += '</tr></thead><tbody>';
-
-            datos.forEach(fila => {
-                html += '<tr>';
-                fila.forEach(celda => { html += `<td>${celda || ''}</td>`; });
-                html += '</tr>';
+        // 1. Filtrar los datos
+        let datosProcesados = datosOriginales.filter(fila => {
+            return Object.keys(filtrosPorColumna).every(colIdx => {
+                const textoFiltro = filtrosPorColumna[colIdx];
+                if (!textoFiltro) return true;
+                const celdaTexto = (fila[colIdx] || '').toString().toLowerCase();
+                return celdaTexto.includes(textoFiltro);
             });
+        });
 
-            html += '</tbody></table>';
-            contenedor.innerHTML = html;
+        // 2. Ordenar los datos
+        if (columnaOrdenadaIdx !== -1) {
+            const esColumnaTiempo = cabecerasGlobales[columnaOrdenadaIdx].trim().toLowerCase().includes('tiempo') ||
+                                    cabecerasGlobales[columnaOrdenadaIdx].trim().toLowerCase().includes('time') ||
+                                    cabecerasGlobales[columnaOrdenadaIdx].trim().toLowerCase().includes('marca');
+
+            datosProcesados.sort((a, b) => {
+                let valA = a[columnaOrdenadaIdx] || '';
+                let valB = b[columnaOrdenadaIdx] || '';
+
+                let comp = 0;
+                if (esColumnaTiempo) {
+                    const segA = tiempoASegundos(valA);
+                    const segB = tiempoASegundos(valB);
+                    comp = segA - segB;
+                } else {
+                    const numA = parseFloat(valA);
+                    const numB = parseFloat(valB);
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        comp = numA - numB;
+                    } else {
+                        comp = valA.toString().localeCompare(valB.toString());
+                    }
+                }
+
+                return ordenAscendente ? comp : -comp;
+            });
         }
 
-        cargarDatos();
-    </script>
+        // 3. Generar la estructura HTML
+        let html = '<table><thead><tr>';
+
+        cabecerasGlobales.forEach((col, idx) => {
+            let indicador = '';
+            if (idx === columnaOrdenadaIdx) {
+                indicador = ordenAscendente ? ' ▲' : ' ▼';
+            }
+            html += `<th onclick="ordenarPorColumna(${idx})">
+                        ${col}<span class="indicador-orden">${indicador}</span>
+                     </th>`;
+        });
+        html += '</tr><tr>';
+
+        cabecerasGlobales.forEach((_, idx) => {
+            const valActual = filtrosPorColumna[idx] || '';
+            html += `<th>
+                        <input type="text" 
+                               id="filtro-col-${idx}"
+                               class="input-filtro" 
+                               placeholder="Filtrar..." 
+                               value="${valActual}" 
+                               onclick="event.stopPropagation()" 
+                               oninput="aplicarFiltro(${idx}, this)">
+                     </th>`;
+        });
+
+        html += '</tr></thead><tbody>';
+
+        datosProcesados.forEach(fila => {
+            html += '<tr>';
+            fila.forEach(celda => { html += `<td>${celda || ''}</td>`; });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        contenedor.innerHTML = html;
+
+        // 4. Restaurar el foco y el cursor si se estaba escribiendo en un input
+        if (inputFocoIdx !== null) {
+            const inputActivo = document.getElementById(`filtro-col-${inputFocoIdx}`);
+            if (inputActivo) {
+                inputActivo.focus();
+                inputActivo.setSelectionRange(posicionCursor, posicionCursor);
+            }
+        }
+    }
+
+    // Carga inicial
+    cargarDatos();
+</script>
 </body>
 </html>
