@@ -24,7 +24,7 @@
             color: #212529;
         }
 
-        /* --- ESTILOS DEL CARRUSEL --- */
+        /* Carrusel */
         .carrusel-contenedor {
             position: relative;
             width: 100%;
@@ -51,7 +51,6 @@
             opacity: 1;
         }
 
-        /* Puntos/Dots de navegación inferior */
         .carrusel-indicadores {
             position: absolute;
             bottom: 12px;
@@ -75,8 +74,122 @@
             background-color: #ffffff;
             transform: scale(1.2);
         }
-        /* --------------------------- */
 
+        /* Panel de Configuración */
+        .panel-columnas-container {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .campo-grupo label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* Contenedores de botones (Chips/Multiselect) */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chip-btn {
+            padding: 6px 12px;
+            font-size: 0.82em;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+            color: #495057;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .chip-btn:hover {
+            border-color: #0d6efd;
+        }
+
+        .chip-btn.activo {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+
+        .chip-btn.orden-tag {
+            background-color: #198754;
+            color: white;
+            border-color: #198754;
+        }
+
+        .orden-select-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .select-orden {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9em;
+            background-color: #ffffff;
+        }
+
+        .select-orden {
+            flex: 1;
+        }
+
+        .select-sentido {
+            width: 150px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .checkbox-container label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-limpiar {
+            padding: 4px 10px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: background-color 0.2s;
+            align-self: flex-start;
+        }
+
+        .btn-limpiar:hover {
+            background-color: #5a6268;
+        }
+
+        /* Tabla */
         #contenedor-tabla { 
             width: 100%; 
             overflow-x: auto; 
@@ -144,25 +257,68 @@
         <span id="estado" class="estado">Cargando...</span>
     </div>
 
-    <!-- CARRUSEL DE IMÁGENES AUTOMÁTICO -->
+    <!-- Carrusel de imágenes -->
     <div class="carrusel-contenedor">
-        <!-- Puedes cambiar o añadir las URLs de tus imágenes en este listado -->
         <img class="carrusel-imagen activa" src="https://masatletismocrono.com/wp-content/uploads/header-bg.jpg" alt="Evento 1" onerror="this.src='https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80'">
         <img class="carrusel-imagen" src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80" alt="Evento 2">
         <img class="carrusel-imagen" src="https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?auto=format&fit=crop&w=1200&q=80" alt="Evento 3">
         <img class="carrusel-imagen" src="https://images.unsplash.com/photo-1471295253337-4ce8380237c8?auto=format&fit=crop&w=1200&q=80" alt="Evento 4">
 
-        <!-- Puntos indicadores de posición -->
         <div class="carrusel-indicadores" id="carrusel-dots"></div>
+    </div>
+
+    <!-- PANEL DE CONFIGURACIÓN -->
+    <div class="panel-columnas-container">
+        <!-- SELECCIÓN DINÁMICA DE COLUMNAS VISIBLES -->
+        <div class="campo-grupo">
+            <label>Columnas a mostrar:</label>
+            <div id="container-chips-visibles" class="chips-container">
+                <!-- Se puebla dinámicamente desde el JSON -->
+            </div>
+            <button class="btn-limpiar" onclick="seleccionarTodasVisibles()">Mostrar todas</button>
+        </div>
+
+        <!-- SELECCIÓN Y ORDENACIÓN DINÁMICA DE POSICIONES -->
+        <div class="campo-grupo">
+            <label>Orden de visualización horizontal (haz clic para añadir a la secuencia):</label>
+            <div id="container-chips-orden-elegido" class="chips-container">
+                <!-- Muestra la secuencia elegida activa -->
+            </div>
+            <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;">
+                <!-- Columnas restantes para añadir -->
+            </div>
+            <button class="btn-limpiar" onclick="restablecerOrdenColumnas()">Restablecer orden inicial</button>
+        </div>
+
+        <!-- SELECTS PARA ORDENACIÓN DE DATOS POR FILA -->
+        <div class="campo-grupo">
+            <label for="select-columna-orden">Ordenar datos por:</label>
+            <div class="orden-select-container">
+                <select id="select-columna-orden" class="select-orden" onchange="cambiarColumnaOrdenDesdeSelect(this.value)">
+                    <option value="">Cargando columnas...</option>
+                </select>
+                <select id="select-sentido-orden" class="select-orden select-sentido" onchange="cambiarSentidoOrdenDesdeSelect(this.value)">
+                    <option value="desc" selected>Descendente</option>
+                    <option value="asc">Ascendente</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- CHECKBOX PARA MOSTRAR/OCULTAR FILTROS -->
+        <div class="checkbox-container">
+            <input type="checkbox" 
+                   id="checkbox-mostrar-filtros" 
+                   checked 
+                   onchange="toggleFiltrosVisibles(this.checked)">
+            <label for="checkbox-mostrar-filtros">Mostrar fila de filtros por columna</label>
+        </div>
     </div>
 
     <div id="contenedor-tabla">Cargando datos...</div>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN Y LÓGICA DEL CARRUSEL
-        // ==========================================
-        const TIEMPO_CARRUSEL_MS = 2000; // X = 2 segundos por defecto (2000 milisegundos)
+        // --- CONFIGURACIÓN DEL CARRUSEL ---
+        const TIEMPO_CARRUSEL_MS = 2000;
         let indiceImagenActual = 0;
         let imagenesCarrusel = [];
         let dotsCarrusel = [];
@@ -174,7 +330,6 @@
 
             if (imagenesCarrusel.length === 0) return;
 
-            // Generar los puntos/dots dinámicamente según la cantidad de imágenes
             imagenesCarrusel.forEach((_, idx) => {
                 const dot = document.createElement('div');
                 dot.classList.add('dot');
@@ -184,28 +339,18 @@
             });
 
             dotsCarrusel = document.querySelectorAll('.dot');
-
-            // Iniciar el temporizador para rotar cada X segundos
             intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
         }
 
         function cambiarImagenCarrusel(nuevoIndice) {
-            // Quitar clase activa de la imagen y dot actual
             imagenesCarrusel[indiceImagenActual].classList.remove('activa');
-            if (dotsCarrusel[indiceImagenActual]) {
-                dotsCarrusel[indiceImagenActual].classList.remove('activo');
-            }
+            if (dotsCarrusel[indiceImagenActual]) dotsCarrusel[indiceImagenActual].classList.remove('activo');
 
-            // Actualizar índice
             indiceImagenActual = nuevoIndice;
 
-            // Mostrar la nueva imagen y activar su dot
             imagenesCarrusel[indiceImagenActual].classList.add('activa');
-            if (dotsCarrusel[indiceImagenActual]) {
-                dotsCarrusel[indiceImagenActual].classList.add('activo');
-            }
+            if (dotsCarrusel[indiceImagenActual]) dotsCarrusel[indiceImagenActual].classList.add('activo');
 
-            // Reiniciar el contador al hacer clic manual
             clearInterval(intervaloCarrusel);
             intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
         }
@@ -215,17 +360,18 @@
             cambiarImagenCarrusel(siguienteIdx);
         }
 
-        // ==========================================
-        // LÓGICA DE TABLA, FILTROS Y REFRESCO LIVE
-        // ==========================================
+        // --- LÓGICA DE TABLA, FILTROS Y ORDEN ---
         let segundosRestantes = 30;
         let ultimaHoraActualizacion = '--:--:--';
         let cargando = false;
 
         let datosObjetos = [];
         let columnasGlobales = [];
+        let columnasVisiblesUser = []; 
+        let ordenColumnasUser = []; 
+        let mostrarFiltros = true; 
         let columnaOrdenadaClave = '';
-        let ordenAscendente = false; // Descendente por defecto
+        let ordenAscendente = false; 
         let filtrosPorColumna = {};
 
         let inputFocoClave = null;
@@ -256,7 +402,17 @@
 
                 if (resJSON.datos && resJSON.datos.length > 0) {
                     datosObjetos = resJSON.datos;
-                    columnasGlobales = Object.keys(datosObjetos[0]);
+                    
+                    // 1. Guardar las columnas extraídas del JSON
+                    const primerasColumnas = Object.keys(datosObjetos[0]);
+                    
+                    // Si es la primera carga, inicializamos las estructuras globales
+                    if (columnasGlobales.length === 0) {
+                        columnasGlobales = primerasColumnas;
+                        columnasVisiblesUser = [...columnasGlobales]; // Todas visibles por defecto
+                    } else {
+                        columnasGlobales = primerasColumnas;
+                    }
 
                     if (!columnaOrdenadaClave) {
                         columnaOrdenadaClave = columnasGlobales.find(clave => 
@@ -265,8 +421,13 @@
                             clave.trim().toLowerCase().includes('marca')
                         ) || columnasGlobales[0];
                         
-                        ordenAscendente = false; // Tiempos descendentes por defecto
+                        ordenAscendente = false; 
                     }
+
+                    // 2. Poblar los controles dinámicos de UI
+                    poblarSelectColumnasOrden();
+                    poblarChipsVisibilidad();
+                    poblarChipsOrdenSecuencia();
                 }
 
                 renderizarTabla();
@@ -288,6 +449,109 @@
                     estado.textContent = 'Error al actualizar. Reintentando en breve...';
                 }
             }
+        }
+
+        // --- RENDERIZADORES DE INTERFAZ DINÁMICA ---
+        function poblarSelectColumnasOrden() {
+            const selectCol = document.getElementById('select-columna-orden');
+            if (!selectCol) return;
+
+            let htmlOptions = '';
+            columnasGlobales.forEach(clave => {
+                const selected = (clave === columnaOrdenadaClave) ? 'selected' : '';
+                htmlOptions += `<option value="${clave}" ${selected}>${clave}</option>`;
+            });
+            selectCol.innerHTML = htmlOptions;
+
+            const selectSentido = document.getElementById('select-sentido-orden');
+            if (selectSentido) {
+                selectSentido.value = ordenAscendente ? 'asc' : 'desc';
+            }
+        }
+
+        function poblarChipsVisibilidad() {
+            const container = document.getElementById('container-chips-visibles');
+            if (!container) return;
+
+            let html = '';
+            columnasGlobales.forEach(clave => {
+                const esActiva = columnasVisiblesUser.includes(clave);
+                html += `<div class="chip-btn ${esActiva ? 'activo' : ''}" onclick="toggleVisibilidadColumna('${clave}')">
+                            ${esActiva ? '✓ ' : '+ '}${clave}
+                         </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function poblarChipsOrdenSecuencia() {
+            const containerElegidos = document.getElementById('container-chips-orden-elegido');
+            const containerDisponibles = document.getElementById('container-chips-orden-disponibles');
+            if (!containerElegidos || !containerDisponibles) return;
+
+            // Renderizar elegidos
+            let htmlElegidos = '';
+            ordenColumnasUser.forEach((clave, index) => {
+                htmlElegidos += `<div class="chip-btn orden-tag" onclick="removerDeOrden('${clave}')">
+                                    ${index + 1}. ${clave} ✕
+                                 </div>`;
+            });
+            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.8em; color:#888;">Ningún orden personalizado (usando orden nativo)</span>';
+
+            // Renderizar disponibles
+            let htmlDisponibles = '';
+            columnasGlobales.forEach(clave => {
+                if (!ordenColumnasUser.includes(clave)) {
+                    htmlDisponibles += `<div class="chip-btn" onclick="agregarAOrden('${clave}')">
+                                            + ${clave}
+                                        </div>`;
+                }
+            });
+            containerDisponibles.innerHTML = htmlDisponibles;
+        }
+
+        // --- ACCIONES DE VISIBILIDAD Y ORDENACION DE COLUMNAS ---
+        function toggleVisibilidadColumna(clave) {
+            if (columnasVisiblesUser.includes(clave)) {
+                columnasVisiblesUser = columnasVisiblesUser.filter(c => c !== clave);
+            } else {
+                columnasVisiblesUser.push(clave);
+            }
+            poblarChipsVisibilidad();
+            renderizarTabla();
+        }
+
+        function seleccionarTodasVisibles() {
+            columnasVisiblesUser = [...columnasGlobales];
+            poblarChipsVisibilidad();
+            renderizarTabla();
+        }
+
+        function agregarAOrden(clave) {
+            ordenColumnasUser.push(clave);
+            poblarChipsOrdenSecuencia();
+            renderizarTabla();
+        }
+
+        function removerDeOrden(clave) {
+            ordenColumnasUser = ordenColumnasUser.filter(c => c !== clave);
+            poblarChipsOrdenSecuencia();
+            renderizarTabla();
+        }
+
+        function restablecerOrdenColumnas() {
+            ordenColumnasUser = [];
+            poblarChipsOrdenSecuencia();
+            renderizarTabla();
+        }
+
+        function cambiarColumnaOrdenDesdeSelect(nuevaClave) {
+            columnaOrdenadaClave = nuevaClave;
+            renderizarTabla();
+        }
+
+        function cambiarSentidoOrdenDesdeSelect(sentido) {
+            ordenAscendente = (sentido === 'asc');
+            renderizarTabla();
         }
 
         function actualizarTextoEstado() {
@@ -327,6 +591,7 @@
                 columnaOrdenadaClave = clave;
                 ordenAscendente = true;
             }
+            poblarSelectColumnasOrden();
             renderizarTabla();
         }
 
@@ -334,6 +599,11 @@
             inputFocoClave = clave;
             posicionCursor = inputElem.selectionStart;
             filtrosPorColumna[clave] = inputElem.value.toLowerCase();
+            renderizarTabla();
+        }
+
+        function toggleFiltrosVisibles(estaChequeado) {
+            mostrarFiltros = estaChequeado;
             renderizarTabla();
         }
 
@@ -346,6 +616,33 @@
                 return;
             }
 
+            // 1. Filtrar visibilidad básica
+            let columnasFiltradas = columnasGlobales.filter(clave => columnasVisiblesUser.includes(clave));
+
+            // 2. Reordenar las columnas filtradas según el multiselect secuencial
+            let columnasFinales = [];
+            if (ordenColumnasUser.length > 0) {
+                ordenColumnasUser.forEach(clave => {
+                    if (columnasFiltradas.includes(clave)) {
+                        columnasFinales.push(clave);
+                    }
+                });
+
+                columnasFiltradas.forEach(clave => {
+                    if (!columnasFinales.includes(clave)) {
+                        columnasFinales.push(clave);
+                    }
+                });
+            } else {
+                columnasFinales = columnasFiltradas;
+            }
+
+            if (columnasFinales.length === 0) {
+                contenedor.innerHTML = '<p style="color: #6c757d; font-style: italic;">No hay columnas visibles seleccionadas.</p>';
+                return;
+            }
+
+            // 3. Filtrar los datos por filas
             let datosProcesados = datosObjetos.filter(item => {
                 return Object.keys(filtrosPorColumna).every(clave => {
                     const textoFiltro = filtrosPorColumna[clave];
@@ -355,6 +652,7 @@
                 });
             });
 
+            // 4. Ordenar filas
             if (columnaOrdenadaClave) {
                 const esColumnaTiempo = columnaOrdenadaClave.trim().toLowerCase().includes('tiempo') ||
                                         columnaOrdenadaClave.trim().toLowerCase().includes('time') ||
@@ -383,9 +681,10 @@
                 });
             }
 
+            // 5. Renderizar HTML
             let html = '<table><thead><tr>';
 
-            columnasGlobales.forEach(clave => {
+            columnasFinales.forEach(clave => {
                 let indicador = '';
                 if (clave === columnaOrdenadaClave) {
                     indicador = ordenAscendente ? ' ▲' : ' ▼';
@@ -394,26 +693,30 @@
                             ${clave}<span class="indicador-orden">${indicador}</span>
                          </th>`;
             });
-            html += '</tr><tr>';
+            html += '</tr>';
 
-            columnasGlobales.forEach(clave => {
-                const valActual = filtrosPorColumna[clave] || '';
-                html += `<th>
-                            <input type="text" 
-                                   id="filtro-col-${clave}"
-                                   class="input-filtro" 
-                                   placeholder="Filtrar..." 
-                                   value="${valActual}" 
-                                   onclick="event.stopPropagation()" 
-                                   oninput="aplicarFiltro('${clave}', this)">
-                         </th>`;
-            });
+            if (mostrarFiltros) {
+                html += '<tr>';
+                columnasFinales.forEach(clave => {
+                    const valActual = filtrosPorColumna[clave] || '';
+                    html += `<th>
+                                <input type="text" 
+                                       id="filtro-col-${clave}"
+                                       class="input-filtro" 
+                                       placeholder="Filtrar..." 
+                                       value="${valActual}" 
+                                       onclick="event.stopPropagation()" 
+                                       oninput="aplicarFiltro('${clave}', this)">
+                             </th>`;
+                });
+                html += '</tr>';
+            }
 
-            html += '</tr></thead><tbody>';
+            html += '</thead><tbody>';
 
             datosProcesados.forEach(item => {
                 html += '<tr>';
-                columnasGlobales.forEach(clave => {
+                columnasFinales.forEach(clave => {
                     html += `<td>${item[clave] ?? ''}</td>`;
                 });
                 html += '</tr>';
@@ -422,7 +725,7 @@
             html += '</tbody></table>';
             contenedor.innerHTML = html;
 
-            if (inputFocoClave) {
+            if (mostrarFiltros && inputFocoClave) {
                 const inputActivo = document.getElementById(`filtro-col-${inputFocoClave}`);
                 if (inputActivo) {
                     inputActivo.focus();
@@ -431,7 +734,6 @@
             }
         }
 
-        // Carga inicial al abrir la página
         iniciarCarrusel();
         cargarDatos();
     </script>
