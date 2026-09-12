@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados del Evento</title>
+    <!-- Importación de la librería QR y el componente del panel de preferencias -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="module" src="./js/admin/components/panel-preferencias.js" defer></script>
     <style>
         body { 
             font-family: system-ui, -apple-system, sans-serif; 
@@ -32,26 +35,6 @@
             align-items: center;
         }
 
-        /* Sección Preferencias (Protegida) */
-        #panel-preferencias {
-            display: none; 
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 2px dashed #198754;
-        }
-
-        #panel-preferencias h3 {
-            margin-top: 0;
-            color: #198754;
-            font-size: 1.1em;
-            border-bottom: 1px solid #e9ecef;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-
         /* Carrusel */
         .carrusel-contenedor {
             position: relative;
@@ -63,6 +46,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #e9ecef;
         }
 
         .carrusel-imagen {
@@ -105,220 +89,18 @@
             transform: scale(1.2);
         }
 
-        /* Gestor Dinámico de Imágenes */
-        .gestor-imagenes-container {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* Contenedor del QR de resultados antes de la tabla */
+        .qr-resultado-contenedor {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .opciones-subida-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        @media (max-width: 768px) {
-            .opciones-subida-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .lista-imagenes-previa {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 8px;
-        }
-
-        .item-imagen-previa {
-            position: relative;
-            width: 80px;
-            height: 50px;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid #ced4da;
-        }
-
-        .item-imagen-previa img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .btn-eliminar-img {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(220, 53, 69, 0.85);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            line-height: 1;
-        }
-
-        /* Panel de Configuración */
-        .panel-columnas-container {
-            background: #f8f9fa;
-            padding: 16px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #ffffff;
             border-radius: 8px;
-            margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .campo-grupo {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .campo-grupo label {
-            font-size: 0.85em;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .chips-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .chip-btn {
-            padding: 6px 12px;
-            font-size: 0.82em;
-            border-radius: 20px;
-            border: 1px solid #ced4da;
-            background-color: #ffffff;
-            color: #495057;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-        }
-
-        .chip-btn.activo {
-            background-color: #0d6efd;
-            color: white;
-            border-color: #0d6efd;
-        }
-
-        .chip-btn.orden-tag {
-            background-color: #198754;
-            color: white;
-            border-color: #198754;
-        }
-
-        .orden-select-container, .input-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .select-orden, .input-columnas, .input-numero {
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.9em;
-            background-color: #ffffff;
-        }
-
-        .input-numero {
-            width: 120px;
-        }
-
-        .input-file-custom {
-            padding: 5px 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.85em;
-            background-color: #ffffff;
-            cursor: pointer;
-        }
-
-        .input-columnas, .select-orden {
-            flex: 1;
-        }
-
-        .select-sentido {
-            width: 150px;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 4px;
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .checkbox-container label {
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .btn-accion {
-            padding: 8px 14px;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            white-space: nowrap;
-        }
-
-        .btn-guardar {
-            padding: 10px 20px;
-            background-color: #198754;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .btn-logout {
-            display: none;
-            padding: 8px 14px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-
-        .btn-limpiar {
-            padding: 4px 10px;
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75em;
-            align-self: flex-start;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Tabla */
@@ -327,6 +109,9 @@
             overflow-x: auto; 
             padding: 16px;
             box-sizing: border-box;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         table { 
@@ -357,15 +142,12 @@
             font-size: 0.85em;
         }
 
-        tr:nth-child(even) {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-
         .estado-chips-container {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 6px;
+            margin-bottom: 15px;
         }
 
         .estado-chip {
@@ -397,6 +179,18 @@
             font-size: 0.8em;
             margin-left: 4px;
         }
+
+        .btn-logout {
+            display: none;
+            padding: 8px 14px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body id="page-body">
@@ -412,81 +206,8 @@
         <div class="carrusel-indicadores" id="carrusel-dots"></div>
     </div>
 
-    <!-- SECCIÓN INDEPENDIENTE DE PREFERENCIAS (SOLO USUARIOS AUTENTICADOS) -->
-    <div id="panel-preferencias">
-        <h3>⚙️ Panel de Preferencias y Configuración</h3>
-
-        <!-- GESTIÓN DE IMÁGENES -->
-        <div class="gestor-imagenes-container">
-            <div class="opciones-subida-grid">
-                <div class="campo-grupo">
-                    <label for="input-url-imagen">Añadir imagen por URL:</label>
-                    <div class="input-group">
-                        <input type="text" id="input-url-imagen" class="input-columnas" placeholder="https://ejemplo.com/mi-imagen.jpg">
-                        <button class="btn-accion" id="btnAgregarUrl">Añadir URL</button>
-                    </div>
-                </div>
-
-                <div class="campo-grupo">
-                    <label for="input-file-imagen">Añadir desde tu dispositivo:</label>
-                    <input type="file" id="input-file-imagen" class="input-file-custom" accept="image/*">
-                </div>
-            </div>
-
-            <div class="campo-grupo">
-                <label>Imágenes en el carrusel:</label>
-                <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
-            </div>
-        </div>
-
-        <!-- PANEL DE CONFIGURACIÓN -->
-        <div class="panel-columnas-container">
-            <div class="campo-grupo">
-                <label for="input-intervalo-refresco">Intervalo de refresco general (en segundos):</label>
-                <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
-            </div>
-
-            <div class="campo-grupo">
-                <label for="input-tiempo-carrusel">Tiempo de cada imagen en el carrusel (en segundos):</label>
-                <input type="number" id="input-tiempo-carrusel" class="input-numero" min="1" max="60" value="2">
-            </div>
-
-            <div class="campo-grupo">
-                <label>Columnas a mostrar:</label>
-                <div id="container-chips-visibles" class="chips-container"></div>
-                <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
-            </div>
-
-            <div class="campo-grupo">
-                <label>Orden de visualización horizontal:</label>
-                <div id="container-chips-orden-elegido" class="chips-container"></div>
-                <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
-                <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden inicial</button>
-            </div>
-
-            <div class="campo-grupo">
-                <label for="select-columna-orden">Ordenar datos por:</label>
-                <div class="orden-select-container">
-                    <select id="select-columna-orden" class="select-orden">
-                        <option value="">Cargando columnas...</option>
-                    </select>
-                    <select id="select-sentido-orden" class="select-orden select-sentido">
-                        <option value="desc" selected>Descendente</option>
-                        <option value="asc">Ascendente</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="checkbox-container">
-                <input type="checkbox" id="checkbox-mostrar-filtros" checked>
-                <label for="checkbox-mostrar-filtros">Mostrar fila de filtros por columna</label>
-            </div>
-        </div>
-
-        <div>
-            <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
-        </div>
-    </div>
+    <!-- PANEL DE PREFERENCIAS MODULARIZADO (Web Component) -->
+    <panel-preferencias-component id="miPanelPrefs"></panel-preferencias-component>
 
     <div>
         <h2 id="tituloResultado">Cargando Resultado...</h2>
@@ -494,6 +215,10 @@
             <span class="estado-chip" id="chip-estado-conexion">Inicializando...</span>
         </div>
     </div>
+
+    <!-- QR GENERADO DEL ENLACE QR DEL RESULTADO ANTES DE LA TABLA -->
+    <div id="contenedor-qr-resultado" class="qr-resultado-contenedor" style="display: none;"></div>
+
     <div id="contenedor-tabla">Cargando datos...</div>
 
     <script type="module">
@@ -502,28 +227,7 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-            const panelPrefs = document.getElementById('panel-preferencias');
-            const btnLogout = document.getElementById('btnLogout');
-            if (user) {
-                if (panelPrefs) panelPrefs.style.display = 'block';
-                if (btnLogout) btnLogout.style.display = 'inline-block';
-            } else {
-                if (panelPrefs) panelPrefs.style.display = 'none';
-                if (btnLogout) btnLogout.style.display = 'none';
-            }
-        });
-
-        document.getElementById('btnLogout').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                window.location.reload();
-            } catch (err) {
-                console.error("Error al cerrar sesión:", err);
-                alert("No se pudo cerrar sesión.");
-            }
-        });
-
+        
         const urlParams = new URLSearchParams(window.location.search);
         const idResultadoParam = urlParams.get('resultado') || urlParams.get('id');
         const eventoIdParam = urlParams.get('evento');
@@ -532,13 +236,14 @@
         let urlCSVoJSON = '';
         let refResultadoDocActual = null;
 
-        let tiempoCarruselMs = 2000; // Por defecto 2 segundos
+        let tiempoCarruselMs = 2000; 
         let indiceImagenActual = 0;
         let intervaloCarrusel = null;
         let listaImagenes = [];
 
         let colorFondoBody = '#f8f9fa';
         let colorTextoEvento = '#212529';
+        let urlQrResultados = '';
 
         let intervaloSegundosConfig = 30; 
         let segundosRestantes = 30;
@@ -557,6 +262,89 @@
         let inputFocoClave = null;
         let posicionCursor = 0;
 
+        // Gestión de Autenticación y visualización del Web Component
+        onAuthStateChanged(auth, (user) => {
+            const panelComp = document.getElementById('miPanelPrefs');
+            const btnLogout = document.getElementById('btnLogout');
+            
+            if (panelComp && panelComp.shadowRoot) {
+                const panelReal = panelComp.shadowRoot.getElementById('panel-preferencias');
+                if (panelReal) {
+                    panelReal.style.display = user ? 'block' : 'none';
+                }
+            }
+
+            if (btnLogout) {
+                btnLogout.style.display = user ? 'inline-block' : 'none';
+            }
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.reload();
+            } catch (err) {
+                console.error("Error al cerrar sesión:", err);
+                alert("No se pudo cerrar sesión.");
+            }
+        });
+
+        // Escuchar el evento personalizado emitido por el Web Component al guardar
+        document.addEventListener('guardar-preferencias', async (e) => {
+            if (!refResultadoDocActual) return alert("No hay una referencia válida a la base de datos.");
+
+            const nuevosDatos = e.detail;
+            const panelComp = document.getElementById('miPanelPrefs');
+            const btnGuardar = panelComp.shadowRoot.getElementById('btnGuardarPreferencias');
+            
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = "⏳ Guardando...";
+
+            try {
+                const datosAActualizar = {
+                    nombre: nuevosDatos.nombre,
+                    fecha: nuevosDatos.fecha,
+                    tipo: nuevosDatos.tipo,
+                    enlace: nuevosDatos.enlace,
+                    url_qr_resultados: nuevosDatos.url_qr_resultados,
+                    columnasMostrar: nuevosDatos.columnasMostrar,
+                    ordenVisual: nuevosDatos.ordenVisual,
+                    columnaOrden: nuevosDatos.columnaOrden,
+                    sentidoOrden: nuevosDatos.sentidoOrden,
+                    mostrarFiltros: nuevosDatos.mostrarFiltros,
+                    intervaloRefresco: nuevosDatos.intervaloRefresco,
+                    tiempoImagenCarrusel: nuevosDatos.tiempoImagenCarrusel
+                };
+
+                await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
+
+                // Sincronizar imágenes en subcolección
+                const subColRef = collection(refResultadoDocActual, 'imagenes_cabecera');
+                const prevImgs = await getDocs(subColRef);
+                for (const docItem of prevImgs.docs) {
+                    await deleteDoc(docItem.ref);
+                }
+
+                listaImagenes = [...nuevosDatos.imagenes];
+                for (let i = 0; i < listaImagenes.length; i++) {
+                    const imgDocRef = doc(subColRef, `img_${i + 1}`);
+                    await setDoc(imgDocRef, { url: listaImagenes[i], orden: i + 1 });
+                }
+
+                urlQrResultados = nuevosDatos.url_qr_resultados;
+                renderizarQrResultado();
+                renderizarCarrusel();
+
+                alert("✅ ¡Preferencias guardadas con éxito en Firebase!");
+            } catch (err) {
+                console.error("Error al guardar preferencias:", err);
+                alert("❌ Error al guardar las preferencias: " + err.message);
+            } finally {
+                btnGuardar.disabled = false;
+                btnGuardar.textContent = "💾 Guardar Preferencias";
+            }
+        });
+
         async function obtenerConfiguracionFirebase() {
             try {
                 let docSnap = null;
@@ -570,16 +358,13 @@
                             const datosEvento = eventoDocSnap.data();
                             nombreEvento += datosEvento.nombre || '';
                             
-                            // Color de fondo del body desde el evento
                             if (datosEvento.color) {
                                 colorFondoBody = datosEvento.color;
                                 document.getElementById('page-body').style.backgroundColor = colorFondoBody;
                             }
-                            // Color de texto del evento
                             if (datosEvento.colorTexto) {
                                 colorTextoEvento = datosEvento.colorTexto;
                             }
-                            // Título con el color de texto del evento
                             const titEl = document.getElementById('tituloResultado');
                             if (titEl) titEl.style.color = colorTextoEvento;
                         }
@@ -619,6 +404,7 @@
 
                 configuracionResultado = docSnap.data();
                 urlCSVoJSON = configuracionResultado.enlace || '';
+                urlQrResultados = configuracionResultado.url_qr_resultados || '';
 
                 const titEl = document.getElementById('tituloResultado');
                 if(titEl) titEl.textContent = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
@@ -637,17 +423,10 @@
                 if (configuracionResultado.intervaloRefresco) {
                     intervaloSegundosConfig = parseInt(configuracionResultado.intervaloRefresco, 10) || 30;
                 }
-                const inputRefresco = document.getElementById('input-intervalo-refresco');
-                if(inputRefresco) inputRefresco.value = intervaloSegundosConfig;
                 segundosRestantes = intervaloSegundosConfig;
 
-                // Cargar tiempo de carrusel (por defecto 2 segundos)
-                const inputCarrusel = document.getElementById('input-tiempo-carrusel');
                 if (configuracionResultado.tiempoImagenCarrusel) {
                     tiempoCarruselMs = parseInt(configuracionResultado.tiempoImagenCarrusel, 10) * 1000;
-                    if(inputCarrusel) inputCarrusel.value = configuracionResultado.tiempoImagenCarrusel;
-                } else {
-                    if(inputCarrusel) inputCarrusel.value = 2;
                 }
 
                 if (configuracionResultado.columnasMostrar && Array.isArray(configuracionResultado.columnasMostrar)) {
@@ -664,11 +443,22 @@
                 }
                 if (typeof configuracionResultado.mostrarFiltros === 'boolean') {
                     mostrarFiltros = configuracionResultado.mostrarFiltros;
-                    const chkFiltros = document.getElementById('checkbox-mostrar-filtros');
-                    if(chkFiltros) chkFiltros.checked = mostrarFiltros;
+                }
+
+                // Sincronizar datos con el Web Component de preferencias de forma segura
+                const panelComp = document.getElementById('miPanelPrefs');
+                if (panelComp) {
+                    const datosParaComponente = {
+                        ...configuracionResultado,
+                        slug: idResultadoParam || ''
+                    };
+                    if (typeof panelComp.setDatosIniciales === 'function') {
+                        panelComp.setDatosIniciales(datosParaComponente, listaImagenes);
+                    }
                 }
 
                 renderizarCarrusel();
+                renderizarQrResultado();
                 return true;
             } catch (err) {
                 console.error("Error al obtener la configuración desde Firebase:", err);
@@ -677,64 +467,26 @@
             }
         }
 
-        document.getElementById('input-intervalo-refresco').addEventListener('change', (e) => {
-            const val = parseInt(e.target.value, 10);
-            if (!isNaN(val) && val >= 5) {
-                intervaloSegundosConfig = val;
-                segundosRestantes = Math.min(segundosRestantes, intervaloSegundosConfig);
-                actualizarTextoEstado();
+        function renderizarQrResultado() {
+            const contenedorQr = document.getElementById('contenedor-qr-resultado');
+            if (!contenedorQr) return;
+
+            contenedorQr.innerHTML = '';
+            if (!urlQrResultados) {
+                contenedorQr.style.display = 'none';
+                return;
             }
-        });
 
-        document.getElementById('input-tiempo-carrusel').addEventListener('change', (e) => {
-            const val = parseInt(e.target.value, 10);
-            if (!isNaN(val) && val >= 1) {
-                tiempoCarruselMs = val * 1000;
-                renderizarCarrusel();
-            }
-        });
-
-        document.getElementById('btnGuardarPreferencias').addEventListener('click', async () => {
-            if (!refResultadoDocActual) return alert("No hay una referencia válida a la base de datos.");
-
-            const btn = document.getElementById('btnGuardarPreferencias');
-            btn.disabled = true;
-            btn.textContent = "⏳ Guardando...";
-
-            try {
-                const tiempoSecs = parseInt(document.getElementById('input-tiempo-carrusel').value, 10) || 2;
-                const datosAActualizar = {
-                    columnasMostrar: columnasVisiblesUser,
-                    ordenVisual: ordenColumnasUser,
-                    columnaOrden: columnaOrdenadaClave,
-                    sentidoOrden: ordenAscendente ? 'asc' : 'desc',
-                    mostrarFiltros: mostrarFiltros,
-                    intervaloRefresco: intervaloSegundosConfig,
-                    tiempoImagenCarrusel: tiempoSecs
-                };
-
-                await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
-
-                const subColRef = collection(refResultadoDocActual, 'imagenes_cabecera');
-                const prevImgs = await getDocs(subColRef);
-                for (const docItem of prevImgs.docs) {
-                    await deleteDoc(docItem.ref);
-                }
-
-                for (let i = 0; i < listaImagenes.length; i++) {
-                    const imgDocRef = doc(subColRef, `img_${i + 1}`);
-                    await setDoc(imgDocRef, { url: listaImagenes[i], orden: i + 1 });
-                }
-
-                alert("✅ ¡Preferencias guardadas con éxito en Firebase!");
-            } catch (err) {
-                console.error("Error al guardar preferencias:", err);
-                alert("❌ Error al guardar las preferencias: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "💾 Guardar Preferencias";
-            }
-        });
+            contenedorQr.style.display = 'flex';
+            new QRCode(contenedorQr, {
+                text: urlQrResultados,
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
 
         function renderizarCarrusel() {
             const contenedor = document.getElementById('carrusel-contenedor');
@@ -744,7 +496,6 @@
 
             if (listaImagenes.length === 0) {
                 contenedor.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:#6c757d;">No hay imágenes cargadas en el carrusel</div>';
-                renderizarVistasPrevias();
                 return;
             }
 
@@ -769,63 +520,14 @@
 
             contenedor.querySelectorAll('.dot').forEach(dot => {
                 dot.addEventListener('click', (e) => {
-                    const idx = parseInt(e.target.getAttribute('data-idx'), 10);
-                    cambiarImagenCarrusel(idx);
+                    cambiarImagenCarrusel(parseInt(e.target.getAttribute('data-idx'), 10));
                 });
             });
-
-            renderizarVistasPrevias();
 
             if (listaImagenes.length > 1) {
                 intervaloCarrusel = setInterval(siguienteImagenCarrusel, tiempoCarruselMs);
             }
         }
-
-        function renderizarVistasPrevias() {
-            const containerPrevias = document.getElementById('container-previa-imagenes');
-            if (!containerPrevias) return;
-
-            let htmlPrevias = '';
-            listaImagenes.forEach((url, idx) => {
-                htmlPrevias += `
-                    <div class="item-imagen-previa">
-                        <img src="${url}" alt="Miniatura ${idx + 1}">
-                        <button class="btn-eliminar-img" title="Eliminar del carrusel" data-idx="${idx}">✕</button>
-                    </div>`;
-            });
-            containerPrevias.innerHTML = htmlPrevias;
-
-            containerPrevias.querySelectorAll('.btn-eliminar-img').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const idx = parseInt(e.target.getAttribute('data-idx'), 10);
-                    listaImagenes.splice(idx, 1);
-                    renderizarCarrusel();
-                });
-            });
-        }
-
-        document.getElementById('btnAgregarUrl').addEventListener('click', () => {
-            const input = document.getElementById('input-url-imagen');
-            if (!input) return;
-            const url = input.value.trim();
-            if (!url) return;
-            listaImagenes.push(url);
-            input.value = '';
-            renderizarCarrusel();
-        });
-
-        document.getElementById('input-file-imagen').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                listaImagenes.push(e.target.result);
-                event.target.value = '';
-                renderizarCarrusel();
-            };
-            reader.readAsDataURL(file);
-        });
 
         function cambiarImagenCarrusel(nuevoIndice) {
             const imagenes = document.querySelectorAll('.carrusel-imagen');
@@ -847,8 +549,7 @@
 
         function siguienteImagenCarrusel() {
             if (listaImagenes.length <= 1) return;
-            let siguienteIdx = (indiceImagenActual + 1) % listaImagenes.length;
-            cambiarImagenCarrusel(siguienteIdx);
+            cambiarImagenCarrusel((indiceImagenActual + 1) % listaImagenes.length);
         }
 
         async function cargarDatos() {
@@ -860,12 +561,6 @@
             try {
                 const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(urlCSVoJSON)}`;
                 const response = await fetch(apiEndpoint);
-                const contentType = response.headers.get('content-type');
-                
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('La API no devolvió un JSON válido.');
-                }
-
                 const resJSON = await response.json();
 
                 if (!response.ok || !resJSON.ok) {
@@ -874,9 +569,7 @@
 
                 if (resJSON.datos && resJSON.datos.length > 0) {
                     datosObjetos = resJSON.datos;
-                    const primerasColumnas = Object.keys(datosObjetos[0]);
-                    
-                    columnasGlobales = primerasColumnas;
+                    columnasGlobales = Object.keys(datosObjetos[0]);
 
                     if (columnasVisiblesUser.length === 0) {
                         columnasVisiblesUser = [...columnasGlobales];
@@ -890,173 +583,41 @@
                         ) || columnasGlobales[0];
                     }
 
-                    poblarSelectColumnasOrden();
-                    poblarChipsVisibilidad();
-                    poblarChipsOrdenSecuencia();
+                    const panelComp = document.getElementById('miPanelPrefs');
+                    if (panelComp && typeof panelComp.setColumnas === 'function') {
+                        panelComp.setColumnas(columnasGlobales, columnasVisiblesUser, ordenColumnasUser, columnaOrdenadaClave, ordenAscendente);
+                    }
                 }
 
                 renderizarTabla();
-
                 ultimaHoraActualizacion = new Date().toLocaleTimeString();
                 segundosRestantes = intervaloSegundosConfig;
                 cargando = false;
-
                 actualizarTextoEstado();
 
             } catch (error) {
                 console.error('Error al actualizar datos:', error);
                 cargando = false;
-
-                if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
+                if (contenedor) {
                     contenedor.innerHTML = `<p style="color:red; font-weight:bold;">Error en la carga: ${error.message}</p>`;
                 }
             }
         }
-
-        function poblarSelectColumnasOrden() {
-            const selectCol = document.getElementById('select-columna-orden');
-            if (!selectCol) return;
-
-            let htmlOptions = '';
-            columnasGlobales.forEach(clave => {
-                const selected = (clave === columnaOrdenadaClave) ? 'selected' : '';
-                htmlOptions += `<option value="${clave}" ${selected}>${clave}</option>`;
-            });
-            selectCol.innerHTML = htmlOptions;
-
-            const selectSentido = document.getElementById('select-sentido-orden');
-            if (selectSentido) {
-                selectSentido.value = ordenAscendente ? 'asc' : 'desc';
-            }
-        }
-
-        function poblarChipsVisibilidad() {
-            const container = document.getElementById('container-chips-visibles');
-            if (!container) return;
-
-            let html = '';
-            columnasGlobales.forEach(clave => {
-                const esActiva = columnasVisiblesUser.includes(clave);
-                html += `<div class="chip-btn ${esActiva ? 'activo' : ''}" data-clave="${clave}">
-                            ${esActiva ? '✓ ' : '+ '}${clave}
-                         </div>`;
-            });
-            container.innerHTML = html;
-
-            container.querySelectorAll('.chip-btn').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    toggleVisibilidadColumna(clave);
-                });
-            });
-        }
-
-        function poblarChipsOrdenSecuencia() {
-            const containerElegidos = document.getElementById('container-chips-orden-elegido');
-            const containerDisponibles = document.getElementById('container-chips-orden-disponibles');
-            if (!containerElegidos || !containerDisponibles) return;
-
-            let htmlElegidos = '';
-            ordenColumnasUser.forEach((clave, index) => {
-                htmlElegidos += `<div class="chip-btn orden-tag" data-clave="${clave}">
-                                    ${index + 1}. ${clave} ✕
-                                 </div>`;
-            });
-            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.8em; color:#888;">Ningún orden personalizado</span>';
-
-            containerElegidos.querySelectorAll('.chip-btn').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    removerDeOrden(clave);
-                });
-            });
-
-            let htmlDisponibles = '';
-            columnasGlobales.forEach(clave => {
-                if (!ordenColumnasUser.includes(clave)) {
-                    htmlDisponibles += `<div class="chip-btn" data-clave="${clave}">
-                                            + ${clave}
-                                        </div>`;
-                }
-            });
-            containerDisponibles.innerHTML = htmlDisponibles;
-
-            containerDisponibles.querySelectorAll('.chip-btn').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const clave = e.currentTarget.getAttribute('data-clave');
-                    agregarAOrden(clave);
-                });
-            });
-        }
-
-        function toggleVisibilidadColumna(clave) {
-            if (columnasVisiblesUser.includes(clave)) {
-                columnasVisiblesUser = columnasVisiblesUser.filter(c => c !== clave);
-            } else {
-                columnasVisiblesUser.push(clave);
-            }
-            poblarChipsVisibilidad();
-            renderizarTabla();
-        }
-
-        document.getElementById('btnMostrarTodasCols').addEventListener('click', () => {
-            columnasVisiblesUser = [...columnasGlobales];
-            poblarChipsVisibilidad();
-            renderizarTabla();
-        });
-
-        function agregarAOrden(clave) {
-            ordenColumnasUser.push(clave);
-            poblarChipsOrdenSecuencia();
-            renderizarTabla();
-        }
-
-        function removerDeOrden(clave) {
-            ordenColumnasUser = ordenColumnasUser.filter(c => c !== clave);
-            poblarChipsOrdenSecuencia();
-            renderizarTabla();
-        }
-
-        document.getElementById('btnRestablecerOrdenCols').addEventListener('click', () => {
-            ordenColumnasUser = [];
-            poblarChipsOrdenSecuencia();
-            renderizarTabla();
-        });
-
-        document.getElementById('select-columna-orden').addEventListener('change', (e) => {
-            columnaOrdenadaClave = e.target.value;
-            renderizarTabla();
-        });
-
-        document.getElementById('select-sentido-orden').addEventListener('change', (e) => {
-            ordenAscendente = (e.target.value === 'asc');
-            renderizarTabla();
-        });
-
-        document.getElementById('checkbox-mostrar-filtros').addEventListener('change', (e) => {
-            mostrarFiltros = e.target.checked;
-            renderizarTabla();
-        });
 
         function actualizarTextoEstado() {
             const container = document.getElementById('estado-chips-container');
             if (!container || cargando) return;
 
             const esDirecto = configuracionResultado?.directo !== false;
-            const modoTexto = esDirecto ? '⚡ En directo' : '⏸️ Pausado';
-            const claseDirecto = esDirecto ? 'directo' : '';
-
             container.innerHTML = `
-                <span class="estado-chip ${claseDirecto}">${modoTexto}</span>
+                <span class="estado-chip ${esDirecto ? 'directo' : ''}">${esDirecto ? '⚡ En directo' : '⏸️ Pausado'}</span>
                 <span class="estado-chip">🕒 Actualizado: ${ultimaHoraActualizacion}</span>
                 <span class="estado-chip proxima">⏱️ Próxima: ${segundosRestantes}s</span>
             `;
         }
 
         setInterval(() => {
-            if (cargando) return;
-            if (configuracionResultado && configuracionResultado.directo === false) return;
-
+            if (cargando || (configuracionResultado && configuracionResultado.directo === false)) return;
             segundosRestantes--;
             if (segundosRestantes <= 0) {
                 cargarDatos();
@@ -1069,10 +630,8 @@
             if (!tiempoStr) return -1;
             const str = tiempoStr.toString().trim();
             const partes = str.split(':').map(Number);
-
             if (partes.length === 3) return (partes[0] * 3600) + (partes[1] * 60) + partes[2];
             if (partes.length === 2) return (partes[0] * 60) + partes[1];
-            
             const num = parseFloat(str);
             return isNaN(num) ? -1 : num;
         }
@@ -1087,19 +646,14 @@
             }
 
             let columnasFiltradas = columnasGlobales.filter(clave => columnasVisiblesUser.includes(clave));
-
             let columnasFinales = [];
+            
             if (ordenColumnasUser.length > 0) {
                 ordenColumnasUser.forEach(clave => {
-                    if (columnasFiltradas.includes(clave)) {
-                        columnasFinales.push(clave);
-                    }
+                    if (columnasFiltradas.includes(clave)) columnasFinales.push(clave);
                 });
-
                 columnasFiltradas.forEach(clave => {
-                    if (!columnasFinales.includes(clave)) {
-                        columnasFinales.push(clave);
-                    }
+                    if (!columnasFinales.includes(clave)) columnasFinales.push(clave);
                 });
             } else {
                 columnasFinales = columnasFiltradas;
@@ -1127,36 +681,20 @@
                 datosProcesados.sort((a, b) => {
                     let valA = a[columnaOrdenadaClave] ?? '';
                     let valB = b[columnaOrdenadaClave] ?? '';
-
                     let comp = 0;
                     if (esColumnaTiempo) {
-                        const segA = tiempoASegundos(valA);
-                        const segB = tiempoASegundos(valB);
-                        comp = segA - segB;
+                        comp = tiempoASegundos(valA) - tiempoASegundos(valB);
                     } else {
-                        const numA = parseFloat(valA);
-                        const numB = parseFloat(valB);
-                        if (!isNaN(numA) && !isNaN(numB)) {
-                            comp = numA - numB;
-                        } else {
-                            comp = valA.toString().localeCompare(valB.toString());
-                        }
+                        let numA = parseFloat(valA), numB = parseFloat(valB);
+                        comp = (!isNaN(numA) && !isNaN(numB)) ? numA - numB : valA.toString().localeCompare(valB.toString());
                     }
-
                     return ordenAscendente ? comp : -comp;
                 });
             }
 
-            // Aplicación de los colores requeridos en la tabla:
-            // - Fondo de la cabecera (th): colorTextoEvento
-            // - Color de fuente de la cabecera (th): colorFondoBody
             let html = `<table><thead><tr style="background-color: ${colorTextoEvento};">`;
-
             columnasFinales.forEach(clave => {
-                let indicador = '';
-                if (clave === columnaOrdenadaClave) {
-                    indicador = ordenAscendente ? ' ▲' : ' ▼';
-                }
+                let indicador = (clave === columnaOrdenadaClave) ? (ordenAscendente ? ' ▲' : ' ▼') : '';
                 html += `<th data-clave="${clave}" style="background-color: ${colorFondoBody}; color: ${colorTextoEvento};">
                             ${clave}<span class="indicador-orden">${indicador}</span>
                          </th>`;
@@ -1164,23 +702,14 @@
             html += '</tr>';
 
             if (mostrarFiltros) {
-                html += '<tr style="background-color: ${colorTextoEvento}; color: ${colorFondoBody};">';
+                html += '<tr>';
                 columnasFinales.forEach(clave => {
-                    const valActual = filtrosPorColumna[clave] || '';
-                    html += `<th>
-                                <input type="text" 
-                                       id="filtro-col-${clave}"
-                                       data-clave="${clave}"
-                                       class="input-filtro" 
-                                       placeholder="Filtrar..." 
-                                       value="${valActual}">
-                             </th>`;
+                    html += `<th><input type="text" data-clave="${clave}" class="input-filtro" placeholder="Filtrar..." value="${filtrosPorColumna[clave] || ''}"></th>`;
                 });
                 html += '</tr>';
             }
 
             html += '</thead><tbody>';
-
             datosProcesados.forEach(item => {
                 html += '<tr>';
                 columnasFinales.forEach(clave => {
@@ -1188,8 +717,8 @@
                 });
                 html += '</tr>';
             });
-
             html += '</tbody></table>';
+
             contenedor.innerHTML = html;
 
             contenedor.querySelectorAll('th[data-clave]').forEach(th => {
@@ -1201,13 +730,11 @@
                         columnaOrdenadaClave = clave;
                         ordenAscendente = true;
                     }
-                    poblarSelectColumnasOrden();
                     renderizarTabla();
                 });
             });
 
             contenedor.querySelectorAll('.input-filtro').forEach(input => {
-                input.addEventListener('click', (e) => e.stopPropagation());
                 input.addEventListener('input', (e) => {
                     const clave = e.target.getAttribute('data-clave');
                     inputFocoClave = clave;
@@ -1218,7 +745,7 @@
             });
 
             if (mostrarFiltros && inputFocoClave) {
-                const inputActivo = document.getElementById(`filtro-col-${inputFocoClave}`);
+                const inputActivo = contenedor.querySelector(`input[data-clave="${inputFocoClave}"]`);
                 if (inputActivo) {
                     inputActivo.focus();
                     inputActivo.setSelectionRange(posicionCursor, posicionCursor);
