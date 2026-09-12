@@ -96,6 +96,7 @@ function seleccionarEvento(id) {
   document.getElementById("evFecha").value = data.fecha || "";
   document.getElementById("evHora").value = data.hora || "";
   document.getElementById("evColor").value = data.color || "#5da999";
+  document.getElementById("evColorTexto").value = data.colorTexto || "#212529";
   document.getElementById("evDesc").value = data.descripcion || "";
   document.getElementById("evImagenUrl").value = data.imagen || "";
   document.getElementById("evLat").value = data.latitud || "";
@@ -123,6 +124,7 @@ async function guardarEvento(e) {
     fecha: document.getElementById("evFecha").value,
     hora: document.getElementById("evHora").value,
     color: document.getElementById("evColor").value,
+    colorTexto: document.getElementById("evColorTexto").value,
     descripcion: document.getElementById("evDesc").value.trim(),
     imagen: document.getElementById("evImagenUrl").value.trim(),
     latitud: document.getElementById("evLat").value.trim(),

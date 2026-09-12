@@ -45,12 +45,6 @@
             flex-shrink: 0;
         }
 
-        .header-container h2 {
-            margin: 0;
-            color: #212529;
-            font-size: 1.1em;
-        }
-
         .header-actions {
             display: flex;
             gap: 8px;
@@ -305,7 +299,6 @@
             gap: 6px;
         }
 
-        /* Modificación para que cada registro ocupe 1 o 2 líneas compactas */
         .resultado-card {
             background: #ffffff;
             border: 1px solid #dee2e6;
@@ -373,7 +366,6 @@
         #tituloResultado {
             font-size: 1.15em;
             margin: 4px 0 4px 0;
-            color: #fffaca;
         }
     </style>
 </head>
@@ -416,6 +408,11 @@
                 <div class="campo-grupo">
                     <label for="input-intervalo-refresco">Refresco (segundos):</label>
                     <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="input-tiempo-carrusel">Tiempo imagen carrusel (segundos):</label>
+                    <input type="number" id="input-tiempo-carrusel" class="input-numero" min="1" max="60" value="2">
                 </div>
 
                 <div class="campo-grupo">
@@ -519,10 +516,13 @@
         let urlCSVoJSON = '';
         let refResultadoDocActual = null;
 
-        const TIEMPO_CARRUSEL_MS = 2000;
+        let tiempoCarruselMs = 2000; // Por defecto 2 segundos
         let indiceImagenActual = 0;
         let intervaloCarrusel = null;
         let listaImagenes = [];
+
+        let colorFondoBody = '#f8f9fa';
+        let colorTextoEvento = '#212529';
 
         let intervaloSegundosConfig = 30; 
         let segundosRestantes = 30;
@@ -554,10 +554,17 @@
                             const datosEvento = eventoDocSnap.data();
                             nombreEvento += datosEvento.nombre || '';
                             
-                            const colorEvento = datosEvento.color;
-                            if (colorEvento) {
-                                document.getElementById('kibuu-canvas').style.backgroundColor = colorEvento;
+                            // Aplicar color de fondo del evento al body / screen-canvas
+                            if (datosEvento.color) {
+                                colorFondoBody = datosEvento.color;
+                                document.getElementById('kibuu-canvas').style.backgroundColor = colorFondoBody;
                             }
+                            // Guardar color de texto del evento
+                            if (datosEvento.colorTexto) {
+                                colorTextoEvento = datosEvento.colorTexto;
+                            }
+                            // Aplicar color de texto al título
+                            document.getElementById('tituloResultado').style.color = colorTextoEvento;
                         }
 
                         refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
@@ -577,7 +584,7 @@
                         const docEncontrado = querySnap.docs.find(d => d.id === idResultadoParam);
                         if (docEncontrado) {
                             docSnap = docEncontrado;
-                            refResultadoDocActual = docEncontrado.ref;
+                            refResultadoDocActual = docSnap.ref;
                         }
                     }
                 } else {
@@ -615,6 +622,14 @@
                 document.getElementById('input-intervalo-refresco').value = intervaloSegundosConfig;
                 segundosRestantes = intervaloSegundosConfig;
 
+                // Cargar tiempo de carrusel (por defecto 2 segundos)
+                if (configuracionResultado.tiempoImagenCarrusel) {
+                    tiempoCarruselMs = parseInt(configuracionResultado.tiempoImagenCarrusel, 10) * 1000;
+                    document.getElementById('input-tiempo-carrusel').value = configuracionResultado.tiempoImagenCarrusel;
+                } else {
+                    document.getElementById('input-tiempo-carrusel').value = 2;
+                }
+
                 if (configuracionResultado.columnasMostrar && Array.isArray(configuracionResultado.columnasMostrar)) {
                     columnasVisiblesUser = configuracionResultado.columnasMostrar;
                 }
@@ -650,6 +665,14 @@
             }
         });
 
+        document.getElementById('input-tiempo-carrusel').addEventListener('change', (e) => {
+            const val = parseInt(e.target.value, 10);
+            if (!isNaN(val) && val >= 1) {
+                tiempoCarruselMs = val * 1000;
+                renderizarCarrusel();
+            }
+        });
+
         document.getElementById('btnGuardarPreferencias').addEventListener('click', async () => {
             if (!refResultadoDocActual) return alert("Referencia no válida.");
 
@@ -658,13 +681,15 @@
             btn.textContent = "⏳ Guardando...";
 
             try {
+                const tiempoSecs = parseInt(document.getElementById('input-tiempo-carrusel').value, 10) || 2;
                 const datosAActualizar = {
                     columnasMostrar: columnasVisiblesUser,
                     ordenVisual: ordenColumnasUser,
                     columnaOrden: columnaOrdenadaClave,
                     sentidoOrden: ordenAscendente ? 'asc' : 'desc',
                     mostrarFiltros: mostrarFiltros,
-                    intervaloRefresco: intervaloSegundosConfig
+                    intervaloRefresco: intervaloSegundosConfig,
+                    tiempoImagenCarrusel: tiempoSecs
                 };
 
                 await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
@@ -727,7 +752,7 @@
             renderizarVistasPrevias();
 
             if (listaImagenes.length > 1) {
-                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, tiempoCarruselMs);
             }
         }
 
@@ -786,7 +811,7 @@
 
             if (intervaloCarrusel) clearInterval(intervaloCarrusel);
             if (listaImagenes.length > 1) {
-                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, tiempoCarruselMs);
             }
         }
 
@@ -966,7 +991,6 @@
             return isNaN(num) ? -1 : num;
         }
 
-        /* Renderizado adaptado para mostrar los registros en formato compacto de 1 o 2 líneas */
         function renderizarTabla() {
             const contenedor = document.getElementById('contenedor-tabla');
             if (!contenedor) return;
@@ -1027,10 +1051,12 @@
 
             html += '<div class="cards-container">';
             datosProcesados.forEach(item => {
-                html += '<div class="resultado-card">';
+                // Aplicación de inversión de color solicitada: 
+                // Fondo de tarjeta con el color de texto del evento, y texto de tarjeta con el color de fondo del body.
+                html += `<div class="resultado-card" style="background-color: ${colorTextoEvento}; color: ${colorFondoBody};">`;
                 columnasFinales.forEach((clave, idx) => {
                     const separador = (idx > 0) ? ' • ' : '';
-                    html += `<span class="card-value-item">${separador}${item[clave] ?? ''}</span>`;
+                    html += `<span class="card-value-item" style="color: ${colorFondoBody};">${separador}${item[clave] ?? ''}</span>`;
                 });
                 html += '</div>';
             });

@@ -34,7 +34,7 @@
 
         /* Sección Preferencias (Protegida) */
         #panel-preferencias {
-            display: none; /* Oculto por defecto hasta verificar autenticación */
+            display: none; 
             background: #ffffff;
             padding: 20px;
             border-radius: 8px;
@@ -60,14 +60,16 @@
             border-radius: 8px;
             overflow: hidden;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .carrusel-imagen {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center center;
             position: absolute;
             top: 0;
             left: 0;
@@ -167,10 +169,6 @@
             line-height: 1;
         }
 
-        .btn-eliminar-img:hover {
-            background: #dc3545;
-        }
-
         /* Panel de Configuración */
         .panel-columnas-container {
             background: #f8f9fa;
@@ -213,10 +211,6 @@
             transition: all 0.2s ease;
         }
 
-        .chip-btn:hover {
-            border-color: #0d6efd;
-        }
-
         .chip-btn.activo {
             background-color: #0d6efd;
             color: white;
@@ -255,11 +249,7 @@
             cursor: pointer;
         }
 
-        .input-columnas {
-            flex: 1;
-        }
-
-        .select-orden {
+        .input-columnas, .select-orden {
             flex: 1;
         }
 
@@ -293,12 +283,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.85em;
-            transition: background-color 0.2s;
             white-space: nowrap;
-        }
-
-        .btn-accion:hover {
-            background-color: #0b5ed7;
         }
 
         .btn-guardar {
@@ -311,15 +296,10 @@
             font-size: 0.9em;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background-color 0.2s;
-        }
-
-        .btn-guardar:hover {
-            background-color: #157347;
         }
 
         .btn-logout {
-            display: none; /* Oculto por defecto hasta autenticarse */
+            display: none;
             padding: 8px 14px;
             background-color: #dc3545;
             color: white;
@@ -328,11 +308,6 @@
             cursor: pointer;
             font-size: 0.85em;
             font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .btn-logout:hover {
-            background-color: #bb2d3b;
         }
 
         .btn-limpiar {
@@ -343,21 +318,13 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.75em;
-            transition: background-color 0.2s;
             align-self: flex-start;
-        }
-
-        .btn-limpiar:hover {
-            background-color: #5a6268;
         }
 
         /* Tabla */
         #contenedor-tabla { 
             width: 100%; 
             overflow-x: auto; 
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             padding: 16px;
             box-sizing: border-box;
         }
@@ -374,16 +341,10 @@
         }
 
         th { 
-            background-color: #0d6efd; 
-            color: white; 
             font-weight: 600;
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
-        }
-
-        th:hover {
-            background-color: #0b5ed7;
         }
 
         .input-filtro {
@@ -397,13 +358,7 @@
         }
 
         tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .estado {
-            font-size: 0.9em;
-            color: #6c757d;
-            font-weight: 500;
+            background-color: rgba(0, 0, 0, 0.02);
         }
 
         .estado-chips-container {
@@ -444,7 +399,7 @@
         }
     </style>
 </head>
-<body>
+<body id="page-body">
 
     <div class="header-container">
         <div class="header-actions">
@@ -467,20 +422,14 @@
                 <div class="campo-grupo">
                     <label for="input-url-imagen">Añadir imagen por URL:</label>
                     <div class="input-group">
-                        <input type="text" 
-                               id="input-url-imagen" 
-                               class="input-columnas" 
-                               placeholder="https://ejemplo.com/mi-imagen.jpg">
+                        <input type="text" id="input-url-imagen" class="input-columnas" placeholder="https://ejemplo.com/mi-imagen.jpg">
                         <button class="btn-accion" id="btnAgregarUrl">Añadir URL</button>
                     </div>
                 </div>
 
                 <div class="campo-grupo">
                     <label for="input-file-imagen">Añadir desde tu dispositivo:</label>
-                    <input type="file" 
-                           id="input-file-imagen" 
-                           class="input-file-custom" 
-                           accept="image/*">
+                    <input type="file" id="input-file-imagen" class="input-file-custom" accept="image/*">
                 </div>
             </div>
 
@@ -493,13 +442,13 @@
         <!-- PANEL DE CONFIGURACIÓN -->
         <div class="panel-columnas-container">
             <div class="campo-grupo">
-                <label for="input-intervalo-refresco">Intervalo de refresco (en segundos):</label>
-                <input type="number" 
-                       id="input-intervalo-refresco" 
-                       class="input-numero" 
-                       min="5" 
-                       max="600" 
-                       value="30">
+                <label for="input-intervalo-refresco">Intervalo de refresco general (en segundos):</label>
+                <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
+            </div>
+
+            <div class="campo-grupo">
+                <label for="input-tiempo-carrusel">Tiempo de cada imagen en el carrusel (en segundos):</label>
+                <input type="number" id="input-tiempo-carrusel" class="input-numero" min="1" max="60" value="2">
             </div>
 
             <div class="campo-grupo">
@@ -509,7 +458,7 @@
             </div>
 
             <div class="campo-grupo">
-                <label>Orden de visualización horizontal (haz clic para añadir a la secuencia):</label>
+                <label>Orden de visualización horizontal:</label>
                 <div id="container-chips-orden-elegido" class="chips-container"></div>
                 <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
                 <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden inicial</button>
@@ -534,7 +483,6 @@
             </div>
         </div>
 
-        <!-- BOTÓN GUARDAR PREFERENCIAS -->
         <div>
             <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
         </div>
@@ -553,9 +501,6 @@
         import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, collectionGroup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // ==========================================
-        // VERIFICACIÓN DE AUTENTICACIÓN Y LOGOUT
-        // ==========================================
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             const panelPrefs = document.getElementById('panel-preferencias');
@@ -579,9 +524,6 @@
             }
         });
 
-        // ==========================================
-        // PARÁMETROS URL Y VARIABLES DE REFERENCIA
-        // ==========================================
         const urlParams = new URLSearchParams(window.location.search);
         const idResultadoParam = urlParams.get('resultado') || urlParams.get('id');
         const eventoIdParam = urlParams.get('evento');
@@ -590,13 +532,13 @@
         let urlCSVoJSON = '';
         let refResultadoDocActual = null;
 
-        // ==========================================
-        // ESTADO GLOBAL
-        // ==========================================
-        const TIEMPO_CARRUSEL_MS = 2000;
+        let tiempoCarruselMs = 2000; // Por defecto 2 segundos
         let indiceImagenActual = 0;
         let intervaloCarrusel = null;
         let listaImagenes = [];
+
+        let colorFondoBody = '#f8f9fa';
+        let colorTextoEvento = '#212529';
 
         let intervaloSegundosConfig = 30; 
         let segundosRestantes = 30;
@@ -615,22 +557,31 @@
         let inputFocoClave = null;
         let posicionCursor = 0;
 
-        // ==========================================
-        // CONSULTA DE CONFIGURACIÓN DE FIREBASE
-        // ==========================================
         async function obtenerConfiguracionFirebase() {
-            const estado = document.getElementById('estado');
             try {
                 let docSnap = null;
                 let nombreEvento = 'Resultados: ';
                 if (idResultadoParam) {
                     if (eventoIdParam) {
-
                         const eventoDocRef = doc(db, 'eventos', eventoIdParam);
                         const eventoDocSnap = await getDoc(eventoDocRef);
                         
                         if (eventoDocSnap.exists()) {
-                            nombreEvento += eventoDocSnap.data().nombre || '';
+                            const datosEvento = eventoDocSnap.data();
+                            nombreEvento += datosEvento.nombre || '';
+                            
+                            // Color de fondo del body desde el evento
+                            if (datosEvento.color) {
+                                colorFondoBody = datosEvento.color;
+                                document.getElementById('page-body').style.backgroundColor = colorFondoBody;
+                            }
+                            // Color de texto del evento
+                            if (datosEvento.colorTexto) {
+                                colorTextoEvento = datosEvento.colorTexto;
+                            }
+                            // Título con el color de texto del evento
+                            const titEl = document.getElementById('tituloResultado');
+                            if (titEl) titEl.style.color = colorTextoEvento;
                         }
 
                         refResultadoDocActual = doc(db, 'eventos', eventoIdParam, 'resultados', idResultadoParam);
@@ -650,7 +601,7 @@
                         const docEncontrado = querySnap.docs.find(d => d.id === idResultadoParam);
                         if (docEncontrado) {
                             docSnap = docEncontrado;
-                            refResultadoDocActual = docEncontrado.ref;
+                            refResultadoDocActual = docSnap.ref;
                         }
                     }
                 } else {
@@ -663,16 +614,16 @@
                 }
 
                 if (!docSnap || !docSnap.exists()) {
-                    throw new Error(`No se encontró la configuración de resultados. Asegúrate de acceder mediante parámetros válidos.`);
+                    throw new Error(`No se encontró la configuración de resultados.`);
                 }
 
                 configuracionResultado = docSnap.data();
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
-                document.getElementById('tituloResultado').textContent = nombreEvento + " " + configuracionResultado.nombre || 'Resultado';
+                const titEl = document.getElementById('tituloResultado');
+                if(titEl) titEl.textContent = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
                 document.title = configuracionResultado.nombre || 'Resultados';
 
-                // Cargar imágenes de la subcolección interna imagenes_cabecera
                 const imgsSnap = await getDocs(collection(refResultadoDocActual, 'imagenes_cabecera'));
                 listaImagenes = [];
                 imgsSnap.forEach(imgDoc => {
@@ -683,12 +634,21 @@
                     listaImagenes = Array.isArray(configuracionResultado.imagenes) ? configuracionResultado.imagenes : [];
                 }
 
-                // Cargar tiempo de refresco
                 if (configuracionResultado.intervaloRefresco) {
                     intervaloSegundosConfig = parseInt(configuracionResultado.intervaloRefresco, 10) || 30;
                 }
-                document.getElementById('input-intervalo-refresco').value = intervaloSegundosConfig;
+                const inputRefresco = document.getElementById('input-intervalo-refresco');
+                if(inputRefresco) inputRefresco.value = intervaloSegundosConfig;
                 segundosRestantes = intervaloSegundosConfig;
+
+                // Cargar tiempo de carrusel (por defecto 2 segundos)
+                const inputCarrusel = document.getElementById('input-tiempo-carrusel');
+                if (configuracionResultado.tiempoImagenCarrusel) {
+                    tiempoCarruselMs = parseInt(configuracionResultado.tiempoImagenCarrusel, 10) * 1000;
+                    if(inputCarrusel) inputCarrusel.value = configuracionResultado.tiempoImagenCarrusel;
+                } else {
+                    if(inputCarrusel) inputCarrusel.value = 2;
+                }
 
                 if (configuracionResultado.columnasMostrar && Array.isArray(configuracionResultado.columnasMostrar)) {
                     columnasVisiblesUser = configuracionResultado.columnasMostrar;
@@ -704,14 +664,14 @@
                 }
                 if (typeof configuracionResultado.mostrarFiltros === 'boolean') {
                     mostrarFiltros = configuracionResultado.mostrarFiltros;
-                    document.getElementById('checkbox-mostrar-filtros').checked = mostrarFiltros;
+                    const chkFiltros = document.getElementById('checkbox-mostrar-filtros');
+                    if(chkFiltros) chkFiltros.checked = mostrarFiltros;
                 }
 
                 renderizarCarrusel();
                 return true;
             } catch (err) {
                 console.error("Error al obtener la configuración desde Firebase:", err);
-                if (estado) estado.textContent = 'Error al cargar la configuración de Firebase.';
                 document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-weight:bold;">${err.message}</p>`;
                 return false;
             }
@@ -726,9 +686,14 @@
             }
         });
 
-        // ==========================================
-        // GUARDAR PREFERENCIAS EN FIRESTORE
-        // ==========================================
+        document.getElementById('input-tiempo-carrusel').addEventListener('change', (e) => {
+            const val = parseInt(e.target.value, 10);
+            if (!isNaN(val) && val >= 1) {
+                tiempoCarruselMs = val * 1000;
+                renderizarCarrusel();
+            }
+        });
+
         document.getElementById('btnGuardarPreferencias').addEventListener('click', async () => {
             if (!refResultadoDocActual) return alert("No hay una referencia válida a la base de datos.");
 
@@ -737,13 +702,15 @@
             btn.textContent = "⏳ Guardando...";
 
             try {
+                const tiempoSecs = parseInt(document.getElementById('input-tiempo-carrusel').value, 10) || 2;
                 const datosAActualizar = {
                     columnasMostrar: columnasVisiblesUser,
                     ordenVisual: ordenColumnasUser,
                     columnaOrden: columnaOrdenadaClave,
                     sentidoOrden: ordenAscendente ? 'asc' : 'desc',
                     mostrarFiltros: mostrarFiltros,
-                    intervaloRefresco: intervaloSegundosConfig
+                    intervaloRefresco: intervaloSegundosConfig,
+                    tiempoImagenCarrusel: tiempoSecs
                 };
 
                 await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
@@ -769,9 +736,6 @@
             }
         });
 
-        // ==========================================
-        // LÓGICA DEL CARRUSEL E IMÁGENES
-        // ==========================================
         function renderizarCarrusel() {
             const contenedor = document.getElementById('carrusel-contenedor');
             if (!contenedor) return;
@@ -813,7 +777,7 @@
             renderizarVistasPrevias();
 
             if (listaImagenes.length > 1) {
-                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, tiempoCarruselMs);
             }
         }
 
@@ -877,7 +841,7 @@
 
             if (intervaloCarrusel) clearInterval(intervaloCarrusel);
             if (listaImagenes.length > 1) {
-                intervaloCarrusel = setInterval(siguienteImagenCarrusel, TIEMPO_CARRUSEL_MS);
+                intervaloCarrusel = setInterval(siguienteImagenCarrusel, tiempoCarruselMs);
             }
         }
 
@@ -887,17 +851,11 @@
             cambiarImagenCarrusel(siguienteIdx);
         }
 
-        // ==========================================
-        // CARGA DE DATOS DESDE LA API CSV-TO-JSON
-        // ==========================================
         async function cargarDatos() {
             if (cargando || !urlCSVoJSON) return;
             cargando = true;
 
             const contenedor = document.getElementById('contenedor-tabla');
-            const estado = document.getElementById('estado');
-
-            if (estado) estado.textContent = 'Actualizando...';
 
             try {
                 const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(urlCSVoJSON)}`;
@@ -952,9 +910,6 @@
                 if (contenedor && (!contenedor.querySelector('table') || contenedor.innerHTML.includes('Error'))) {
                     contenedor.innerHTML = `<p style="color:red; font-weight:bold;">Error en la carga: ${error.message}</p>`;
                 }
-                if (estado) {
-                    estado.textContent = 'Error al actualizar. Reintentando en breve...';
-                }
             }
         }
 
@@ -1007,7 +962,7 @@
                                     ${index + 1}. ${clave} ✕
                                  </div>`;
             });
-            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.8em; color:#888;">Ningún orden personalizado (usando orden nativo)</span>';
+            containerElegidos.innerHTML = htmlElegidos || '<span style="font-size:0.8em; color:#888;">Ningún orden personalizado</span>';
 
             containerElegidos.querySelectorAll('.chip-btn').forEach(chip => {
                 chip.addEventListener('click', (e) => {
@@ -1192,21 +1147,24 @@
                 });
             }
 
-            let html = '<table><thead><tr>';
+            // Aplicación de los colores requeridos en la tabla:
+            // - Fondo de la cabecera (th): colorTextoEvento
+            // - Color de fuente de la cabecera (th): colorFondoBody
+            let html = `<table><thead><tr style="background-color: ${colorTextoEvento};">`;
 
             columnasFinales.forEach(clave => {
                 let indicador = '';
                 if (clave === columnaOrdenadaClave) {
                     indicador = ordenAscendente ? ' ▲' : ' ▼';
                 }
-                html += `<th data-clave="${clave}">
+                html += `<th data-clave="${clave}" style="background-color: ${colorFondoBody}; color: ${colorTextoEvento};">
                             ${clave}<span class="indicador-orden">${indicador}</span>
                          </th>`;
             });
             html += '</tr>';
 
             if (mostrarFiltros) {
-                html += '<tr>';
+                html += '<tr style="background-color: ${colorTextoEvento}; color: ${colorFondoBody};">';
                 columnasFinales.forEach(clave => {
                     const valActual = filtrosPorColumna[clave] || '';
                     html += `<th>
@@ -1226,7 +1184,7 @@
             datosProcesados.forEach(item => {
                 html += '<tr>';
                 columnasFinales.forEach(clave => {
-                    html += `<td>${item[clave] ?? ''}</td>`;
+                    html += `<td style="border: 1px solid ${colorFondoBody}; background-color: ${colorTextoEvento}; color: ${colorFondoBody};">${item[clave] ?? ''}</td>`;
                 });
                 html += '</tr>';
             });
@@ -1268,9 +1226,6 @@
             }
         }
 
-        // ==========================================
-        // INICIALIZACIÓN DE LA PÁGINA
-        // ==========================================
         async function init() {
             const exito = await obtenerConfiguracionFirebase();
             if (exito) {

@@ -167,7 +167,20 @@ export function cargarResultadosEvento(eventoId) {
         document.getElementById("resFecha").value = data.fecha || "";
         document.getElementById("resTipo").value = data.tipo || "CSV";
         document.getElementById("resEnlace").value = data.enlace || "";
+        document.getElementById("resTiempoCarrusel").value = data.tiempoImagenCarrusel || 2; // <-- Añadido
 
+// Al guardar resultado
+const resData = {
+  nombre: document.getElementById("resNombre").value.trim(),
+  fecha: document.getElementById("resFecha").value,
+  tipo: document.getElementById("resTipo").value,
+  enlace: document.getElementById("resEnlace").value.trim(),
+  columnasMostrar: adminColumnasVisibles,
+  ordenVisual: adminOrdenColumnas,
+  directo: true,
+  intervaloRefresco: 30,
+  tiempoImagenCarrusel: parseInt(document.getElementById("resTiempoCarrusel").value, 10) || 2 // <-- Añadido
+};
         adminColumnasGlobales = Array.isArray(data.columnasMostrar) ? [...data.columnasMostrar] : [];
         adminColumnasVisibles = Array.isArray(data.columnasMostrar) ? [...data.columnasMostrar] : [];
         adminOrdenColumnas = Array.isArray(data.ordenVisual) ? [...data.ordenVisual] : [];
@@ -206,7 +219,8 @@ async function guardarResultado(e) {
     columnasMostrar: adminColumnasVisibles,
     ordenVisual: adminOrdenColumnas,
     directo: true,
-    intervaloRefresco: 30
+    intervaloRefresco: 30,
+    tiempoImagenCarrusel: parseInt(document.getElementById("resTiempoCarrusel").value, 10) || 2
   };
 
   try {

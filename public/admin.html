@@ -102,7 +102,15 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Color Primario del Evento:</label>
                 <div class="flex items-center gap-2">
                   <input type="color" id="evColor" value="#5da999" class="h-10 w-16 border border-gray-300 rounded-md p-1 cursor-pointer">
-                  <span class="text-xs text-gray-500">Color personalizado para evento.html</span>
+                  <span class="text-xs text-gray-500">Color primario</span>
+                </div>
+              </div>
+              <!-- En el formulario de Eventos (tabDetalles), añade este campo junto al color primario -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Color Secundario:</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="evColorTexto" value="#212529" class="h-10 w-16 border border-gray-300 rounded-md p-1 cursor-pointer">
+                  <span class="text-xs text-gray-500">Color secundario</span>
                 </div>
               </div>
               <div>
@@ -221,7 +229,6 @@
             <button id="btnNuevaSeccionResultado" class="btn-primary text-xs">➕ Añadir Sección Resultados</button>
           </div>
           <!-- FORMULARIO RESULTADOS -->
-          <!-- FORMULARIO RESULTADOS -->
           <form id="resultadoForm" class="hidden bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-4">
             <h4 id="resFormTitle" class="font-bold text-gray-900 text-base">Configurar Sección de Resultado</h4>
             <input type="hidden" id="resIdOriginal">
@@ -281,6 +288,10 @@
             <div class="flex gap-2 pt-2">
               <button type="submit" class="btn-primary text-xs py-2">Guardar Sección de Resultado</button>
               <button type="button" id="btnCancelarResultado" class="btn-secondary text-xs py-2">Cancelar</button>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 mb-1">Tiempo imagen en carrusel (segundos):</label>
+              <input type="number" id="resTiempoCarrusel" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" min="1" max="60" value="2" required>
             </div>
           </form>
 
