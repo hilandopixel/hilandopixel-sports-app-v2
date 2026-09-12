@@ -1,35 +1,27 @@
-import { db } from '../../firebase.config.js';
-import { collection, doc, onSnapshot, setDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { eventoActualId, generarSlugTexto } from './admin-eventos.js';
+import { db } from '../../../firebase.config.js';
+import { collection, doc, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { eventoActualId } from './admin-eventos.js';
 
 let unsubResultadosAdmin = null;
 
 export function initAdminResultados() {
   const panelComp = document.getElementById("miPanelPrefs");
 
-  // Slug automático al escribir el nombre del resultado dentro del componente
-  if (panelComp) {
-    panelComp.shadowRoot.addEventListener("input", (e) => {
-      if (e.target.id === "input-res-nombre" && eventoActualId) {
-        const shadow = panelComp.shadowRoot;
-        const idOriginal = shadow.getElementById("input-res-slug").value; // Puedes usar un campo oculto o el slug actual
-        const slugRes = generarSlugTexto(e.target.value);
-        if (!idOriginal.includes("-")) { // Si es un registro nuevo
-            shadow.getElementById("input-res-slug").value = slugRes ? `${eventoActualId}-${slugRes}` : eventoActualId;
-        }
-      }
-    });
-  }
-
   // Botón para crear nueva sección
-  document.getElementById("btnNuevaSeccionResultado").addEventListener("click", () => {
+  document.getElementById("btnNuevaSeccionResultado").addEventListener("click", async () => {
+    const panelComp = document.getElementById("miPanelPrefs");
     if (panelComp) {
+      await customElements.whenDefined('panel-preferencias-component');
       panelComp.setDatosIniciales({
-        slug: eventoActualId ? `${eventoActualId}-` : ''
+        slug: eventoActualId ? `${eventoActualId}-` : '',
+        eventoId: eventoActualId
       }, []);
-      panelComp.setColumnas([], [], [], '', true);
+      if (typeof panelComp.setColumnas === 'function') {
+          panelComp.setColumnas([], [], [], '', true);
+      }
     }
     document.getElementById("contenedorFormularioResultado").classList.remove("hidden");
+    document.getElementById("contenedorFormularioResultado").scrollIntoView({ behavior: 'smooth' });
   });
 
   // Botón cancelar
@@ -37,39 +29,9 @@ export function initAdminResultados() {
     document.getElementById("contenedorFormularioResultado").classList.add("hidden");
   });
 
-  // Escuchar cuando el componente emita el evento de guardar
-  document.addEventListener("guardar-preferencias", async (e) => {
-    e.stopPropagation();
-    if (!eventoActualId) return;
-
-    const datos = e.detail;
-    const nuevoId = generarSlugTexto(datos.slug);
-    if (!nuevoId) return alert("El ID del resultado es obligatorio.");
-
-    const resData = {
-      nombre: datos.nombre,
-      fecha: datos.fecha,
-      tipo: datos.tipo,
-      enlace: datos.enlace,
-      url_qr_resultados: datos.url_qr_resultados,
-      columnasMostrar: datos.columnasMostrar,
-      ordenVisual: datos.ordenVisual,
-      columnaOrden: datos.columnaOrden,
-      sentidoOrden: datos.sentidoOrden,
-      mostrarFiltros: datos.mostrarFiltros,
-      directo: true,
-      intervaloRefresco: datos.intervaloRefresco,
-      tiempoImagenCarrusel: datos.tiempoImagenCarrusel
-    };
-
-    try {
-      const nuevoDocRef = doc(db, "eventos", eventoActualId, "resultados", nuevoId);
-      await setDoc(nuevoDocRef, resData, { merge: true });
-      alert("Sección de resultados guardada correctamente.");
-      document.getElementById("contenedorFormularioResultado").classList.add("hidden");
-    } catch (err) {
-      alert("Error guardando el resultado: " + err.message);
-    }
+  // Escuchar cuando el componente termine de guardar por sí mismo en Firebase
+  document.addEventListener("resultado-guardado", () => {
+    document.getElementById("contenedorFormularioResultado").classList.add("hidden");
   });
 }
 
@@ -96,7 +58,7 @@ export function cargarResultadosEvento(eventoId) {
         <td class="p-3 font-mono text-xs text-gray-500">${resId}</td>
         <td class="p-3 text-right space-x-1">
             <button class="btn-secondary text-xs py-1 px-2 btn-generar-qr" data-id="${resId}" data-nombre="${data.nombre}" data-urlqr="${data.url_qr_resultados || ''}">Generar QR</button>
-            <a href="resultados-pantalla.html?evento=${eventoId}&resultado=${resId}" target="_blank" class="btn-primary text-xs py-1 px-2 inline-block">Ver enlace</a>
+            <a href="resultados-pantalla?evento=${eventoId}&resultado=${resId}" target="_blank" class="btn-primary text-xs py-1 px-2 inline-block">Ver enlace</a>
             <button class="btn-secondary text-xs py-1 px-2 btn-editar-res" data-id="${resId}">Editar</button>
             <button class="btn-danger text-xs py-1 px-2 btn-del-res" data-id="${resId}">Borrar</button>
         </td>
@@ -112,29 +74,31 @@ export function cargarResultadosEvento(eventoId) {
         if (!resDoc) return;
         const data = resDoc.data();
 
-        // 1. Cargar las imágenes desde la subcolección 'imagenes_cabecera' (igual que en la vista pública)
-        const subColRef = collection(db, "eventos", eventoActualId, "resultados", id, "imagenes_cabecera");
+        // Cargar las imágenes desde la subcolección 'imagenes_cabecera'
+        const subColRef = collection(db, "eventos", eventoId, "resultados", id, "imagenes_cabecera");
         const imgsSnap = await getDocs(subColRef);
         let imagenesCargadas = [];
         imgsSnap.forEach(imgDoc => {
             if (imgDoc.data().url) imagenesCargadas.push(imgDoc.data().url);
         });
 
-        // 2. Fallback por si estuvieran guardadas directamente en el array del documento
         if (imagenesCargadas.length === 0 && data.imagenes) {
             imagenesCargadas = Array.isArray(data.imagenes) ? data.imagenes : [];
         }
 
-        // 3. Enviar los datos y las imágenes recuperadas al Web Component
         const panelComp = document.getElementById("miPanelPrefs");
         if (panelComp) {
+          await customElements.whenDefined('panel-preferencias-component');
           panelComp.setDatosIniciales({
             ...data,
-            slug: id
+            slug: id,
+            eventoId: eventoId
           }, imagenesCargadas);
           
           const cols = data.columnasMostrar || [];
-          panelComp.setColumnas(cols, cols, data.ordenVisual || [], data.columnaOrden || '', data.sentidoOrden === 'asc');
+          if (typeof panelComp.setColumnas === 'function') {
+              panelComp.setColumnas(cols, cols, data.ordenVisual || [], data.columnaOrden || '', data.sentidoOrden === 'asc');
+          }
         }
 
         document.getElementById("contenedorFormularioResultado").classList.remove("hidden");

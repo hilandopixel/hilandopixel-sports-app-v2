@@ -1,3 +1,6 @@
+import { db } from '../../../../firebase.config.js';
+import { collection, doc, setDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 class PanelPreferencias extends HTMLElement {
     constructor() {
         super();
@@ -6,11 +9,16 @@ class PanelPreferencias extends HTMLElement {
         this.columnasGlobales = [];
         this.columnasVisibles = [];
         this.ordenColumnas = [];
+        this.prefijoEventoActual = '';
+        this.eventoId = '';
+        this.resultadoId = '';
     }
 
     connectedCallback() {
-        this.render();
-        this.initListeners();
+        if (!this.shadowRoot.hasChildNodes()) {
+            this.render();
+            this.initListeners();
+        }
     }
 
     render() {
@@ -189,8 +197,11 @@ class PanelPreferencias extends HTMLElement {
                 </div>
 
                 <div class="campo-grupo">
-                    <label for="input-res-enlace">Enlace del Resultado (URL):</label>
-                    <input type="url" id="input-res-enlace" class="input-columnas" placeholder="https://...">
+                    <label for="input-res-enlace">Enlace del Resultado (URL del CSV):</label>
+                    <div class="input-group" style="display:flex; gap:4px;">
+                        <input type="url" id="input-res-enlace" class="input-columnas" placeholder="https://..." style="flex:1;">
+                        <button type="button" id="btnValidarEnlace" class="btn-accion">🔍 Validar</button>
+                    </div>
                 </div>
 
                 <div class="campo-grupo">
@@ -231,7 +242,9 @@ class PanelPreferencias extends HTMLElement {
 
                     <div class="campo-grupo">
                         <label>Columnas a mostrar:</label>
-                        <div id="container-chips-visibles" class="chips-container"></div>
+                        <div id="container-chips-visibles" class="chips-container">
+                            <span style="font-size:0.7em; color:#888;">Valida una URL de CSV arriba para cargar columnas...</span>
+                        </div>
                         <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
                     </div>
 
@@ -268,6 +281,166 @@ class PanelPreferencias extends HTMLElement {
         `;
     }
 
+    initListeners() {
+        const shadow = this.shadowRoot;
+
+        // Validar CSV
+        shadow.getElementById('btnValidarEnlace')?.addEventListener('click', () => {
+            const url = shadow.getElementById('input-res-enlace').value.trim();
+            this.validarYCargarCsv(url);
+        });
+
+        // Slug automático basado en nombre del evento y nombre de resultado
+        shadow.getElementById('input-res-nombre')?.addEventListener('input', (e) => {
+            const inputSlug = shadow.getElementById('input-res-slug');
+            if (!inputSlug) return;
+
+            const nombreResultadoLimpio = this.generarSlug(e.target.value);
+            const prefijoEvento = this.getPrefijoEventoAutomatico();
+
+            if (prefijoEvento) {
+                inputSlug.value = nombreResultadoLimpio ? `${prefijoEvento}-${nombreResultadoLimpio}` : prefijoEvento;
+            } else {
+                inputSlug.value = nombreResultadoLimpio;
+            }
+        });
+
+        // Añadir imagen por URL
+        shadow.getElementById('btnAgregarUrl').addEventListener('click', () => {
+            const input = shadow.getElementById('input-url-imagen');
+            if (!input.value.trim()) return;
+            this.listaImagenes.push(input.value.trim());
+            input.value = '';
+            this.renderizarVistasPrevias();
+        });
+
+        // Añadir imagen por archivo local de forma segura
+        const inputFile = shadow.getElementById('input-file-imagen');
+        if (inputFile && !inputFile.dataset.bound) {
+            inputFile.dataset.bound = "true";
+            inputFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    this.listaImagenes.push(event.target.result);
+                    this.renderizarVistasPrevias();
+                    if (inputFile) {
+                        inputFile.value = '';
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Guardar Preferencias autónomo en Firebase
+        shadow.getElementById('btnGuardarPreferencias').addEventListener('click', async () => {
+            const datos = this.obtenerDatosConfiguracion();
+            const nuevoId = this.generarSlug(datos.slug);
+
+            if (!this.eventoId) {
+                return alert("⚠️ Falta el ID del evento principal para guardar.");
+            }
+            if (!nuevoId) {
+                return alert("⚠️ El ID del resultado (Slug) es obligatorio.");
+            }
+
+            const btn = shadow.getElementById('btnGuardarPreferencias');
+            btn.disabled = true;
+            btn.textContent = "⏳ Guardando...";
+
+            try {
+                const resData = {
+                    nombre: datos.nombre,
+                    fecha: datos.fecha,
+                    tipo: datos.tipo,
+                    enlace: datos.enlace,
+                    url_qr_resultados: datos.url_qr_resultados,
+                    columnasMostrar: datos.columnasMostrar,
+                    ordenVisual: datos.ordenVisual,
+                    columnaOrden: datos.columnaOrden,
+                    sentidoOrden: datos.sentidoOrden,
+                    mostrarFiltros: datos.mostrarFiltros,
+                    directo: true,
+                    intervaloRefresco: datos.intervaloRefresco,
+                    tiempoImagenCarrusel: datos.tiempoImagenCarrusel,
+                    imagenes: this.listaImagenes
+                };
+
+                const nuevoDocRef = doc(db, "eventos", this.eventoId, "resultados", nuevoId);
+                
+                // Si cambió el slug original, limpiamos el anterior si fuese necesario (opcional)
+                if (this.resultadoId && this.resultadoId !== nuevoId) {
+                    await deleteDoc(doc(db, "eventos", this.eventoId, "resultados", this.resultadoId));
+                }
+
+                await setDoc(nuevoDocRef, resData, { merge: true });
+
+                // Subcolección de imágenes de cabecera
+                const subColRef = collection(db, "eventos", this.eventoId, "resultados", nuevoId, "imagenes_cabecera");
+                const prevImgs = await getDocs(subColRef);
+                for (const docItem of prevImgs.docs) {
+                    await deleteDoc(docItem.ref);
+                }
+
+                for (let i = 0; i < this.listaImagenes.length; i++) {
+                    const imgDocRef = doc(subColRef, `img_${i + 1}`);
+                    await setDoc(imgDocRef, { url: this.listaImagenes[i], orden: i + 1 });
+                }
+
+                this.resultadoId = nuevoId;
+                alert("✅ ¡Sección de resultados guardada correctamente en Firebase!");
+
+                this.dispatchEvent(new CustomEvent('resultado-guardado', { 
+                    detail: { id: nuevoId, datos: resData },
+                    bubbles: true, 
+                    composed: true 
+                }));
+
+            } catch (err) {
+                console.error("Error al guardar:", err);
+                alert("❌ Error al guardar: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "💾 Guardar Preferencias";
+            }
+        });
+
+        // Botón Mostrar todas las columnas
+        shadow.getElementById('btnMostrarTodasCols').addEventListener('click', () => {
+            this.columnasVisibles = [...this.columnasGlobales];
+            this.renderizarChipsVisibles();
+        });
+
+        // Botón Restablecer orden
+        shadow.getElementById('btnRestablecerOrdenCols').addEventListener('click', () => {
+            this.ordenColumnas = [];
+            this.renderizarChipsOrden();
+        });
+    }
+
+    generarSlug(texto) {
+        if (!texto) return '';
+        return texto
+            .toString()
+            .toLowerCase()
+            .trim()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/[^\w\-]+/g, "")
+            .replace(/\-+/g, "-");
+    }
+
+    getPrefijoEventoAutomatico() {
+        const elEvento = document.getElementById("detalleEventoNombre");
+        if (elEvento) {
+            let texto = elEvento.textContent.replace("Gestión: ", "").trim();
+            return this.generarSlug(texto);
+        }
+        return this.prefijoEventoActual || '';
+    }
+
     async validarYCargarCsv(url) {
         if (!url) return alert("Introduce una URL de CSV válida.");
         try {
@@ -286,6 +459,12 @@ class PanelPreferencias extends HTMLElement {
 
                 this.renderizarChipsVisibles();
                 this.renderizarChipsOrden();
+                
+                const selectCol = this.shadowRoot.getElementById('select-columna-orden');
+                if (selectCol) {
+                    selectCol.innerHTML = this.columnasGlobales.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+
                 alert(`✅ CSV validado con éxito. Se detectaron ${this.columnasGlobales.length} columnas.`);
             } else {
                 alert("El archivo CSV está vacío o no tiene un formato válido.");
@@ -296,66 +475,14 @@ class PanelPreferencias extends HTMLElement {
         }
     }
 
-    initListeners() {
-        const shadow = this.shadowRoot;
-
-        shadow.getElementById('btnValidarEnlace')?.addEventListener('click', () => {
-            const url = shadow.getElementById('input-res-enlace').value.trim();
-            this.validarYCargarCsv(url);
-        });
-
-        // Añadir imagen por URL
-        shadow.getElementById('btnAgregarUrl').addEventListener('click', () => {
-            const input = shadow.getElementById('input-url-imagen');
-            if (!input.value.trim()) return;
-            this.listaImagenes.push(input.value.trim());
-            input.value = '';
-            this.renderizarVistasPrevias();
-        });
-
-        // Añadir imagen por archivo local
-        shadow.getElementById('input-file-imagen').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                this.listaImagenes.push(event.target.result);
-                e.target.value = '';
-                this.renderizarVistasPrevias();
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Botón Guardar (Dispara un evento personalizado hacia la página principal)
-        shadow.getElementById('btnGuardarPreferencias').addEventListener('click', () => {
-            const eventoGuardar = new CustomEvent('guardar-preferencias', {
-                detail: this.obtenerDatosConfiguracion(),
-                bubbles: true,
-                composed: true
-            });
-            this.dispatchEvent(eventoGuardar);
-        });
-
-        // Botón Mostrar todas las columnas
-        shadow.getElementById('btnMostrarTodasCols').addEventListener('click', () => {
-            this.columnasVisibles = [...this.columnasGlobales];
-            this.renderizarChipsVisibles();
-        });
-
-        // Botón Restablecer orden
-        shadow.getElementById('btnRestablecerOrdenCols').addEventListener('click', () => {
-            this.ordenColumnas = [];
-            this.renderizarChipsOrden();
-        });
-    }
-
-    // Métodos públicos para alimentar el componente desde tu script principal
     setDatosIniciales(config, imagenes) {
         const shadow = this.shadowRoot;
         if (!shadow) return;
         
-        // Usamos un respaldo con objeto vacío por si 'config' es null o undefined
         const c = config || {}; 
+        this.eventoId = c.eventoId || '';
+        this.resultadoId = c.slug || '';
+        this.prefijoEventoActual = c.prefijoEvento || '';
 
         const setVal = (id, val) => {
             const el = shadow.getElementById(id);
@@ -379,24 +506,32 @@ class PanelPreferencias extends HTMLElement {
     }
 
     setColumnas(globales, visibles, orden, colOrden, sentidoAsc) {
-        this.columnasGlobales = globales;
-        this.columnasVisibles = visibles;
-        this.ordenColumnas = orden;
+        this.columnasGlobales = globales || [];
+        this.columnasVisibles = visibles || [];
+        this.ordenColumnas = orden || [];
 
         this.renderizarChipsVisibles();
         this.renderizarChipsOrden();
 
-        const selectCol = this.shadowRoot.getElementById('select-columna-orden');
-        selectCol.innerHTML = globales.map(c => `<option value="${c}" ${c === colOrden ? 'selected' : ''}>${c}</option>`).join('');
-        this.shadowRoot.getElementById('select-sentido-orden').value = sentidoAsc ? 'asc' : 'desc';
+        const shadow = this.shadowRoot;
+        const selectCol = shadow.getElementById('select-columna-orden');
+        if (selectCol && this.columnasGlobales.length > 0) {
+            selectCol.innerHTML = this.columnasGlobales.map(c => `<option value="${c}" ${c === colOrden ? 'selected' : ''}>${c}</option>`).join('');
+        }
+        const selectSentido = shadow.getElementById('select-sentido-orden');
+        if (selectSentido) {
+            selectSentido.value = sentidoAsc ? 'asc' : 'desc';
+        }
     }
 
     renderizarVistasPrevias() {
         const container = this.shadowRoot.getElementById('container-previa-imagenes');
+        if (!container) return;
+
         container.innerHTML = this.listaImagenes.map((url, idx) => `
             <div class="item-imagen-previa">
                 <img src="${url}">
-                <button class="btn-eliminar-img" data-idx="${idx}">✕</button>
+                <button type="button" class="btn-eliminar-img" data-idx="${idx}">✕</button>
             </div>
         `).join('');
 
@@ -411,6 +546,13 @@ class PanelPreferencias extends HTMLElement {
 
     renderizarChipsVisibles() {
         const container = this.shadowRoot.getElementById('container-chips-visibles');
+        if (!container) return;
+
+        if (this.columnasGlobales.length === 0) {
+            container.innerHTML = `<span style="font-size:0.7em; color:#888;">Valida una URL de CSV arriba para cargar columnas...</span>`;
+            return;
+        }
+
         container.innerHTML = this.columnasGlobales.map(col => {
             const activa = this.columnasVisibles.includes(col);
             return `<div class="chip-btn ${activa ? 'activo' : ''}" data-col="${col}">${activa ? '✓ ' : '+ '}${col}</div>`;
@@ -418,7 +560,7 @@ class PanelPreferencias extends HTMLElement {
 
         container.querySelectorAll('.chip-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const col = e.target.getAttribute('data-col');
+                const col = e.currentTarget.getAttribute('data-col');
                 if (this.columnasVisibles.includes(col)) {
                     this.columnasVisibles = this.columnasVisibles.filter(c => c !== col);
                 } else {
@@ -432,27 +574,27 @@ class PanelPreferencias extends HTMLElement {
     renderizarChipsOrden() {
         const containerElegidos = this.shadowRoot.getElementById('container-chips-orden-elegido');
         const containerDisponibles = this.shadowRoot.getElementById('container-chips-orden-disponibles');
+        if (!containerElegidos || !containerDisponibles) return;
 
         containerElegidos.innerHTML = this.ordenColumnas.map((col, idx) => `
             <div class="chip-btn orden-tag" data-col="${col}">${idx + 1}. ${col} ✕</div>
-        `).join('') || '<span style="font-size:0.7em; color:#888;">Orden nativo</span>';
+        `).join('') || '<span style="font-size:0.7em; color:#888;">Ningún orden personalizado</span>';
 
         containerDisponibles.innerHTML = this.columnasGlobales
             .filter(col => !this.ordenColumnas.includes(col))
             .map(col => `<div class="chip-btn" data-col="${col}">+ ${col}</div>`).join('');
 
-        // Listeners para quitar/poner orden
-        this.shadowRoot.querySelectorAll('#container-chips-orden-elegido .chip-btn').forEach(btn => {
+        containerElegidos.querySelectorAll('.chip-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const col = e.target.getAttribute('data-col');
+                const col = e.currentTarget.getAttribute('data-col');
                 this.ordenColumnas = this.ordenColumnas.filter(c => c !== col);
                 this.renderizarChipsOrden();
             });
         });
 
-        this.shadowRoot.querySelectorAll('#container-chips-orden-disponibles .chip-btn').forEach(btn => {
+        containerDisponibles.querySelectorAll('.chip-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const col = e.target.getAttribute('data-col');
+                const col = e.currentTarget.getAttribute('data-col');
                 this.ordenColumnas.push(col);
                 this.renderizarChipsOrden();
             });
@@ -478,7 +620,6 @@ class PanelPreferencias extends HTMLElement {
             imagenes: this.listaImagenes
         };
     }
-    
 }
 
 customElements.define('panel-preferencias-component', PanelPreferencias);
