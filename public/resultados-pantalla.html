@@ -27,7 +27,7 @@
             max-height: 1536px;
             padding: 14px;
             box-sizing: border-box;
-            background-color: #f8f9fa; /* Color por defecto, se reemplazará por Firebase */
+            background-color: #f8f9fa;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -302,31 +302,30 @@
         .cards-container {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
+        /* Modificación para que cada registro ocupe 1 o 2 líneas compactas */
         .resultado-card {
             background: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 6px;
-            padding: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            padding: 8px 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
             box-sizing: border-box;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+            align-items: center;
         }
 
-        .card-value-line {
-            font-size: 0.9em;
+        .card-value-item {
+            font-size: 0.85em;
             color: #212529;
-            word-break: break-word;
-            padding: 4px 0;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-        .card-value-line:last-child {
-            border-bottom: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
         .filtros-panel-movil {
@@ -457,8 +456,7 @@
         </div>
 
         <div>
-                        <h2 id="tituloResultado">Cargando...</h2>
-
+            <h2 id="tituloResultado">Cargando...</h2>
             <div id="estado-chips-container" class="estado-chips-container">
                 <span class="estado-chip" id="chip-estado-conexion">Iniciando...</span>
             </div>
@@ -556,7 +554,6 @@
                             const datosEvento = eventoDocSnap.data();
                             nombreEvento += datosEvento.nombre || '';
                             
-                            // Reemplazar el background de screen-canvas con el color guardado en el evento (ej: campo colorFondo o backgroundColor)
                             const colorEvento = datosEvento.color;
                             if (colorEvento) {
                                 document.getElementById('kibuu-canvas').style.backgroundColor = colorEvento;
@@ -969,6 +966,7 @@
             return isNaN(num) ? -1 : num;
         }
 
+        /* Renderizado adaptado para mostrar los registros en formato compacto de 1 o 2 líneas */
         function renderizarTabla() {
             const contenedor = document.getElementById('contenedor-tabla');
             if (!contenedor) return;
@@ -1030,8 +1028,9 @@
             html += '<div class="cards-container">';
             datosProcesados.forEach(item => {
                 html += '<div class="resultado-card">';
-                columnasFinales.forEach(clave => {
-                    html += `<div class="card-value-line">${item[clave] ?? ''}</div>`;
+                columnasFinales.forEach((clave, idx) => {
+                    const separador = (idx > 0) ? ' • ' : '';
+                    html += `<span class="card-value-item">${separador}${item[clave] ?? ''}</span>`;
                 });
                 html += '</div>';
             });
