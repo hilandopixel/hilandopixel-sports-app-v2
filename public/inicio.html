@@ -47,7 +47,7 @@
       snapshot.forEach((docSnap) => {
         const ev = docSnap.data();
         const id = docSnap.id;
-        const urlEvento = `evento.html?slug=${ev.slug || id}`;
+        const urlEvento = `evento?id=${ev.slug || id}`;
         const fechaFormateada = formatearFecha(ev.fecha);
         const horaTexto = ev.hora ? ` - ⏰ ${ev.hora}` : '';
         const esFinalizado = Boolean(ev.finalizado);

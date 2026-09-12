@@ -48,8 +48,9 @@
           <input type="hidden" id="eventoIdEdit">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">Slug URL (único):</label>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">ID del Evento (Slug URL):</label>
               <input type="text" id="evSlug" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primary focus:outline-none" required placeholder="maraton-nocturna-2026">
+              <span class="text-[11px] text-gray-500">Si modificas este ID en un evento existente, la colección cambiará de identificador.</span>
             </div>
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Evento:</label>
@@ -106,18 +107,17 @@
         </form>
       </div>
 
-      <!-- TABLA EVENTOS -->
+      <!-- TABLA EVENTOS REGISTRADOS -->
       <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <h3 class="text-xl font-bold text-gray-900 mb-4">Eventos Registrados</h3>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-gray-600">
             <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
               <tr>
+                <th class="p-3">ID (Slug)</th>
                 <th class="p-3">Nombre</th>
                 <th class="p-3">Estado</th>
                 <th class="p-3">Fecha y Hora</th>
-                <th class="p-3">Color</th>
-                <th class="p-3">Imagen</th>
                 <th class="p-3 text-right">Acciones</th>
               </tr>
             </thead>
@@ -260,7 +260,7 @@
           <!-- FORMULARIO RESULTADOS -->
           <form id="resultadoForm" class="hidden bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-4">
             <h4 id="resFormTitle" class="font-bold text-gray-900 text-base">Configurar Sección de Resultado</h4>
-            <input type="hidden" id="resIdEdit">
+            <input type="hidden" id="resIdOriginal">
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -268,8 +268,9 @@
                 <input type="text" id="resNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: Clasificación General 10K" required>
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">ID del Resultado (Slug):</label>
-                <input type="text" id="resIdCustom" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="Ej: general-10k" required>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">ID del Resultado (Slug Autogenerado):</label>
+                <input type="text" id="resIdCustom" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white bg-gray-50" placeholder="slug-evento-nombre-resultado" required>
+                <span class="text-[10px] text-gray-500">Formato automático: [slug-evento]-[nombre-resultado]</span>
               </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Fecha del Resultado:</label>
@@ -316,7 +317,6 @@
                   <span class="text-sm font-bold text-gray-800">⚡ Activar Resultados en Directo</span>
                 </label>
 
-                <!-- NUEVO CAMPO: TIEMPO DE REFRESCO -->
                 <div>
                   <label class="block text-xs font-semibold text-gray-700 mb-1">Intervalo de Refresco en Directo (segundos):</label>
                   <input type="number" id="resIntervalo" min="5" max="600" value="30" class="w-full border border-gray-300 rounded-md p-2 text-xs bg-white" placeholder="Ej: 30">
@@ -382,7 +382,7 @@
 
   <script type="module">
     import { db, auth } from './firebase.config.js';
-    import { collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, getDocs, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, doc, getDoc, onSnapshot, setDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const loginSection = document.getElementById("loginSection");
@@ -394,6 +394,7 @@
     let unsubResultadosAdmin = null;
     let listaImagenesMemoria = [];
 
+    // NAVEGACIÓN PESTAÑAS
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const targetId = e.currentTarget.getAttribute("data-target");
@@ -415,6 +416,31 @@
       return fechaStr;
     }
 
+    // UTILIDAD SLUG GENERATOR
+    function generarSlugTexto(str) {
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Eliminar acentos
+        .replace(/[^a-z0-9\s-]/g, "") // Eliminar caracteres especiales
+        .trim()
+        .replace(/\s+/g, "-");
+    }
+
+    // GENERAR SLUG DE RESULTADO AL ESCRIBIR SU NOMBRE
+    document.getElementById("resNombre").addEventListener("input", (e) => {
+      if (!eventoActualId) return;
+      const idOriginal = document.getElementById("resIdOriginal").value;
+      
+      // Auto-generar slug si se está creando una nueva sección
+      if (!idOriginal) {
+        const slugNombreRes = generarSlugTexto(e.target.value);
+        const slugCompleto = slugNombreRes ? `${eventoActualId}-${slugNombreRes}` : eventoActualId;
+        document.getElementById("resIdCustom").value = slugCompleto;
+      }
+    });
+
+    // AUTENTICACIÓN
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       try {
@@ -439,23 +465,122 @@
       }
     });
 
+    async function obtenerImagenURL() {
+      const fileInput = document.getElementById("evImagenFile");
+      const urlInput = document.getElementById("evImagenUrl").value.trim();
+
+      if (fileInput.files && fileInput.files[0]) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(fileInput.files[0]);
+        });
+      }
+      return urlInput;
+    }
+
+    async function copiarSubcoleccion(refOrigen, refDestino, nombreSubcol) {
+      const snap = await getDocs(collection(refOrigen, nombreSubcol));
+      for (const docSnap of snap.docs) {
+        await setDoc(doc(refDestino, nombreSubcol, docSnap.id), docSnap.data());
+        if (nombreSubcol === 'resultados') {
+          const subImgsSnap = await getDocs(collection(docSnap.ref, 'imagenes_cabecera'));
+          for (const imgDoc of subImgsSnap.docs) {
+            await setDoc(doc(refDestino, 'resultados', docSnap.id, 'imagenes_cabecera', imgDoc.id), imgDoc.data());
+          }
+        }
+      }
+    }
+
+    // GUARDAR O EDICIÓN DE ID DE EVENTO
+    document.getElementById("eventoForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const oldId = document.getElementById("eventoIdEdit").value;
+      const newId = generarSlugTexto(document.getElementById("evSlug").value);
+      const imagenUrl = await obtenerImagenURL();
+
+      if (!newId) return alert("El ID (Slug) del evento no puede estar vacío.");
+
+      const eventoData = {
+        nombre: document.getElementById("evNombre").value.trim(),
+        slug: newId,
+        fecha: document.getElementById("evFecha").value,
+        hora: document.getElementById("evHora").value,
+        color: document.getElementById("evColor").value,
+        descripcion: document.getElementById("evDesc").value.trim(),
+        imagen: imagenUrl,
+        latitud: document.getElementById("evLat").value.trim(),
+        longitud: document.getElementById("evLng").value.trim(),
+        finalizado: document.getElementById("evFinalizado").checked,
+        oculto: document.getElementById("evOculto").checked
+      };
+
+      try {
+        if (oldId && oldId !== newId) {
+          const oldRef = doc(db, "eventos", oldId);
+          const newRef = doc(db, "eventos", newId);
+
+          await setDoc(newRef, eventoData);
+          await copiarSubcoleccion(oldRef, newRef, 'resultados');
+          await copiarSubcoleccion(oldRef, newRef, 'stock');
+          await copiarSubcoleccion(oldRef, newRef, 'personal');
+          await copiarSubcoleccion(oldRef, newRef, 'solicitudes');
+          await deleteDoc(oldRef);
+
+          if (eventoActualId === oldId) {
+            eventoActualId = newId;
+            seleccionarEventoParaGestion(newId, eventoData.nombre);
+          }
+          alert(`Evento migrado correctamente al nuevo ID: "${newId}".`);
+        } else {
+          const refDoc = doc(db, "eventos", newId);
+          await setDoc(refDoc, eventoData, { merge: true });
+          alert("Evento guardado correctamente.");
+        }
+        resetFormEvento();
+      } catch (err) {
+        alert("Error guardando el evento: " + err.message);
+      }
+    });
+
+    function resetFormEvento() {
+      document.getElementById("eventoForm").reset();
+      document.getElementById("eventoIdEdit").value = "";
+      document.getElementById("evColor").value = "#5da999";
+      document.getElementById("evFinalizado").checked = false;
+      document.getElementById("evOculto").checked = false;
+      document.getElementById("formEventoTitle").textContent = "Crear Nuevo Evento";
+      document.getElementById("btnCancelarEditEvento").classList.add("hidden");
+    }
+
+    document.getElementById("btnCancelarEditEvento").addEventListener("click", resetFormEvento);
+
+    // LISTAR EVENTOS
     function cargarEventos() {
       onSnapshot(collection(db, "eventos"), (snapshot) => {
         tablaEventos.innerHTML = "";
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
           const id = docSnap.id;
+          const fechaFormateada = formatearFecha(data.fecha);
+
+          const badgesHtml = `
+            ${data.finalizado ? '<span class="px-2 py-0.5 text-[10px] bg-red-100 text-red-700 font-bold rounded">🏁 FINALIZADO</span>' : ''}
+            ${data.oculto ? '<span class="px-2 py-0.5 text-[10px] bg-gray-200 text-gray-700 font-bold rounded">👁️ OCULTO</span>' : ''}
+            ${!data.finalizado && !data.oculto ? '<span class="px-2 py-0.5 text-[10px] bg-green-100 text-green-700 font-bold rounded">✅ ACTIVO</span>' : ''}
+          `;
 
           const tr = document.createElement("tr");
           tr.className = "hover:bg-gray-50 border-b border-gray-100";
           tr.innerHTML = `
+            <td class="p-3 font-mono text-xs font-bold text-gray-600">${id}</td>
             <td class="p-3 font-semibold text-gray-900">${data.nombre}</td>
-            <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-green-100 text-green-700 font-bold rounded">ACTIVO</span></td>
-            <td class="p-3 text-gray-500">${formatearFecha(data.fecha)}</td>
-            <td class="p-3"><span class="inline-block w-6 h-6 rounded border border-gray-300" style="background-color: ${data.color || '#5da999'};"></span></td>
-            <td class="p-3"><img src="${data.imagen || ''}" class="w-12 h-8 object-cover rounded border border-gray-200"></td>
+            <td class="p-3"><div class="flex flex-wrap gap-1">${badgesHtml}</div></td>
+            <td class="p-3 text-gray-500">${fechaFormateada}</td>
             <td class="p-3 text-right space-x-1">
               <button class="btn-primary text-xs py-1 px-2 btn-gestionar" data-id="${id}">Gestionar</button>
+              <button class="btn-secondary text-xs py-1 px-2 btn-editar-ev" data-id="${id}">Editar</button>
+              <button class="btn-danger text-xs py-1 px-2 btn-borrar-ev" data-id="${id}">Borrar</button>
             </td>
           `;
           tablaEventos.appendChild(tr);
@@ -466,6 +591,42 @@
             const id = e.target.getAttribute("data-id");
             const evDoc = snapshot.docs.find(d => d.id === id);
             if (evDoc) seleccionarEventoParaGestion(id, evDoc.data().nombre);
+          });
+        });
+
+        document.querySelectorAll(".btn-editar-ev").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            const evDoc = snapshot.docs.find(d => d.id === id);
+            if (!evDoc) return;
+            const data = evDoc.data();
+
+            document.getElementById("eventoIdEdit").value = id;
+            document.getElementById("evSlug").value = id;
+            document.getElementById("evNombre").value = data.nombre || "";
+            document.getElementById("evFecha").value = data.fecha || "";
+            document.getElementById("evHora").value = data.hora || "";
+            document.getElementById("evColor").value = data.color || "#5da999";
+            document.getElementById("evDesc").value = data.descripcion || "";
+            document.getElementById("evImagenUrl").value = data.imagen || "";
+            document.getElementById("evLat").value = data.latitud || "";
+            document.getElementById("evLng").value = data.longitud || "";
+            document.getElementById("evFinalizado").checked = Boolean(data.finalizado);
+            document.getElementById("evOculto").checked = Boolean(data.oculto);
+
+            document.getElementById("formEventoTitle").textContent = "Editar Evento: " + data.nombre;
+            document.getElementById("btnCancelarEditEvento").classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        });
+
+        document.querySelectorAll(".btn-borrar-ev").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            if (confirm("⚠️ ¿Estás seguro de ELIMINAR todo el evento?")) {
+              await deleteDoc(doc(db, "eventos", id));
+              if (eventoActualId === id) seccionDetalleEvento.classList.add("hidden");
+            }
           });
         });
       });
@@ -514,10 +675,9 @@
             if (!resDoc) return;
             const data = resDoc.data();
 
-            document.getElementById("resIdEdit").value = id;
+            document.getElementById("resIdOriginal").value = id;
             document.getElementById("resNombre").value = data.nombre || "";
             document.getElementById("resIdCustom").value = id;
-            document.getElementById("resIdCustom").disabled = true;
             document.getElementById("resFecha").value = data.fecha || "";
             document.getElementById("resTipo").value = data.tipo || "CSV";
             document.getElementById("resEnlace").value = data.enlace || "";
@@ -605,24 +765,23 @@
 
     function resetFormResultado() {
       document.getElementById("resultadoForm").reset();
-      document.getElementById("resIdEdit").value = "";
+      document.getElementById("resIdOriginal").value = "";
       document.getElementById("resIntervalo").value = 30;
-      document.getElementById("resIdCustom").disabled = false;
       listaImagenesMemoria = [];
       renderizarMiniaturasMemoria();
       document.getElementById("resultadoForm").classList.add("hidden");
     }
 
-    // GUARDAR EN FIRESTORE CON INTERVALO CONFIGURADO
+    // GUARDAR O EDICIÓN DE RESULTADOS CON SLUG LIMPIO
     document.getElementById("resultadoForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!eventoActualId) return;
 
-      const editId = document.getElementById("resIdEdit").value;
-      const customId = document.getElementById("resIdCustom").value.trim().toLowerCase().replace(/\s+/g, '-');
-      const targetDocId = editId || customId;
+      const idOriginal = document.getElementById("resIdOriginal").value;
+      const rawSlugInput = document.getElementById("resIdCustom").value.trim();
+      const nuevoId = generarSlugTexto(rawSlugInput);
 
-      if (!targetDocId) return alert("ID inválido.");
+      if (!nuevoId) return alert("El ID del resultado es obligatorio.");
 
       const parseArray = (str) => str ? str.split(',').map(s => s.trim()).filter(Boolean) : [];
 
@@ -641,10 +800,16 @@
       };
 
       try {
-        const resRef = doc(db, "eventos", eventoActualId, "resultados", targetDocId);
-        await setDoc(resRef, resData, { merge: true });
+        const nuevoDocRef = doc(db, "eventos", eventoActualId, "resultados", nuevoId);
 
-        const subColRef = collection(resRef, "imagenes_cabecera");
+        if (idOriginal && idOriginal !== nuevoId) {
+          const originalDocRef = doc(db, "eventos", eventoActualId, "resultados", idOriginal);
+          await deleteDoc(originalDocRef);
+        }
+
+        await setDoc(nuevoDocRef, resData, { merge: true });
+
+        const subColRef = collection(nuevoDocRef, "imagenes_cabecera");
         const prevImgs = await getDocs(subColRef);
         for (const docItem of prevImgs.docs) {
           await deleteDoc(docItem.ref);
@@ -655,10 +820,10 @@
           await setDoc(imgDocRef, { url: listaImagenesMemoria[i], orden: i + 1 });
         }
 
-        alert("Sección de resultados guardada correctamente.");
+        alert(`Sección de resultados guardada correctamente con el ID "${nuevoId}".`);
         resetFormResultado();
       } catch (err) {
-        alert("Error guardando resultado: " + err.message);
+        alert("Error guardando el resultado: " + err.message);
       }
     });
   </script>

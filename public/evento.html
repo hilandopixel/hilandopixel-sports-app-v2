@@ -92,14 +92,14 @@
 
   <script type="module">
     import { db } from './firebase.config.js';
-    import { collection, doc, query, where, getDocs, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, doc, getDoc, query, where, getDocs, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     let eventoId = null;
     let esFinalizado = false;
     let solicitudPendiente = null;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const slugParam = urlParams.get('slug');
+    const slugParam = urlParams.get('slug') || urlParams.get('id') || urlParams.get('evento');
 
     function formatearFecha(fechaStr) {
       if (!fechaStr) return 'Por confirmar';
@@ -109,22 +109,36 @@
     }
 
     if (!slugParam) {
-      document.getElementById("loading").textContent = "Error: No se ha proporcionado un slug de evento válido.";
+      document.getElementById("loading").textContent = "Error: No se ha proporcionado un identificador o slug de evento válido.";
     } else {
       cargarEventoPorSlug(slugParam);
     }
 
     async function cargarEventoPorSlug(slug) {
       try {
-        const q = query(collection(db, "eventos"), where("slug", "==", slug));
-        const snapshot = await getDocs(q);
+        let docSnap = null;
 
-        if (snapshot.empty) {
-          document.getElementById("loading").textContent = "Error: No se encontró ningún evento con ese slug.";
+        // 1. Buscar por ID exacto de documento en Firestore
+        const refDirecta = doc(db, "eventos", slug);
+        const snapDirecto = await getDoc(refDirecta);
+
+        if (snapDirecto.exists()) {
+          docSnap = snapDirecto;
+        } else {
+          // 2. Buscar por el campo "slug" interno
+          const q = query(collection(db, "eventos"), where("slug", "==", slug));
+          const snapshot = await getDocs(q);
+
+          if (!snapshot.empty) {
+            docSnap = snapshot.docs[0];
+          }
+        }
+
+        if (!docSnap || !docSnap.exists()) {
+          document.getElementById("loading").textContent = `Error: No se encontró ningún evento con el slug/ID "${slug}".`;
           return;
         }
 
-        const docSnap = snapshot.docs[0];
         eventoId = docSnap.id;
         const data = docSnap.data();
 
