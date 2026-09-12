@@ -5,24 +5,25 @@
     <meta name="viewport" content="width=512, initial-scale=1.0">
     <title>Resultados del Evento</title>
     <style>
-        /* Bloqueo estricto de dimensiones para contenedor de 512x1536 */
-        html {
+        /* Forzar dimensiones fijas exactas para evitar desbordamientos en iframe */
+        html, body {
             width: 512px;
             height: 1536px;
+            margin: 0;
+            padding: 0;
             background-color: #f8f9fa;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
-        body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            padding: 12px; 
-            background-color: #f8f9fa;
-            margin: 0;
+        .fixed-screen-wrapper {
             width: 512px;
-            min-width: 512px;
-            max-width: 512px;
             min-height: 1536px;
+            padding: 12px;
             box-sizing: border-box;
-            overflow-x: hidden;
+            background-color: #f8f9fa;
+            margin: 0 auto;
         }
 
         .header-container {
@@ -357,91 +358,92 @@
     </style>
 </head>
 <body>
-
-    <div class="header-container">
-        <h2 id="tituloResultado">Cargando...</h2>
-        <div class="header-actions">
-            <button id="btnLogout" class="btn-logout">🚪 Salir</button>
+    <div class="fixed-screen-wrapper">
+        <div class="header-container">
+            <h2 id="tituloResultado">Cargando...</h2>
+            <div class="header-actions">
+                <button id="btnLogout" class="btn-logout">🚪 Salir</button>
+            </div>
         </div>
-    </div>
 
-    <div class="carrusel-contenedor" id="carrusel-contenedor">
-        <div class="carrusel-indicadores" id="carrusel-dots"></div>
-    </div>
+        <div class="carrusel-contenedor" id="carrusel-contenedor">
+            <div class="carrusel-indicadores" id="carrusel-dots"></div>
+        </div>
 
-    <div id="panel-preferencias">
-        <h3>⚙️ Panel de Configuración</h3>
+        <div id="panel-preferencias">
+            <h3>⚙️ Panel de Configuración</h3>
 
-        <div class="gestor-imagenes-container">
-            <div class="opciones-subida-grid">
-                <div class="campo-grupo">
-                    <label for="input-url-imagen">Imagen por URL:</label>
-                    <div class="input-group">
-                        <input type="text" id="input-url-imagen" class="input-columnas" placeholder="https://...">
-                        <button class="btn-accion" id="btnAgregarUrl">Añadir</button>
+            <div class="gestor-imagenes-container">
+                <div class="opciones-subida-grid">
+                    <div class="campo-grupo">
+                        <label for="input-url-imagen">Imagen por URL:</label>
+                        <div class="input-group">
+                            <input type="text" id="input-url-imagen" class="input-columnas" placeholder="https://...">
+                            <button class="btn-accion" id="btnAgregarUrl">Añadir</button>
+                        </div>
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="input-file-imagen">Desde dispositivo:</label>
+                        <input type="file" id="input-file-imagen" class="input-file-custom" accept="image/*">
                     </div>
                 </div>
                 <div class="campo-grupo">
-                    <label for="input-file-imagen">Desde dispositivo:</label>
-                    <input type="file" id="input-file-imagen" class="input-file-custom" accept="image/*">
-                </div>
-            </div>
-            <div class="campo-grupo">
-                <label>Imágenes actuales:</label>
-                <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
-            </div>
-        </div>
-
-        <div class="panel-columnas-container">
-            <div class="campo-grupo">
-                <label for="input-intervalo-refresco">Refresco (segundos):</label>
-                <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
-            </div>
-
-            <div class="campo-grupo">
-                <label>Columnas a mostrar:</label>
-                <div id="container-chips-visibles" class="chips-container"></div>
-                <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
-            </div>
-
-            <div class="campo-grupo">
-                <label>Orden horizontal de columnas:</label>
-                <div id="container-chips-orden-elegido" class="chips-container"></div>
-                <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
-                <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden</button>
-            </div>
-
-            <div class="campo-grupo">
-                <label for="select-columna-orden">Ordenar filas por:</label>
-                <div class="orden-select-container">
-                    <select id="select-columna-orden" class="select-orden">
-                        <option value="">Cargando...</option>
-                    </select>
-                    <select id="select-sentido-orden" class="select-orden">
-                        <option value="desc" selected>Descendente</option>
-                        <option value="asc">Ascendente</option>
-                    </select>
+                    <label>Imágenes actuales:</label>
+                    <div class="lista-imagenes-previa" id="container-previa-imagenes"></div>
                 </div>
             </div>
 
-            <div class="checkbox-container">
-                <input type="checkbox" id="checkbox-mostrar-filtros" checked>
-                <label for="checkbox-mostrar-filtros">Mostrar filtros de búsqueda</label>
+            <div class="panel-columnas-container">
+                <div class="campo-grupo">
+                    <label for="input-intervalo-refresco">Refresco (segundos):</label>
+                    <input type="number" id="input-intervalo-refresco" class="input-numero" min="5" max="600" value="30">
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Columnas a mostrar:</label>
+                    <div id="container-chips-visibles" class="chips-container"></div>
+                    <button class="btn-limpiar" id="btnMostrarTodasCols">Mostrar todas</button>
+                </div>
+
+                <div class="campo-grupo">
+                    <label>Orden horizontal de columnas:</label>
+                    <div id="container-chips-orden-elegido" class="chips-container"></div>
+                    <div id="container-chips-orden-disponibles" class="chips-container" style="margin-top: 4px;"></div>
+                    <button class="btn-limpiar" id="btnRestablecerOrdenCols">Restablecer orden</button>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="select-columna-orden">Ordenar filas por:</label>
+                    <div class="orden-select-container">
+                        <select id="select-columna-orden" class="select-orden">
+                            <option value="">Cargando...</option>
+                        </select>
+                        <select id="select-sentido-orden" class="select-orden">
+                            <option value="desc" selected>Descendente</option>
+                            <option value="asc">Ascendente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="checkbox-container">
+                    <input type="checkbox" id="checkbox-mostrar-filtros" checked>
+                    <label for="checkbox-mostrar-filtros">Mostrar filtros de búsqueda</label>
+                </div>
+            </div>
+
+            <div>
+                <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
             </div>
         </div>
 
         <div>
-            <button id="btnGuardarPreferencias" class="btn-guardar">💾 Guardar Preferencias</button>
+            <div id="estado-chips-container" class="estado-chips-container">
+                <span class="estado-chip" id="chip-estado-conexion">Iniciando...</span>
+            </div>
         </div>
+        
+        <div id="contenedor-tabla">Cargando datos...</div>
     </div>
-
-    <div>
-        <div id="estado-chips-container" class="estado-chips-container">
-            <span class="estado-chip" id="chip-estado-conexion">Iniciando...</span>
-        </div>
-    </div>
-    
-    <div id="contenedor-tabla">Cargando datos...</div>
 
     <script type="module">
         import { db } from './firebase.config.js';
