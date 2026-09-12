@@ -268,8 +268,41 @@ class PanelPreferencias extends HTMLElement {
         `;
     }
 
+    async validarYCargarCsv(url) {
+        if (!url) return alert("Introduce una URL de CSV válida.");
+        try {
+            const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(url)}`;
+            const response = await fetch(apiEndpoint);
+            const resJSON = await response.json();
+
+            if (!response.ok || !resJSON.ok) {
+                throw new Error(resJSON.error || "Error al procesar el archivo.");
+            }
+
+            if (resJSON.datos && resJSON.datos.length > 0) {
+                this.columnasGlobales = Object.keys(resJSON.datos[0]);
+                this.columnasVisibles = [...this.columnasGlobales];
+                this.ordenColumnas = [];
+
+                this.renderizarChipsVisibles();
+                this.renderizarChipsOrden();
+                alert(`✅ CSV validado con éxito. Se detectaron ${this.columnasGlobales.length} columnas.`);
+            } else {
+                alert("El archivo CSV está vacío o no tiene un formato válido.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("❌ Error al validar el CSV: " + err.message);
+        }
+    }
+
     initListeners() {
         const shadow = this.shadowRoot;
+
+        shadow.getElementById('btnValidarEnlace')?.addEventListener('click', () => {
+            const url = shadow.getElementById('input-res-enlace').value.trim();
+            this.validarYCargarCsv(url);
+        });
 
         // Añadir imagen por URL
         shadow.getElementById('btnAgregarUrl').addEventListener('click', () => {
@@ -445,6 +478,7 @@ class PanelPreferencias extends HTMLElement {
             imagenes: this.listaImagenes
         };
     }
+    
 }
 
 customElements.define('panel-preferencias-component', PanelPreferencias);

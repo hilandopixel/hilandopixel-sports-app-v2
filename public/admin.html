@@ -6,6 +6,8 @@
   <title>Panel de Administración - Gestión de Eventos</title>
   <link rel="stylesheet" href="style.css">
   <script src="./navbar.js" defer></script>
+  <!-- Importar el Web Component del panel de preferencias -->
+  <script type="module" src="./js/admin/components/panel-preferencias.js" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
@@ -105,7 +107,6 @@
                   <span class="text-xs text-gray-500">Color primario</span>
                 </div>
               </div>
-              <!-- En el formulario de Eventos (tabDetalles), añade este campo junto al color primario -->
               <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Color Secundario:</label>
                 <div class="flex items-center gap-2">
@@ -148,8 +149,7 @@
           </form>
         </div>
 
-
-      <!-- TAB STOCK -->
+        <!-- TAB STOCK -->
         <div id="tabStock" class="tab-content hidden space-y-8">
           <div>
             <h3 class="text-lg font-bold text-gray-900 mb-4">1. Control de Stock de Tallas</h3>
@@ -174,7 +174,6 @@
             </div>
           </div>
 
-          <!-- 👈 AÑADIR ESTA SECCIÓN DE SOLICITUDES -->
           <div class="pt-6 border-t border-gray-200">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-bold text-gray-900">2. Solicitudes de Clientes</h3>
@@ -222,82 +221,20 @@
           </div>
         </div>
 
-        <!-- TAB RESULTADOS -->
+        <!-- TAB RESULTADOS (INTEGRANDO EL COMPONENTE WEB) -->
         <div id="tabResultados" class="tab-content hidden space-y-6">
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-bold text-gray-900">Secciones de Resultados</h3>
             <button id="btnNuevaSeccionResultado" class="btn-primary text-xs">➕ Añadir Sección Resultados</button>
           </div>
-          <!-- FORMULARIO RESULTADOS -->
-          <form id="resultadoForm" class="hidden bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-4">
-            <h4 id="resFormTitle" class="font-bold text-gray-900 text-base">Configurar Sección de Resultado</h4>
-            <input type="hidden" id="resIdOriginal">
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Nombre del Resultado:</label>
-                <input type="text" id="resNombre" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">ID del Resultado (Slug):</label>
-                <input type="text" id="resIdCustom" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Fecha:</label>
-                <input type="date" id="resFecha" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Tipo:</label>
-                <select id="resTipo" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" required>
-                  <option value="CSV">CSV</option>
-                  <option value="JSON">JSON</option>
-                </select>
-              </div>
-              <div class="md:col-span-2">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Enlace del Resultado (URL del CSV):</label>
-                <div class="flex gap-2">
-                  <input type="url" id="resEnlace" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="https://..." required>
-                  <button type="button" id="btnValidarEnlace" class="btn-primary text-xs whitespace-nowrap px-4">🔍 Validar y Detectar Columnas</button>
-                </div>
-              </div>
-            <div class="md:col-span-2">
-              <label class="block text-xs font-semibold text-gray-700 mb-1">URL QR Resultados (Opcional):</label>
-              <input type="url" id="resUrlQr" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" placeholder="https://...">
-            </div>
-            </div>
-
-            <!-- CONFIGURACIÓN INTERACTIVA DE COLUMNAS -->
-            <div class="p-4 bg-white rounded-lg border border-gray-200 space-y-4">
-              <h5 class="text-xs font-bold text-gray-800 uppercase tracking-wide">⚙️ Configuración Visual de Columnas (Detectadas del CSV)</h5>
-              
-              <div class="campo-grupo">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Columnas a mostrar (clic para activar/desactivar):</label>
-                <div id="admin-container-chips-visibles" class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded border min-h-[40px]">
-                  <span class="text-xs text-gray-400 italic">Valida una URL de CSV arriba para cargar las columnas...</span>
-                </div>
-              </div>
-
-              <div class="campo-grupo">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Orden de visualización horizontal (clic para añadir/quitar secuencia):</label>
-                <div id="admin-container-chips-orden-elegido" class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded border min-h-[40px] mb-2">
-                  <span class="text-xs text-gray-400 italic">Ningún orden personalizado...</span>
-                </div>
-                <div id="admin-container-chips-orden-disponibles" class="flex flex-wrap gap-2"></div>
-              </div>
-            </div>
-
-            <!-- GESTOR DE IMÁGENES CABECERA Y DEMÁS CONFIGS -->
-            <!-- (Mantén aquí el resto de tus inputs de intervalo, directo, etc.) -->
-
+          
+          <!-- AQUÍ REEMPLAZAMOS EL FORMULARIO ANTIGUO POR EL COMPONENTE WEB -->
+          <div id="contenedorFormularioResultado" class="hidden">
+            <panel-preferencias-component id="miPanelPrefs"></panel-preferencias-component>
             <div class="flex gap-2 pt-2">
-              <button type="submit" class="btn-primary text-xs py-2">Guardar Sección de Resultado</button>
               <button type="button" id="btnCancelarResultado" class="btn-secondary text-xs py-2">Cancelar</button>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-700 mb-1">Tiempo imagen en carrusel (segundos):</label>
-              <input type="number" id="resTiempoCarrusel" class="w-full border border-gray-300 rounded-md p-2 text-sm bg-white" min="1" max="60" value="2" required>
-            </div>
-          </form>
+          </div>
 
           <!-- POPUP DE CARGA -->
           <div id="loadingPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -306,6 +243,7 @@
               <span class="text-sm font-bold text-gray-800">Descargando y procesando CSV...</span>
             </div>
           </div>
+          
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
@@ -326,12 +264,10 @@
     import { initAdminEventos, activarPestana } from './js/admin/admin-eventos.js';
     import { initAdminResultados } from './js/admin/admin-resultados.js';
 
-    // Manejo global de Pestañas
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", (e) => activarPestana(e.currentTarget.getAttribute("data-target")));
     });
 
-    // Auth
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       try {
@@ -350,7 +286,6 @@
         document.getElementById("loginSection").classList.add("hidden");
         document.getElementById("adminContent").classList.remove("hidden");
         
-        // Inicializar Módulos
         initAdminEventos();
         initAdminResultados();
       } else {
@@ -361,31 +296,30 @@
   </script>
 
   <!-- MODAL QR DE RESULTADOS -->
-<div id="modalQrResultados" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
-  <div class="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full space-y-4 text-center relative">
-    <button type="button" id="cerrarModalQr" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold text-lg">✕</button>
-    
-    <div>
-      <h3 id="modalQrEventoNombre" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">--</h3>
-      <h2 id="modalQrResultadoNombre" class="text-xl font-bold text-gray-900 mt-1">--</h2>
-    </div>
+  <div id="modalQrResultados" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full space-y-4 text-center relative">
+      <button type="button" id="cerrarModalQr" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold text-lg">✕</button>
+      
+      <div>
+        <h3 id="modalQrEventoNombre" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">--</h3>
+        <h2 id="modalQrResultadoNombre" class="text-xl font-bold text-gray-900 mt-1">--</h2>
+      </div>
 
-    <div class="flex justify-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-      <div id="contenedorQrCanvas" class="bg-white p-2 shadow-sm rounded"></div>
-    </div>
+      <div class="flex justify-center p-4 bg-gray-50 rounded-lg border border-gray-100">
+        <div id="contenedorQrCanvas" class="bg-white p-2 shadow-sm rounded"></div>
+      </div>
 
-    <div class="text-xs font-mono text-gray-600 break-all bg-gray-50 p-2 rounded border">
-      <span id="modalQrUrlTexto">--</span>
-    </div>
+      <div class="text-xs font-mono text-gray-600 break-all bg-gray-50 p-2 rounded border">
+        <span id="modalQrUrlTexto">--</span>
+      </div>
 
-    <div class="flex gap-2 pt-2">
-      <button type="button" id="btnImprimirQr" class="btn-primary flex-1 text-xs py-2">🖨️ Imprimir</button>
-      <button type="button" id="btnDescargarPdfQr" class="btn-secondary flex-1 text-xs py-2">📥 Descargar PDF</button>
+      <div class="flex gap-2 pt-2">
+        <button type="button" id="btnImprimirQr" class="btn-primary flex-1 text-xs py-2">🖨️ Imprimir</button>
+        <button type="button" id="btnDescargarPdfQr" class="btn-secondary flex-1 text-xs py-2">📥 Descargar PDF</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Librería externa ligera para generar QR (QRCode.js) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>

@@ -3,125 +3,74 @@ import { collection, doc, onSnapshot, setDoc, deleteDoc, getDocs } from "https:/
 import { eventoActualId, generarSlugTexto } from './admin-eventos.js';
 
 let unsubResultadosAdmin = null;
-let listaImagenesMemoria = [];
-
-let adminColumnasGlobales = [];
-let adminColumnasVisibles = [];
-let adminOrdenColumnas = [];
 
 export function initAdminResultados() {
-  document.getElementById("resNombre").addEventListener("input", (e) => {
-    if (!eventoActualId) return;
-    const idOriginal = document.getElementById("resIdOriginal").value;
-    if (!idOriginal) {
-      const slugRes = generarSlugTexto(e.target.value);
-      document.getElementById("resIdCustom").value = slugRes ? `${eventoActualId}-${slugRes}` : eventoActualId;
+  const panelComp = document.getElementById("miPanelPrefs");
+
+  // Slug automático al escribir el nombre del resultado dentro del componente
+  if (panelComp) {
+    panelComp.shadowRoot.addEventListener("input", (e) => {
+      if (e.target.id === "input-res-nombre" && eventoActualId) {
+        const shadow = panelComp.shadowRoot;
+        const idOriginal = shadow.getElementById("input-res-slug").value; // Puedes usar un campo oculto o el slug actual
+        const slugRes = generarSlugTexto(e.target.value);
+        if (!idOriginal.includes("-")) { // Si es un registro nuevo
+            shadow.getElementById("input-res-slug").value = slugRes ? `${eventoActualId}-${slugRes}` : eventoActualId;
+        }
+      }
+    });
+  }
+
+  // Botón para crear nueva sección
+  document.getElementById("btnNuevaSeccionResultado").addEventListener("click", () => {
+    if (panelComp) {
+      panelComp.setDatosIniciales({
+        slug: eventoActualId ? `${eventoActualId}-` : ''
+      }, []);
+      panelComp.setColumnas([], [], [], '', true);
     }
+    document.getElementById("contenedorFormularioResultado").classList.remove("hidden");
   });
 
-  document.getElementById("btnValidarEnlace").addEventListener("click", async () => {
-    const url = document.getElementById("resEnlace").value.trim();
-    if (!url) return alert("Introduce una URL de CSV válida.");
+  // Botón cancelar
+  document.getElementById("btnCancelarResultado").addEventListener("click", () => {
+    document.getElementById("contenedorFormularioResultado").classList.add("hidden");
+  });
 
-    const popup = document.getElementById("loadingPopup");
-    if (popup) popup.classList.remove("hidden");
+  // Escuchar cuando el componente emita el evento de guardar
+  document.addEventListener("guardar-preferencias", async (e) => {
+    e.stopPropagation();
+    if (!eventoActualId) return;
+
+    const datos = e.detail;
+    const nuevoId = generarSlugTexto(datos.slug);
+    if (!nuevoId) return alert("El ID del resultado es obligatorio.");
+
+    const resData = {
+      nombre: datos.nombre,
+      fecha: datos.fecha,
+      tipo: datos.tipo,
+      enlace: datos.enlace,
+      url_qr_resultados: datos.url_qr_resultados,
+      columnasMostrar: datos.columnasMostrar,
+      ordenVisual: datos.ordenVisual,
+      columnaOrden: datos.columnaOrden,
+      sentidoOrden: datos.sentidoOrden,
+      mostrarFiltros: datos.mostrarFiltros,
+      directo: true,
+      intervaloRefresco: datos.intervaloRefresco,
+      tiempoImagenCarrusel: datos.tiempoImagenCarrusel
+    };
 
     try {
-      const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(url)}`;
-      const response = await fetch(apiEndpoint);
-      const resJSON = await response.json();
-
-      if (!response.ok || !resJSON.ok) {
-        throw new Error(resJSON.error || "Error al procesar el archivo.");
-      }
-
-      if (resJSON.datos && resJSON.datos.length > 0) {
-        adminColumnasGlobales = Object.keys(resJSON.datos[0]);
-        adminColumnasVisibles = [...adminColumnasGlobales];
-        adminOrdenColumnas = [];
-
-        renderizarChipsAdmin();
-        alert(`✅ CSV validado con éxito. Se detectaron ${adminColumnasGlobales.length} columnas.`);
-      } else {
-        alert("El archivo CSV está vacío o no tiene un formato válido.");
-      }
+      const nuevoDocRef = doc(db, "eventos", eventoActualId, "resultados", nuevoId);
+      await setDoc(nuevoDocRef, resData, { merge: true });
+      alert("Sección de resultados guardada correctamente.");
+      document.getElementById("contenedorFormularioResultado").classList.add("hidden");
     } catch (err) {
-      console.error(err);
-      alert("❌ Error al validar el CSV: " + err.message);
-    } finally {
-      if (popup) popup.classList.add("hidden");
+      alert("Error guardando el resultado: " + err.message);
     }
   });
-
-  window.toggleAdminVisCol = function(col) {
-    if (adminColumnasVisibles.includes(col)) {
-      adminColumnasVisibles = adminColumnasVisibles.filter(c => c !== col);
-    } else {
-      adminColumnasVisibles.push(col);
-    }
-    renderizarChipsAdmin();
-  };
-
-  window.agregarAdminOrdenCol = function(col) {
-    adminOrdenColumnas.push(col);
-    renderizarChipsAdmin();
-  };
-
-  window.removerAdminOrdenCol = function(col) {
-    adminOrdenColumnas = adminOrdenColumnas.filter(c => c !== col);
-    renderizarChipsAdmin();
-  };
-
-  document.getElementById("btnNuevaSeccionResultado").addEventListener("click", () => {
-    resetFormResultado();
-    document.getElementById("resultadoForm").classList.remove("hidden");
-  });
-
-  document.getElementById("btnCancelarResultado").addEventListener("click", resetFormResultado);
-  document.getElementById("resultadoForm").addEventListener("submit", guardarResultado);
-}
-
-function renderizarChipsAdmin() {
-  const containerVisibles = document.getElementById("admin-container-chips-visibles");
-  const containerElegidos = document.getElementById("admin-container-chips-orden-elegido");
-  const containerDisponibles = document.getElementById("admin-container-chips-orden-disponibles");
-  if (!containerVisibles) return;
-
-  let htmlVis = "";
-  adminColumnasGlobales.forEach(col => {
-    const activa = adminColumnasVisibles.includes(col);
-    htmlVis += `<button type="button" class="px-3 py-1 text-xs rounded-full border ${activa ? 'bg-primary text-white border-primary' : 'bg-gray-100 text-gray-700 border-gray-300'}" data-col="${col}" onclick="window.toggleAdminVisCol('${col}')">${activa ? '✓ ' : '+ '}${col}</button>`;
-  });
-  containerVisibles.innerHTML = htmlVis;
-
-  let htmlElegidos = "";
-  adminOrdenColumnas.forEach((col, idx) => {
-    htmlElegidos += `<button type="button" class="px-3 py-1 text-xs rounded-full bg-green-600 text-white" onclick="window.removerAdminOrdenCol('${col}')">${idx + 1}. ${col} ✕</button>`;
-  });
-  containerElegidos.innerHTML = htmlElegidos || '<span class="text-xs text-gray-400 italic">Ningún orden personalizado...</span>';
-
-  let htmlDisp = "";
-  adminColumnasGlobales.forEach(col => {
-    if (!adminOrdenColumnas.includes(col)) {
-      htmlDisp += `<button type="button" class="px-3 py-1 text-xs rounded-full bg-gray-100 border border-gray-300 text-gray-700" onclick="window.agregarAdminOrdenCol('${col}')">+ ${col}</button>`;
-    }
-  });
-  if (containerDisponibles) containerDisponibles.innerHTML = htmlDisp;
-}
-
-function resetFormResultado() {
-  document.getElementById("resultadoForm").reset();
-  document.getElementById("resIdOriginal").value = "";
-  adminColumnasGlobales = [];
-  adminColumnasVisibles = [];
-  adminOrdenColumnas = [];
-  const cv = document.getElementById("admin-container-chips-visibles");
-  const coe = document.getElementById("admin-container-chips-orden-elegido");
-  const cod = document.getElementById("admin-container-chips-orden-disponibles");
-  if (cv) cv.innerHTML = `<span class="text-xs text-gray-400 italic">Valida una URL de CSV arriba para cargar las columnas...</span>`;
-  if (coe) coe.innerHTML = `<span class="text-xs text-gray-400 italic">Ningún orden personalizado...</span>`;
-  if (cod) cod.innerHTML = "";
-  document.getElementById("resultadoForm").classList.add("hidden");
 }
 
 export function cargarResultadosEvento(eventoId) {
@@ -151,10 +100,11 @@ export function cargarResultadosEvento(eventoId) {
             <button class="btn-secondary text-xs py-1 px-2 btn-editar-res" data-id="${resId}">Editar</button>
             <button class="btn-danger text-xs py-1 px-2 btn-del-res" data-id="${resId}">Borrar</button>
         </td>
-        `;
+      `;
       tabla.appendChild(tr);
     });
 
+    // Evento Editar
     document.querySelectorAll(".btn-editar-res").forEach(btn => {
       btn.addEventListener("click", async (e) => {
         const id = e.target.getAttribute("data-id");
@@ -162,38 +112,37 @@ export function cargarResultadosEvento(eventoId) {
         if (!resDoc) return;
         const data = resDoc.data();
 
-        document.getElementById("resIdOriginal").value = id;
-        document.getElementById("resNombre").value = data.nombre || "";
-        document.getElementById("resIdCustom").value = id;
-        document.getElementById("resFecha").value = data.fecha || "";
-        document.getElementById("resTipo").value = data.tipo || "CSV";
-        document.getElementById("resEnlace").value = data.enlace || "";
-        document.getElementById("resUrlQr").value = data.url_qr_resultados || ""; // <-- Añadido
-        document.getElementById("resTiempoCarrusel").value = data.tiempoImagenCarrusel || 2; // <-- Añadido
+        // 1. Cargar las imágenes desde la subcolección 'imagenes_cabecera' (igual que en la vista pública)
+        const subColRef = collection(db, "eventos", eventoActualId, "resultados", id, "imagenes_cabecera");
+        const imgsSnap = await getDocs(subColRef);
+        let imagenesCargadas = [];
+        imgsSnap.forEach(imgDoc => {
+            if (imgDoc.data().url) imagenesCargadas.push(imgDoc.data().url);
+        });
 
-// Al guardar resultado
-const resData = {
-  nombre: document.getElementById("resNombre").value.trim(),
-  fecha: document.getElementById("resFecha").value,
-  tipo: document.getElementById("resTipo").value,
-  enlace: document.getElementById("resEnlace").value.trim(),
-  columnasMostrar: adminColumnasVisibles,
-  ordenVisual: adminOrdenColumnas,
-  directo: true,
-  intervaloRefresco: 30,
-  tiempoImagenCarrusel: parseInt(document.getElementById("resTiempoCarrusel").value, 10) || 2 // <-- Añadido
-};
-        adminColumnasGlobales = Array.isArray(data.columnasMostrar) ? [...data.columnasMostrar] : [];
-        adminColumnasVisibles = Array.isArray(data.columnasMostrar) ? [...data.columnasMostrar] : [];
-        adminOrdenColumnas = Array.isArray(data.ordenVisual) ? [...data.ordenVisual] : [];
+        // 2. Fallback por si estuvieran guardadas directamente en el array del documento
+        if (imagenesCargadas.length === 0 && data.imagenes) {
+            imagenesCargadas = Array.isArray(data.imagenes) ? data.imagenes : [];
+        }
 
-        renderizarChipsAdmin();
+        // 3. Enviar los datos y las imágenes recuperadas al Web Component
+        const panelComp = document.getElementById("miPanelPrefs");
+        if (panelComp) {
+          panelComp.setDatosIniciales({
+            ...data,
+            slug: id
+          }, imagenesCargadas);
+          
+          const cols = data.columnasMostrar || [];
+          panelComp.setColumnas(cols, cols, data.ordenVisual || [], data.columnaOrden || '', data.sentidoOrden === 'asc');
+        }
 
-        document.getElementById("resultadoForm").classList.remove("hidden");
-        document.getElementById("resultadoForm").scrollIntoView({ behavior: 'smooth' });
+        document.getElementById("contenedorFormularioResultado").classList.remove("hidden");
+        document.getElementById("contenedorFormularioResultado").scrollIntoView({ behavior: 'smooth' });
       });
     });
 
+    // Evento Borrar
     document.querySelectorAll(".btn-del-res").forEach(btn => {
       btn.addEventListener("click", async (e) => {
         const id = e.target.getAttribute("data-id");
@@ -205,41 +154,7 @@ const resData = {
   });
 }
 
-async function guardarResultado(e) {
-  e.preventDefault();
-  if (!eventoActualId) return;
-
-  const idOriginal = document.getElementById("resIdOriginal").value;
-  const nuevoId = generarSlugTexto(document.getElementById("resIdCustom").value);
-  if (!nuevoId) return alert("El ID del resultado es obligatorio.");
-
-  const resData = {
-    nombre: document.getElementById("resNombre").value.trim(),
-    fecha: document.getElementById("resFecha").value,
-    tipo: document.getElementById("resTipo").value,
-    enlace: document.getElementById("resEnlace").value.trim(),
-    url_qr_resultados: document.getElementById("resUrlQr").value.trim(), // <-- Añadido
-    columnasMostrar: adminColumnasVisibles,
-    ordenVisual: adminOrdenColumnas,
-    directo: true,
-    intervaloRefresco: 30,
-    tiempoImagenCarrusel: parseInt(document.getElementById("resTiempoCarrusel").value, 10) || 2
-  };
-
-  try {
-    const nuevoDocRef = doc(db, "eventos", eventoActualId, "resultados", nuevoId);
-    if (idOriginal && idOriginal !== nuevoId) {
-      await deleteDoc(doc(db, "eventos", eventoActualId, "resultados", idOriginal));
-    }
-    await setDoc(nuevoDocRef, resData, { merge: true });
-    alert("Sección de resultados guardada correctamente.");
-    resetFormResultado();
-  } catch (err) {
-    alert("Error guardando el resultado: " + err.message);
-  }
-}
-
-// Lógica del Modal QR
+// Lógica global del Modal QR
 document.addEventListener("click", (e) => {
   if (e.target && e.target.classList.contains("btn-generar-qr")) {
     const resNombre = e.target.getAttribute("data-nombre");
@@ -271,14 +186,14 @@ document.addEventListener("click", (e) => {
   }
 });
 
-document.getElementById("cerrarModalQr").addEventListener("click", () => {
+document.getElementById("cerrarModalQr")?.addEventListener("click", () => {
   document.getElementById("modalQrResultados").classList.add("hidden");
 });
 
-document.getElementById("btnImprimirQr").addEventListener("click", () => {
+document.getElementById("btnImprimirQr")?.addEventListener("click", () => {
   window.print();
 });
 
-document.getElementById("btnDescargarPdfQr").addEventListener("click", () => {
-  window.print(); // Impresión nativa optimizada a PDF mediante el diálogo del navegador
+document.getElementById("btnDescargarPdfQr")?.addEventListener("click", () => {
+  window.print();
 });
