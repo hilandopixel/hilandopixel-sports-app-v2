@@ -4,6 +4,16 @@
     {
       "source": "/",
       "destination": "/index"
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "rutadelamiel2025.tudominio.com"
+        }
+      ],
+      "destination": "/rutadelamiel2025/resultados"
     }
   ]
 }
