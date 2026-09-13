@@ -1,0 +1,21 @@
+{
+  "name": "excel-column-exporter-seguro",
+  "version": "1.0.1",
+  "description": "Exporta columnas específicas de un Excel a un JSON usando exceljs.",
+  "main": "xlstojson.js",
+  "scripts": {
+    "start": "node xlstojson.js"
+  },
+  "keywords": [
+    "excel",
+    "json",
+    "exceljs",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "json2csv": "^6.0.0-alpha.2"
+  }
+}

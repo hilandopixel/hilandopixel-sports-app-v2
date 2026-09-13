@@ -1,0 +1,5654 @@
+{
+  "data": [
+    {
+      "posicion": "1",
+      "SEXO": "",
+      "dorsal": "669",
+      "nombre": "LAUREANO GARCIA ALCAIDE",
+      "club": "CA TROTASIERRA HORNACHUELOS",
+      "posicionprueba": "1",
+      "CATEG": "MDM",
+      "tiempo": "00:50:28.364"
+    },
+    {
+      "posicion": "2",
+      "SEXO": "",
+      "dorsal": "676",
+      "nombre": "RAFA RIVAS GONZALEZ",
+      "club": "SIERRA NEVADA TRAIL RUNNING",
+      "posicionprueba": "1",
+      "CATEG": "MAM",
+      "tiempo": "00:51:25.155"
+    },
+    {
+      "posicion": "3",
+      "SEXO": "",
+      "dorsal": "316",
+      "nombre": "RAUL QUINTANA FUENTES",
+      "club": "TABLERO RUNNERS",
+      "posicionprueba": "1",
+      "CATEG": "MBM",
+      "tiempo": "00:51:52.353"
+    },
+    {
+      "posicion": "4",
+      "SEXO": "",
+      "dorsal": "260",
+      "nombre": "ANTONIO GARCIA PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "2",
+      "CATEG": "MBM",
+      "tiempo": "00:52:21.702"
+    },
+    {
+      "posicion": "5",
+      "SEXO": "",
+      "dorsal": "684",
+      "nombre": "ANDRES MORENO MORENO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "1",
+      "CATEG": "MCM",
+      "tiempo": "00:52:24.104"
+    },
+    {
+      "posicion": "6",
+      "SEXO": "",
+      "dorsal": "488",
+      "nombre": "BONIFACIO SALAS MORENO",
+      "club": "GLOBALDERM TRAIL",
+      "posicionprueba": "2",
+      "CATEG": "MAM",
+      "tiempo": "00:53:14.752"
+    },
+    {
+      "posicion": "7",
+      "SEXO": "",
+      "dorsal": "605",
+      "nombre": "JAVIER PONFERRADA HIDALGO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "3",
+      "CATEG": "MBM",
+      "tiempo": "00:53:20.059"
+    },
+    {
+      "posicion": "8",
+      "SEXO": "",
+      "dorsal": "614",
+      "nombre": "JUAN CARLOS NIETO GRACIA",
+      "club": "CARBULA SPORT",
+      "posicionprueba": "4",
+      "CATEG": "MBM",
+      "tiempo": "00:53:28.274"
+    },
+    {
+      "posicion": "9",
+      "SEXO": "",
+      "dorsal": "682",
+      "nombre": "SERGIO ESPEJO SANCHEZ",
+      "club": "TROTASIERRA",
+      "posicionprueba": "1",
+      "CATEG": "SUB23M",
+      "tiempo": "00:53:33.465"
+    },
+    {
+      "posicion": "10",
+      "SEXO": "",
+      "dorsal": "414",
+      "nombre": "ALEJANDRO REYES DELGADO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "1",
+      "CATEG": "SM",
+      "tiempo": "00:53:35.077"
+    },
+    {
+      "posicion": "11",
+      "SEXO": "",
+      "dorsal": "87",
+      "nombre": "ANTONIO JOSE VILLALBA TORRES",
+      "club": "CD INDEA",
+      "posicionprueba": "3",
+      "CATEG": "MAM",
+      "tiempo": "00:54:20.273"
+    },
+    {
+      "posicion": "12",
+      "SEXO": "",
+      "dorsal": "16",
+      "nombre": "JORGE DURO GOMEZ",
+      "club": "LYNX TRAIL",
+      "posicionprueba": "4",
+      "CATEG": "MAM",
+      "tiempo": "00:54:29.863"
+    },
+    {
+      "posicion": "13",
+      "SEXO": "",
+      "dorsal": "347",
+      "nombre": "IGNACIO POYATO ZAFRA",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "5",
+      "CATEG": "MAM",
+      "tiempo": "00:54:50.298"
+    },
+    {
+      "posicion": "14",
+      "SEXO": "",
+      "dorsal": "590",
+      "nombre": "JESUS CARCELEN VEGA",
+      "club": "LA ANTIGRUPETA",
+      "posicionprueba": "6",
+      "CATEG": "MAM",
+      "tiempo": "00:54:57.798"
+    },
+    {
+      "posicion": "15",
+      "SEXO": "",
+      "dorsal": "511",
+      "nombre": "GUILLERMO DUEÑAS DEL POZO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "5",
+      "CATEG": "MBM",
+      "tiempo": "00:57:14.965"
+    },
+    {
+      "posicion": "16",
+      "SEXO": "",
+      "dorsal": "518",
+      "nombre": "PABLO BUENO CARRILLO",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "2",
+      "CATEG": "SM",
+      "tiempo": "00:57:17.920"
+    },
+    {
+      "posicion": "17",
+      "SEXO": "",
+      "dorsal": "307",
+      "nombre": "JUAN FRANCISCO RUJULA PINO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "2",
+      "CATEG": "MCM",
+      "tiempo": "00:57:28.848"
+    },
+    {
+      "posicion": "18",
+      "SEXO": "",
+      "dorsal": "400",
+      "nombre": "FRANCISCO JOSE GARCIA GRANADOS",
+      "club": "CLUB ATLETISMO LA CARLOTA",
+      "posicionprueba": "6",
+      "CATEG": "MBM",
+      "tiempo": "00:57:30.200"
+    },
+    {
+      "posicion": "19",
+      "SEXO": "",
+      "dorsal": "652",
+      "nombre": "MARCELO GUIMARAES OSORIO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "2",
+      "CATEG": "MDM",
+      "tiempo": "00:57:55.205"
+    },
+    {
+      "posicion": "20",
+      "SEXO": "",
+      "dorsal": "639",
+      "nombre": "ANTONIO JESUS CANO BORREGO",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "3",
+      "CATEG": "MDM",
+      "tiempo": "00:58:06.178"
+    },
+    {
+      "posicion": "21",
+      "SEXO": "",
+      "dorsal": "591",
+      "nombre": "JORGE FERNANDEZ MARIN",
+      "club": "LOBOS TRAIL",
+      "posicionprueba": "7",
+      "CATEG": "MBM",
+      "tiempo": "00:58:19.398"
+    },
+    {
+      "posicion": "22",
+      "SEXO": "",
+      "dorsal": "67",
+      "nombre": "RAFAEL CARLOS PEREZ ESCOBAR",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "3",
+      "CATEG": "SM",
+      "tiempo": "00:58:20.369"
+    },
+    {
+      "posicion": "23",
+      "SEXO": "",
+      "dorsal": "199",
+      "nombre": "MIGUEL ANGEL ORTIZ GARCIA",
+      "club": "TIKISMIKIS",
+      "posicionprueba": "3",
+      "CATEG": "MCM",
+      "tiempo": "00:58:21.478"
+    },
+    {
+      "posicion": "24",
+      "SEXO": "",
+      "dorsal": "123",
+      "nombre": "JOSE ANTONIO GALVEZ SEGOVIA",
+      "club": "C.D. GUERREROS DE LA GUZMAN",
+      "posicionprueba": "8",
+      "CATEG": "MBM",
+      "tiempo": "00:58:30.939"
+    },
+    {
+      "posicion": "25",
+      "SEXO": "",
+      "dorsal": "63",
+      "nombre": "FRANCISCO JAVIER SANCHEZ GARCIA",
+      "club": "CD INDEA",
+      "posicionprueba": "7",
+      "CATEG": "MAM",
+      "tiempo": "00:59:05.654"
+    },
+    {
+      "posicion": "26",
+      "SEXO": "",
+      "dorsal": "611",
+      "nombre": "MIGUEL ANGEL ORGAZ GARCIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "MAM",
+      "tiempo": "00:59:10.679"
+    },
+    {
+      "posicion": "27",
+      "SEXO": "",
+      "dorsal": "410",
+      "nombre": "EMILIO JOSE PAEZ MEJIAS",
+      "club": "ATLETISMO LA RAMBLA",
+      "posicionprueba": "9",
+      "CATEG": "MBM",
+      "tiempo": "00:59:12.431"
+    },
+    {
+      "posicion": "28",
+      "SEXO": "",
+      "dorsal": "36",
+      "nombre": "JOSE ANTONIO FLORES CASADO",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "4",
+      "CATEG": "MCM",
+      "tiempo": "00:59:16.031"
+    },
+    {
+      "posicion": "29",
+      "SEXO": "",
+      "dorsal": "534",
+      "nombre": "RAFAEL ORTIZ LINARES",
+      "club": "TROTASIERRA",
+      "posicionprueba": "1",
+      "CATEG": "MFM",
+      "tiempo": "00:59:34.491"
+    },
+    {
+      "posicion": "30",
+      "SEXO": "",
+      "dorsal": "62",
+      "nombre": "CRISTIAN CAMBRONERO MARTINEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "4",
+      "CATEG": "SM",
+      "tiempo": "01:00:09.293"
+    },
+    {
+      "posicion": "31",
+      "SEXO": "",
+      "dorsal": "4",
+      "nombre": "JULIAN CALERO ARROYO",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "5",
+      "CATEG": "MCM",
+      "tiempo": "01:00:16.931"
+    },
+    {
+      "posicion": "32",
+      "SEXO": "",
+      "dorsal": "88",
+      "nombre": "JOSE ANTONIO GUADIX NUÑEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "1",
+      "CATEG": "MEM",
+      "tiempo": "01:00:23.618"
+    },
+    {
+      "posicion": "33",
+      "SEXO": "",
+      "dorsal": "622",
+      "nombre": "FRANCISCO JOSE PLAZA ARANDA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "5",
+      "CATEG": "SM",
+      "tiempo": "01:00:42.167"
+    },
+    {
+      "posicion": "34",
+      "SEXO": "",
+      "dorsal": "37",
+      "nombre": "DAVID ANTONIO RUBIO MUÑOZ",
+      "club": "CERRO JONETE",
+      "posicionprueba": "4",
+      "CATEG": "MDM",
+      "tiempo": "01:00:43.250"
+    },
+    {
+      "posicion": "35",
+      "SEXO": "",
+      "dorsal": "177",
+      "nombre": "MIGUEL ANGEL MACIAS PEREA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "MCM",
+      "tiempo": "01:00:46.433"
+    },
+    {
+      "posicion": "36",
+      "SEXO": "",
+      "dorsal": "200",
+      "nombre": "ALVARO PORTERO BOLAÑOS",
+      "club": "TIKISMIKIS",
+      "posicionprueba": "7",
+      "CATEG": "MCM",
+      "tiempo": "01:00:48.364"
+    },
+    {
+      "posicion": "37",
+      "SEXO": "",
+      "dorsal": "184",
+      "nombre": "RAFAEL MORENO VALERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "SM",
+      "tiempo": "01:00:49.916"
+    },
+    {
+      "posicion": "38",
+      "SEXO": "",
+      "dorsal": "599",
+      "nombre": "FRANCISCO JESUS GARCIA DELGADO",
+      "club": "CHACALES DEL PARQUE",
+      "posicionprueba": "2",
+      "CATEG": "MFM",
+      "tiempo": "01:00:51.407"
+    },
+    {
+      "posicion": "39",
+      "SEXO": "",
+      "dorsal": "449",
+      "nombre": "MANUEL JOSE SIVIANES MONTAÑO",
+      "club": "CD INDEA",
+      "posicionprueba": "5",
+      "CATEG": "MDM",
+      "tiempo": "01:00:56.064"
+    },
+    {
+      "posicion": "40",
+      "SEXO": "",
+      "dorsal": "195",
+      "nombre": "ALEJANDRO LUCENA TOLEDANO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "9",
+      "CATEG": "MAM",
+      "tiempo": "01:01:03.507"
+    },
+    {
+      "posicion": "41",
+      "SEXO": "",
+      "dorsal": "610",
+      "nombre": "JUAN FERNANDO VELASCO CHACON",
+      "club": "TROTASIERRA",
+      "posicionprueba": "6",
+      "CATEG": "MDM",
+      "tiempo": "01:01:07.056"
+    },
+    {
+      "posicion": "42",
+      "SEXO": "",
+      "dorsal": "557",
+      "nombre": "JOSE JAVIER SOLIGO MIÑAMBRES",
+      "club": "TROTACALLES",
+      "posicionprueba": "2",
+      "CATEG": "MEM",
+      "tiempo": "01:01:09.891"
+    },
+    {
+      "posicion": "43",
+      "SEXO": "",
+      "dorsal": "644",
+      "nombre": "RAFAEL CUEVAS JIMENEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "MCM",
+      "tiempo": "01:01:17.955"
+    },
+    {
+      "posicion": "44",
+      "SEXO": "",
+      "dorsal": "24",
+      "nombre": "ANGEL GARCIA ROMERO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "9",
+      "CATEG": "MCM",
+      "tiempo": "01:01:31.538"
+    },
+    {
+      "posicion": "45",
+      "SEXO": "",
+      "dorsal": "80",
+      "nombre": "JOSE MARIA MUÑOZ VIDAL",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "7",
+      "CATEG": "MDM",
+      "tiempo": "01:01:34.622"
+    },
+    {
+      "posicion": "46",
+      "SEXO": "",
+      "dorsal": "404",
+      "nombre": "ANTONIO ARANDA. CARMONA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "10",
+      "CATEG": "MCM",
+      "tiempo": "01:01:41.125"
+    },
+    {
+      "posicion": "47",
+      "SEXO": "",
+      "dorsal": "665",
+      "nombre": "ALEJANDRO BLESA GALLARDO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "10",
+      "CATEG": "MBM",
+      "tiempo": "01:01:55.092"
+    },
+    {
+      "posicion": "48",
+      "SEXO": "",
+      "dorsal": "102",
+      "nombre": "MANUEL GUISADO ORTEGA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "3",
+      "CATEG": "MEM",
+      "tiempo": "01:02:03.075"
+    },
+    {
+      "posicion": "49",
+      "SEXO": "",
+      "dorsal": "553",
+      "nombre": "DANIEL SANTIAGO PESO",
+      "club": "VIRGEN DE BELEN",
+      "posicionprueba": "11",
+      "CATEG": "MCM",
+      "tiempo": "01:02:07.193"
+    },
+    {
+      "posicion": "50",
+      "SEXO": "",
+      "dorsal": "388",
+      "nombre": "ESTEBAN GARCIA PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "MDM",
+      "tiempo": "01:02:08.972"
+    },
+    {
+      "posicion": "51",
+      "SEXO": "",
+      "dorsal": "673",
+      "nombre": "ANDRES ALBERTO PEREZ CAÑETE",
+      "club": "TROTACALLES",
+      "posicionprueba": "10",
+      "CATEG": "MAM",
+      "tiempo": "01:02:11.391"
+    },
+    {
+      "posicion": "52",
+      "SEXO": "",
+      "dorsal": "32",
+      "nombre": "ALVARO MONTERO BUSTILLO",
+      "club": "CD INDEA",
+      "posicionprueba": "9",
+      "CATEG": "MDM",
+      "tiempo": "01:02:16.732"
+    },
+    {
+      "posicion": "53",
+      "SEXO": "",
+      "dorsal": "401",
+      "nombre": "ANTONIO ORTIZ PEÑUELAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "12",
+      "CATEG": "MCM",
+      "tiempo": "01:02:25.974"
+    },
+    {
+      "posicion": "54",
+      "SEXO": "",
+      "dorsal": "600",
+      "nombre": "ALVARO BAUTISTA GOMEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "11",
+      "CATEG": "MAM",
+      "tiempo": "01:02:28.274"
+    },
+    {
+      "posicion": "55",
+      "SEXO": "",
+      "dorsal": "299",
+      "nombre": "FRANCISCO JAVIER PEÑA CALZADA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "13",
+      "CATEG": "MCM",
+      "tiempo": "01:02:32.514"
+    },
+    {
+      "posicion": "56",
+      "SEXO": "",
+      "dorsal": "12",
+      "nombre": "FRANCISCO JAVIER ORDOÑEZ MARQUEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "11",
+      "CATEG": "MBM",
+      "tiempo": "01:02:33.005"
+    },
+    {
+      "posicion": "57",
+      "SEXO": "",
+      "dorsal": "231",
+      "nombre": "RAFAEL NIETO DUARTE",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "12",
+      "CATEG": "MAM",
+      "tiempo": "01:02:44.344"
+    },
+    {
+      "posicion": "58",
+      "SEXO": "1",
+      "dorsal": "333",
+      "nombre": "LISA ESQUIVEL BLANCO",
+      "club": "TROTASIERRA",
+      "posicionprueba": "1",
+      "CATEG": "MBF",
+      "tiempo": "01:02:48.081"
+    },
+    {
+      "posicion": "59",
+      "SEXO": "",
+      "dorsal": "319",
+      "nombre": "JOSE MARIA ARANDA CARMONA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "12",
+      "CATEG": "MBM",
+      "tiempo": "01:02:50.786"
+    },
+    {
+      "posicion": "60",
+      "SEXO": "2",
+      "dorsal": "650",
+      "nombre": "MARIBEL LOPEZ MOHEDANO",
+      "club": "TROTACOLONIA",
+      "posicionprueba": "2",
+      "CATEG": "MBF",
+      "tiempo": "01:02:59.751"
+    },
+    {
+      "posicion": "61",
+      "SEXO": "",
+      "dorsal": "187",
+      "nombre": "FRANCISCO PEREZ ARJONA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "13",
+      "CATEG": "MBM",
+      "tiempo": "01:03:13.631"
+    },
+    {
+      "posicion": "62",
+      "SEXO": "",
+      "dorsal": "108",
+      "nombre": "JOSE L CEULAR CARRASCO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "14",
+      "CATEG": "MBM",
+      "tiempo": "01:03:14.355"
+    },
+    {
+      "posicion": "63",
+      "SEXO": "",
+      "dorsal": "185",
+      "nombre": "ANTONIO ANGEL DE LA TORRE PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "7",
+      "CATEG": "SM",
+      "tiempo": "01:03:15.369"
+    },
+    {
+      "posicion": "64",
+      "SEXO": "",
+      "dorsal": "391",
+      "nombre": "MANUEL HANS HEBLES",
+      "club": "KENNYATAS DE SANTAELLA",
+      "posicionprueba": "13",
+      "CATEG": "MAM",
+      "tiempo": "01:03:22.597"
+    },
+    {
+      "posicion": "65",
+      "SEXO": "",
+      "dorsal": "422",
+      "nombre": "SALVADOR MORALES ROMERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "10",
+      "CATEG": "MDM",
+      "tiempo": "01:03:23.817"
+    },
+    {
+      "posicion": "66",
+      "SEXO": "",
+      "dorsal": "495",
+      "nombre": "JUAN JOSE SANCHEZ GIL",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "8",
+      "CATEG": "SM",
+      "tiempo": "01:03:25.736"
+    },
+    {
+      "posicion": "67",
+      "SEXO": "",
+      "dorsal": "130",
+      "nombre": "DAVID PASTOR BAENA",
+      "club": "CD INDEA",
+      "posicionprueba": "15",
+      "CATEG": "MBM",
+      "tiempo": "01:03:28.329"
+    },
+    {
+      "posicion": "68",
+      "SEXO": "3",
+      "dorsal": "308",
+      "nombre": "MARTA RUEDA FERNANDEZ",
+      "club": "CD INDEA",
+      "posicionprueba": "1",
+      "CATEG": "MAF",
+      "tiempo": "01:03:33.507"
+    },
+    {
+      "posicion": "69",
+      "SEXO": "",
+      "dorsal": "585",
+      "nombre": "ALEJANDRO CEPAS RAMIREZ",
+      "club": "VIRGEN DE BELEN",
+      "posicionprueba": "9",
+      "CATEG": "SM",
+      "tiempo": "01:03:50.133"
+    },
+    {
+      "posicion": "70",
+      "SEXO": "",
+      "dorsal": "390",
+      "nombre": "MIGUEL ESTEBAN DIAZ DE RUS",
+      "club": "ATLETISMO LA RAMBLA",
+      "posicionprueba": "16",
+      "CATEG": "MBM",
+      "tiempo": "01:03:52.314"
+    },
+    {
+      "posicion": "71",
+      "SEXO": "",
+      "dorsal": "389",
+      "nombre": "FRANCISCO JAVIER ROMERO BEJAR",
+      "club": "CD GUERREROS DE LA GUZMAN",
+      "posicionprueba": "14",
+      "CATEG": "MCM",
+      "tiempo": "01:04:15.242"
+    },
+    {
+      "posicion": "72",
+      "SEXO": "",
+      "dorsal": "100",
+      "nombre": "MATEO ORTIZ RUIZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "10",
+      "CATEG": "SM",
+      "tiempo": "01:04:23.896"
+    },
+    {
+      "posicion": "73",
+      "SEXO": "",
+      "dorsal": "443",
+      "nombre": "JAVIER POYATO AGUERA",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "2",
+      "CATEG": "SUB23M",
+      "tiempo": "01:04:34.383"
+    },
+    {
+      "posicion": "74",
+      "SEXO": "",
+      "dorsal": "11",
+      "nombre": "JAVIER ANTONIO POYATO GALAN",
+      "club": "TREPACHULOS",
+      "posicionprueba": "11",
+      "CATEG": "MDM",
+      "tiempo": "01:04:34.919"
+    },
+    {
+      "posicion": "75",
+      "SEXO": "",
+      "dorsal": "105",
+      "nombre": "SANTIAGO PASCUAL PONTONES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "12",
+      "CATEG": "MDM",
+      "tiempo": "01:04:40.955"
+    },
+    {
+      "posicion": "76",
+      "SEXO": "",
+      "dorsal": "467",
+      "nombre": "SERGIO ALMENARA FERNANDEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "15",
+      "CATEG": "MCM",
+      "tiempo": "01:04:43.412"
+    },
+    {
+      "posicion": "77",
+      "SEXO": "",
+      "dorsal": "173",
+      "nombre": "RAFAEL AGUILAR BARROSO",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "16",
+      "CATEG": "MCM",
+      "tiempo": "01:04:45.620"
+    },
+    {
+      "posicion": "78",
+      "SEXO": "",
+      "dorsal": "158",
+      "nombre": "MANUEL AYLLON RIZOS",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "14",
+      "CATEG": "MAM",
+      "tiempo": "01:04:55.844"
+    },
+    {
+      "posicion": "79",
+      "SEXO": "",
+      "dorsal": "97",
+      "nombre": "ALBERTO BARRERA LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "17",
+      "CATEG": "MBM",
+      "tiempo": "01:04:56.549"
+    },
+    {
+      "posicion": "80",
+      "SEXO": "",
+      "dorsal": "171",
+      "nombre": "JOSE MANUEL NARANJO FERNANDEZ",
+      "club": "TROTASIERRA",
+      "posicionprueba": "18",
+      "CATEG": "MBM",
+      "tiempo": "01:04:56.753"
+    },
+    {
+      "posicion": "81",
+      "SEXO": "",
+      "dorsal": "452",
+      "nombre": "JOSE COBO QUERO",
+      "club": "LA ANTIGRUPETA IMPORALIA",
+      "posicionprueba": "15",
+      "CATEG": "MAM",
+      "tiempo": "01:04:56.801"
+    },
+    {
+      "posicion": "82",
+      "SEXO": "",
+      "dorsal": "74",
+      "nombre": "CARLOS MERCHAN MANGAS",
+      "club": "TROTASIERRA",
+      "posicionprueba": "16",
+      "CATEG": "MAM",
+      "tiempo": "01:04:58.007"
+    },
+    {
+      "posicion": "83",
+      "SEXO": "",
+      "dorsal": "172",
+      "nombre": "FRAN AREVALO CARRILLO",
+      "club": "TROTASIERRA",
+      "posicionprueba": "17",
+      "CATEG": "MAM",
+      "tiempo": "01:04:58.383"
+    },
+    {
+      "posicion": "84",
+      "SEXO": "4",
+      "dorsal": "128",
+      "nombre": "AZAHARA PEREZ RUIZ",
+      "club": "CD INDEA",
+      "posicionprueba": "1",
+      "CATEG": "SF",
+      "tiempo": "01:04:59.875"
+    },
+    {
+      "posicion": "85",
+      "SEXO": "",
+      "dorsal": "77",
+      "nombre": "JORGE RAYA LLAMAS",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "19",
+      "CATEG": "MBM",
+      "tiempo": "01:05:04.812"
+    },
+    {
+      "posicion": "86",
+      "SEXO": "",
+      "dorsal": "124",
+      "nombre": "FERNANDO DEL REY MONTESINOS",
+      "club": "VERTICALIA",
+      "posicionprueba": "4",
+      "CATEG": "MEM",
+      "tiempo": "01:05:11.647"
+    },
+    {
+      "posicion": "87",
+      "SEXO": "",
+      "dorsal": "632",
+      "nombre": "ANTONIO SANCHEZ ALCAIDE",
+      "club": "CORRECAMINOSTRAILCORDOBA",
+      "posicionprueba": "17",
+      "CATEG": "MCM",
+      "tiempo": "01:05:12.709"
+    },
+    {
+      "posicion": "88",
+      "SEXO": "",
+      "dorsal": "543",
+      "nombre": "JUAN CARLOS SANCHEZ CASARES",
+      "club": "CALIFA",
+      "posicionprueba": "20",
+      "CATEG": "MBM",
+      "tiempo": "01:05:20.007"
+    },
+    {
+      "posicion": "89",
+      "SEXO": "",
+      "dorsal": "483",
+      "nombre": "MIGUEL ANGEL AGUILERA DEL PINO",
+      "club": "AIRA SPORT",
+      "posicionprueba": "18",
+      "CATEG": "MCM",
+      "tiempo": "01:05:24.378"
+    },
+    {
+      "posicion": "90",
+      "SEXO": "",
+      "dorsal": "510",
+      "nombre": "MIGUEL DURAN CABALLERO",
+      "club": "LYNX TRAIL",
+      "posicionprueba": "13",
+      "CATEG": "MDM",
+      "tiempo": "01:05:32.977"
+    },
+    {
+      "posicion": "91",
+      "SEXO": "",
+      "dorsal": "166",
+      "nombre": "FRANCISCO JESUS MONTERO GARCIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "11",
+      "CATEG": "SM",
+      "tiempo": "01:05:36.214"
+    },
+    {
+      "posicion": "92",
+      "SEXO": "",
+      "dorsal": "480",
+      "nombre": "FRANCISCO JAVIER GARCIA MORENO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "19",
+      "CATEG": "MCM",
+      "tiempo": "01:05:38.531"
+    },
+    {
+      "posicion": "93",
+      "SEXO": "",
+      "dorsal": "626",
+      "nombre": "JAVIER ALVAREZ LEON",
+      "club": "CA LA LUISIANA-EL CAMPILLO",
+      "posicionprueba": "12",
+      "CATEG": "SM",
+      "tiempo": "01:05:50.445"
+    },
+    {
+      "posicion": "94",
+      "SEXO": "",
+      "dorsal": "517",
+      "nombre": "BENITO LUQUE ARROYO",
+      "club": "VIRGEN DE BELEN",
+      "posicionprueba": "3",
+      "CATEG": "MFM",
+      "tiempo": "01:05:51.387"
+    },
+    {
+      "posicion": "95",
+      "SEXO": "",
+      "dorsal": "356",
+      "nombre": "JOSE ANGEL RAMIREZ REINA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "18",
+      "CATEG": "MAM",
+      "tiempo": "01:05:53.059"
+    },
+    {
+      "posicion": "96",
+      "SEXO": "",
+      "dorsal": "618",
+      "nombre": "ROMAN SANCHEZ JURADO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "20",
+      "CATEG": "MCM",
+      "tiempo": "01:05:54.420"
+    },
+    {
+      "posicion": "97",
+      "SEXO": "5",
+      "dorsal": "655",
+      "nombre": "VIRGINIA MOYA ARMENTEROS",
+      "club": "TROTASIERRA",
+      "posicionprueba": "2",
+      "CATEG": "MAF",
+      "tiempo": "01:05:55.772"
+    },
+    {
+      "posicion": "98",
+      "SEXO": "",
+      "dorsal": "276",
+      "nombre": "DAVID PUERMA MARTINEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "14",
+      "CATEG": "MDM",
+      "tiempo": "01:05:59.769"
+    },
+    {
+      "posicion": "99",
+      "SEXO": "",
+      "dorsal": "568",
+      "nombre": "FRANCISCO JOSE CRUZ MUÑOZ",
+      "club": "GRUPO DE MONTAÑA MONTE COBRE TRAIL",
+      "posicionprueba": "21",
+      "CATEG": "MCM",
+      "tiempo": "01:06:01.256"
+    },
+    {
+      "posicion": "100",
+      "SEXO": "",
+      "dorsal": "398",
+      "nombre": "JOSE RAFAEL PIERNAGORDA JULIA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "15",
+      "CATEG": "MDM",
+      "tiempo": "01:06:01.632"
+    },
+    {
+      "posicion": "101",
+      "SEXO": "",
+      "dorsal": "402",
+      "nombre": "MANUEL RUIZ MEMBRILLA",
+      "club": "BATALLA DE ALCOLEA 1808",
+      "posicionprueba": "16",
+      "CATEG": "MDM",
+      "tiempo": "01:06:04.429"
+    },
+    {
+      "posicion": "102",
+      "SEXO": "",
+      "dorsal": "360",
+      "nombre": "ANTONIO JESUS RIOS GARCIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "22",
+      "CATEG": "MCM",
+      "tiempo": "01:06:06.997"
+    },
+    {
+      "posicion": "103",
+      "SEXO": "",
+      "dorsal": "152",
+      "nombre": "RAUL SANCHEZ CABALLERO",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "23",
+      "CATEG": "MCM",
+      "tiempo": "01:06:07.668"
+    },
+    {
+      "posicion": "104",
+      "SEXO": "",
+      "dorsal": "563",
+      "nombre": "JOSE LUIS MARTINEZ CASTILLEJOS",
+      "club": "ATLETISMO HINOJOSA DEL DUQUE",
+      "posicionprueba": "19",
+      "CATEG": "MAM",
+      "tiempo": "01:06:09.210"
+    },
+    {
+      "posicion": "105",
+      "SEXO": "",
+      "dorsal": "339",
+      "nombre": "ANGEL RUIZ GARCIA",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "24",
+      "CATEG": "MCM",
+      "tiempo": "01:06:15.207"
+    },
+    {
+      "posicion": "106",
+      "SEXO": "",
+      "dorsal": "58",
+      "nombre": "PEDRO GONZALEZ MUÑOZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "21",
+      "CATEG": "MBM",
+      "tiempo": "01:06:24.369"
+    },
+    {
+      "posicion": "107",
+      "SEXO": "",
+      "dorsal": "14",
+      "nombre": "DAVID MUÑOZ SANCHEZ",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "20",
+      "CATEG": "MAM",
+      "tiempo": "01:06:37.456"
+    },
+    {
+      "posicion": "108",
+      "SEXO": "",
+      "dorsal": "189",
+      "nombre": "FRANCISCO RUIZ VAZQUEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "25",
+      "CATEG": "MCM",
+      "tiempo": "01:06:37.752"
+    },
+    {
+      "posicion": "109",
+      "SEXO": "",
+      "dorsal": "66",
+      "nombre": "IVAN ZEA SORIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "21",
+      "CATEG": "MAM",
+      "tiempo": "01:06:38.421"
+    },
+    {
+      "posicion": "110",
+      "SEXO": "",
+      "dorsal": "324",
+      "nombre": "DAVID GARCIA RODRIGUEZ",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "26",
+      "CATEG": "MCM",
+      "tiempo": "01:06:39.542"
+    },
+    {
+      "posicion": "111",
+      "SEXO": "",
+      "dorsal": "354",
+      "nombre": "GABRIEL MARIN JURADO",
+      "club": "SATYSTRAIL CORDOBA TEAM",
+      "posicionprueba": "27",
+      "CATEG": "MCM",
+      "tiempo": "01:06:41.468"
+    },
+    {
+      "posicion": "112",
+      "SEXO": "",
+      "dorsal": "274",
+      "nombre": "MARIO ARTEAGA ATALAYA",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "28",
+      "CATEG": "MCM",
+      "tiempo": "01:06:44.778"
+    },
+    {
+      "posicion": "113",
+      "SEXO": "",
+      "dorsal": "379",
+      "nombre": "RAFAEL PRIEGO RUIZ",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "17",
+      "CATEG": "MDM",
+      "tiempo": "01:06:45.566"
+    },
+    {
+      "posicion": "114",
+      "SEXO": "",
+      "dorsal": "256",
+      "nombre": "PABLO MORENO SILLERO",
+      "club": "WIILD TRAIL",
+      "posicionprueba": "18",
+      "CATEG": "MDM",
+      "tiempo": "01:06:50.121"
+    },
+    {
+      "posicion": "115",
+      "SEXO": "",
+      "dorsal": "498",
+      "nombre": "JUAN JOSE SANCHEZ MADRID",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "5",
+      "CATEG": "MEM",
+      "tiempo": "01:07:05.240"
+    },
+    {
+      "posicion": "116",
+      "SEXO": "",
+      "dorsal": "94",
+      "nombre": "SALVADOR YUSTE REDONDO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "22",
+      "CATEG": "MBM",
+      "tiempo": "01:07:06.870"
+    },
+    {
+      "posicion": "117",
+      "SEXO": "",
+      "dorsal": "31",
+      "nombre": "JOSE MIGUEL CARMONA RODRIGUEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "13",
+      "CATEG": "SM",
+      "tiempo": "01:07:07.796"
+    },
+    {
+      "posicion": "118",
+      "SEXO": "",
+      "dorsal": "624",
+      "nombre": "JUAN CADENAS ARCAS",
+      "club": "CA LA LUISIANA-EL CAMPILLO",
+      "posicionprueba": "29",
+      "CATEG": "MCM",
+      "tiempo": "01:07:10.908"
+    },
+    {
+      "posicion": "119",
+      "SEXO": "",
+      "dorsal": "577",
+      "nombre": "JUAN CARRASCO GARCIA",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "23",
+      "CATEG": "MBM",
+      "tiempo": "01:07:15.283"
+    },
+    {
+      "posicion": "120",
+      "SEXO": "",
+      "dorsal": "75",
+      "nombre": "MIGUEL ANGEL GARCIA FERNANDEZ",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "30",
+      "CATEG": "MCM",
+      "tiempo": "01:07:24.645"
+    },
+    {
+      "posicion": "121",
+      "SEXO": "",
+      "dorsal": "332",
+      "nombre": "ANTONIO JOSE SIERRA GOMEZ",
+      "club": "ATLETISMO LA RAMBLA",
+      "posicionprueba": "24",
+      "CATEG": "MBM",
+      "tiempo": "01:07:27.769"
+    },
+    {
+      "posicion": "122",
+      "SEXO": "",
+      "dorsal": "479",
+      "nombre": "IGNACIO MUÑOZ MARTIN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "19",
+      "CATEG": "MDM",
+      "tiempo": "01:07:31.709"
+    },
+    {
+      "posicion": "123",
+      "SEXO": "",
+      "dorsal": "153",
+      "nombre": "FRANCISCO JAVIER CONTIÑEZ DORADO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "31",
+      "CATEG": "MCM",
+      "tiempo": "01:07:35.226"
+    },
+    {
+      "posicion": "124",
+      "SEXO": "",
+      "dorsal": "680",
+      "nombre": "MARCO ANTONTO SARMIENTO TRAPERO",
+      "club": "RECICLAOS",
+      "posicionprueba": "25",
+      "CATEG": "MBM",
+      "tiempo": "01:07:37.411"
+    },
+    {
+      "posicion": "125",
+      "SEXO": "",
+      "dorsal": "21",
+      "nombre": "MIGUEL ANGEL BRAVO GOMEZ",
+      "club": "CD INDEA",
+      "posicionprueba": "14",
+      "CATEG": "SM",
+      "tiempo": "01:07:43.508"
+    },
+    {
+      "posicion": "126",
+      "SEXO": "",
+      "dorsal": "39",
+      "nombre": "FRANCISCO DOMINGUEZ MEJIAS",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "32",
+      "CATEG": "MCM",
+      "tiempo": "01:07:48.391"
+    },
+    {
+      "posicion": "127",
+      "SEXO": "",
+      "dorsal": "215",
+      "nombre": "JUAN CARLOS TRINIDAD LORO",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "6",
+      "CATEG": "MEM",
+      "tiempo": "01:07:48.984"
+    },
+    {
+      "posicion": "128",
+      "SEXO": "",
+      "dorsal": "306",
+      "nombre": "LUIS FIGUEROA JIMENEZ",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "7",
+      "CATEG": "MEM",
+      "tiempo": "01:07:51.100"
+    },
+    {
+      "posicion": "129",
+      "SEXO": "6",
+      "dorsal": "196",
+      "nombre": "JOANNA BURLING JOHNSON",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "3",
+      "CATEG": "MAF",
+      "tiempo": "01:07:54.622"
+    },
+    {
+      "posicion": "130",
+      "SEXO": "",
+      "dorsal": "678",
+      "nombre": "ANTONIO JAVIER ROLDAN VILLALOBOS",
+      "club": "JAMOUNTAIN",
+      "posicionprueba": "4",
+      "CATEG": "MFM",
+      "tiempo": "01:07:57.348"
+    },
+    {
+      "posicion": "131",
+      "SEXO": "",
+      "dorsal": "136",
+      "nombre": "MANUEL GOMEZ JIMENEZ",
+      "club": "CLUB DE ATLETISMO LA CARLOTA",
+      "posicionprueba": "26",
+      "CATEG": "MBM",
+      "tiempo": "01:08:00.220"
+    },
+    {
+      "posicion": "132",
+      "SEXO": "",
+      "dorsal": "309",
+      "nombre": "FERNANDO JESUS PENO DIAZ",
+      "club": "CLUB DE ATLETISMO LA CARLOTA",
+      "posicionprueba": "33",
+      "CATEG": "MCM",
+      "tiempo": "01:08:00.452"
+    },
+    {
+      "posicion": "133",
+      "SEXO": "7",
+      "dorsal": "6",
+      "nombre": "IRENE ZAMORANO SERRANO",
+      "club": "CLUB INDEA",
+      "posicionprueba": "2",
+      "CATEG": "SF",
+      "tiempo": "01:08:05.488"
+    },
+    {
+      "posicion": "134",
+      "SEXO": "8",
+      "dorsal": "30",
+      "nombre": "MARILO FRANCO LUQUE",
+      "club": "CD INDEA",
+      "posicionprueba": "3",
+      "CATEG": "MBF",
+      "tiempo": "01:08:12.929"
+    },
+    {
+      "posicion": "135",
+      "SEXO": "",
+      "dorsal": "5",
+      "nombre": "MANUEL LEON GONZALEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "34",
+      "CATEG": "MCM",
+      "tiempo": "01:08:18.926"
+    },
+    {
+      "posicion": "136",
+      "SEXO": "",
+      "dorsal": "647",
+      "nombre": "ANTONIO GRANADOS IZQUIERDO",
+      "club": "LAS ZORRERAS",
+      "posicionprueba": "20",
+      "CATEG": "MDM",
+      "tiempo": "01:08:25.299"
+    },
+    {
+      "posicion": "137",
+      "SEXO": "",
+      "dorsal": "178",
+      "nombre": "FRANCISCO CARMONA CHICO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "35",
+      "CATEG": "MCM",
+      "tiempo": "01:08:39.569"
+    },
+    {
+      "posicion": "138",
+      "SEXO": "",
+      "dorsal": "27",
+      "nombre": "OSCAR PEREZ EXPOSITO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "36",
+      "CATEG": "MCM",
+      "tiempo": "01:08:41.517"
+    },
+    {
+      "posicion": "139",
+      "SEXO": "",
+      "dorsal": "254",
+      "nombre": "ANDRES ROMAN PRIETO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "27",
+      "CATEG": "MBM",
+      "tiempo": "01:08:50.880"
+    },
+    {
+      "posicion": "140",
+      "SEXO": "",
+      "dorsal": "428",
+      "nombre": "LUIS TORIBIO CASTRO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "28",
+      "CATEG": "MBM",
+      "tiempo": "01:08:56.908"
+    },
+    {
+      "posicion": "141",
+      "SEXO": "",
+      "dorsal": "564",
+      "nombre": "RAMON BUSTOS CRUZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "21",
+      "CATEG": "MDM",
+      "tiempo": "01:08:58.612"
+    },
+    {
+      "posicion": "142",
+      "SEXO": "",
+      "dorsal": "133",
+      "nombre": "PABLO CAZALLA LOPEZ",
+      "club": "WIL TRAIL",
+      "posicionprueba": "37",
+      "CATEG": "MCM",
+      "tiempo": "01:08:59.063"
+    },
+    {
+      "posicion": "143",
+      "SEXO": "9",
+      "dorsal": "444",
+      "nombre": "REYES GIL LOPEZ-SEPULVEDA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "3",
+      "CATEG": "SF",
+      "tiempo": "01:09:00.537"
+    },
+    {
+      "posicion": "144",
+      "SEXO": "",
+      "dorsal": "210",
+      "nombre": "RAFA ALVAREZ MALLENCO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "22",
+      "CATEG": "MDM",
+      "tiempo": "01:09:00.960"
+    },
+    {
+      "posicion": "145",
+      "SEXO": "",
+      "dorsal": "526",
+      "nombre": "PEDRO LAVELA CABELLO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "5",
+      "CATEG": "MFM",
+      "tiempo": "01:09:02.517"
+    },
+    {
+      "posicion": "146",
+      "SEXO": "",
+      "dorsal": "8",
+      "nombre": "RAFAEL ROSA UBEDA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "29",
+      "CATEG": "MBM",
+      "tiempo": "01:09:04.815"
+    },
+    {
+      "posicion": "147",
+      "SEXO": "",
+      "dorsal": "141",
+      "nombre": "JORGE AGGEO LOPEZ DE MEDINA",
+      "club": "ATLETISMO BELALCAZAR",
+      "posicionprueba": "30",
+      "CATEG": "MBM",
+      "tiempo": "01:09:05.071"
+    },
+    {
+      "posicion": "148",
+      "SEXO": "",
+      "dorsal": "432",
+      "nombre": "FRANCISCO JOSE VISO MOSCOSO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "MEM",
+      "tiempo": "01:09:06.016"
+    },
+    {
+      "posicion": "149",
+      "SEXO": "",
+      "dorsal": "216",
+      "nombre": "FRANCISCO MUÑOZ FERNANDEZ",
+      "club": "SATYSTRAIL CORDOBA TEAM",
+      "posicionprueba": "38",
+      "CATEG": "MCM",
+      "tiempo": "01:09:11.137"
+    },
+    {
+      "posicion": "150",
+      "SEXO": "",
+      "dorsal": "54",
+      "nombre": "ANTONIO PAEZ RODRIGUEZ",
+      "club": "KOMOMOLOS",
+      "posicionprueba": "9",
+      "CATEG": "MEM",
+      "tiempo": "01:09:18.031"
+    },
+    {
+      "posicion": "151",
+      "SEXO": "",
+      "dorsal": "497",
+      "nombre": "LUCAS MUÑOZ REYES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "10",
+      "CATEG": "MEM",
+      "tiempo": "01:09:18.279"
+    },
+    {
+      "posicion": "152",
+      "SEXO": "",
+      "dorsal": "573",
+      "nombre": "CARLOS GARCIA ROCA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "23",
+      "CATEG": "MDM",
+      "tiempo": "01:09:22.437"
+    },
+    {
+      "posicion": "153",
+      "SEXO": "",
+      "dorsal": "286",
+      "nombre": "ANTONIO MOLINA BERGILLOS",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "24",
+      "CATEG": "MDM",
+      "tiempo": "01:09:23.143"
+    },
+    {
+      "posicion": "154",
+      "SEXO": "10",
+      "dorsal": "175",
+      "nombre": "VANESSA RUIZ FERNANDEZ",
+      "club": "MASATLETISMO",
+      "posicionprueba": "4",
+      "CATEG": "MBF",
+      "tiempo": "01:09:24.235"
+    },
+    {
+      "posicion": "155",
+      "SEXO": "",
+      "dorsal": "589",
+      "nombre": "FERNANDO LUNA LAMA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "15",
+      "CATEG": "SM",
+      "tiempo": "01:09:25.494"
+    },
+    {
+      "posicion": "156",
+      "SEXO": "",
+      "dorsal": "691",
+      "nombre": "PEDRO LUIS BANCALERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "MFM",
+      "tiempo": "01:09:29.070"
+    },
+    {
+      "posicion": "157",
+      "SEXO": "",
+      "dorsal": "107",
+      "nombre": "RAFAEL CASTILLA ARENAS",
+      "club": "CD INDEA",
+      "posicionprueba": "7",
+      "CATEG": "MFM",
+      "tiempo": "01:09:30.212"
+    },
+    {
+      "posicion": "158",
+      "SEXO": "",
+      "dorsal": "168",
+      "nombre": "MANUEL BUJALANCE LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "16",
+      "CATEG": "SM",
+      "tiempo": "01:09:38.045"
+    },
+    {
+      "posicion": "159",
+      "SEXO": "",
+      "dorsal": "110",
+      "nombre": "RAFAEL CASAS CASTRO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "17",
+      "CATEG": "SM",
+      "tiempo": "01:09:38.447"
+    },
+    {
+      "posicion": "160",
+      "SEXO": "",
+      "dorsal": "211",
+      "nombre": "JOSE LUIS TERNERO MARTIN",
+      "club": "MONTECOBRETRAIL",
+      "posicionprueba": "22",
+      "CATEG": "MAM",
+      "tiempo": "01:09:43.997"
+    },
+    {
+      "posicion": "161",
+      "SEXO": "",
+      "dorsal": "69",
+      "nombre": "ANDRES FRIAS ZAMORANO",
+      "club": "CD RUNNING SERIES",
+      "posicionprueba": "25",
+      "CATEG": "MDM",
+      "tiempo": "01:09:48.609"
+    },
+    {
+      "posicion": "162",
+      "SEXO": "",
+      "dorsal": "420",
+      "nombre": "ANTONIO RODRIGUEZ CRIADO",
+      "club": "CALIFA MOUNTAIN",
+      "posicionprueba": "11",
+      "CATEG": "MEM",
+      "tiempo": "01:09:49.449"
+    },
+    {
+      "posicion": "163",
+      "SEXO": "",
+      "dorsal": "258",
+      "nombre": "ISMAEL ROMERO ORTS",
+      "club": "CD TREXIMO",
+      "posicionprueba": "23",
+      "CATEG": "MAM",
+      "tiempo": "01:09:52.488"
+    },
+    {
+      "posicion": "164",
+      "SEXO": "11",
+      "dorsal": "631",
+      "nombre": "INMACULADA RIVERA GONZALEZ",
+      "club": "CARBULA SPORT",
+      "posicionprueba": "1",
+      "CATEG": "MCF",
+      "tiempo": "01:09:54.438"
+    },
+    {
+      "posicion": "165",
+      "SEXO": "",
+      "dorsal": "300",
+      "nombre": "FCO JAVIER ARROYO MURILLO",
+      "club": "C. T. ALFANADIC",
+      "posicionprueba": "12",
+      "CATEG": "MEM",
+      "tiempo": "01:09:56.118"
+    },
+    {
+      "posicion": "166",
+      "SEXO": "",
+      "dorsal": "221",
+      "nombre": "JAVIER MERIDA MARTINEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "26",
+      "CATEG": "MDM",
+      "tiempo": "01:09:57.764"
+    },
+    {
+      "posicion": "167",
+      "SEXO": "",
+      "dorsal": "180",
+      "nombre": "MANUEL LARA GARCIA",
+      "club": "C A AVE FENIX",
+      "posicionprueba": "27",
+      "CATEG": "MDM",
+      "tiempo": "01:10:00.467"
+    },
+    {
+      "posicion": "168",
+      "SEXO": "",
+      "dorsal": "635",
+      "nombre": "VICENTE CARRASCO GOMEZ",
+      "club": "TROTACALLES",
+      "posicionprueba": "13",
+      "CATEG": "MEM",
+      "tiempo": "01:10:01.188"
+    },
+    {
+      "posicion": "169",
+      "SEXO": "12",
+      "dorsal": "149",
+      "nombre": "MARIA JESUS TORRES PORRAS",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "2",
+      "CATEG": "MCF",
+      "tiempo": "01:10:11.163"
+    },
+    {
+      "posicion": "170",
+      "SEXO": "",
+      "dorsal": "119",
+      "nombre": "PEDRO SUAREZ-VARELA GIMENEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "31",
+      "CATEG": "MBM",
+      "tiempo": "01:10:11.273"
+    },
+    {
+      "posicion": "171",
+      "SEXO": "",
+      "dorsal": "541",
+      "nombre": "JUAN JESUS ESTEVEZ SANTAMARIA",
+      "club": "CAMALEONES TRAIL & RUNNING",
+      "posicionprueba": "32",
+      "CATEG": "MBM",
+      "tiempo": "01:10:14.619"
+    },
+    {
+      "posicion": "172",
+      "SEXO": "",
+      "dorsal": "552",
+      "nombre": "EMILIO MILLAN VAZQUEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "28",
+      "CATEG": "MDM",
+      "tiempo": "01:10:19.196"
+    },
+    {
+      "posicion": "173",
+      "SEXO": "",
+      "dorsal": "26",
+      "nombre": "CARLOS RODRIGUEZ FONSECA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "29",
+      "CATEG": "MDM",
+      "tiempo": "01:10:19.306"
+    },
+    {
+      "posicion": "174",
+      "SEXO": "",
+      "dorsal": "461",
+      "nombre": "RAFAEL BORREGO OLLERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "33",
+      "CATEG": "MBM",
+      "tiempo": "01:10:24.783"
+    },
+    {
+      "posicion": "175",
+      "SEXO": "",
+      "dorsal": "436",
+      "nombre": "JESUS MOLINA OLLERO",
+      "club": "TROTACALLES",
+      "posicionprueba": "18",
+      "CATEG": "SM",
+      "tiempo": "01:10:27.321"
+    },
+    {
+      "posicion": "176",
+      "SEXO": "",
+      "dorsal": "584",
+      "nombre": "LAUREANO LOPEZ MUÑOZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "39",
+      "CATEG": "MCM",
+      "tiempo": "01:10:30.091"
+    },
+    {
+      "posicion": "177",
+      "SEXO": "",
+      "dorsal": "350",
+      "nombre": "JUAN CARLOS LUQUE MONTORO",
+      "club": "SATYSTRAIL CORDOBA TEAM",
+      "posicionprueba": "8",
+      "CATEG": "MFM",
+      "tiempo": "01:10:33.464"
+    },
+    {
+      "posicion": "178",
+      "SEXO": "",
+      "dorsal": "18",
+      "nombre": "JOSE LUIS CEPEDELLO ROSA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "24",
+      "CATEG": "MAM",
+      "tiempo": "01:10:37.221"
+    },
+    {
+      "posicion": "179",
+      "SEXO": "",
+      "dorsal": "685",
+      "nombre": "PABLO FERNANDEZ CREUVET",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "40",
+      "CATEG": "MCM",
+      "tiempo": "01:10:37.983"
+    },
+    {
+      "posicion": "180",
+      "SEXO": "13",
+      "dorsal": "59",
+      "nombre": "LUCIA ALVAREZ MONTERO",
+      "club": "WILD TRAIL",
+      "posicionprueba": "4",
+      "CATEG": "SF",
+      "tiempo": "01:10:41.069"
+    },
+    {
+      "posicion": "181",
+      "SEXO": "",
+      "dorsal": "341",
+      "nombre": "PEPE DIAZ SANCHEZ",
+      "club": "CARBULA SPORT",
+      "posicionprueba": "41",
+      "CATEG": "MCM",
+      "tiempo": "01:10:41.286"
+    },
+    {
+      "posicion": "182",
+      "SEXO": "",
+      "dorsal": "663",
+      "nombre": "JOSE CARLOS FERNANDEZ CAMACHO",
+      "club": "H CRUZ ROJA",
+      "posicionprueba": "19",
+      "CATEG": "SM",
+      "tiempo": "01:10:44.566"
+    },
+    {
+      "posicion": "183",
+      "SEXO": "",
+      "dorsal": "598",
+      "nombre": "ALEJANDRO VAZQUEZ SANCHEZ",
+      "club": "GUERREROS DE LA GUZMAN",
+      "posicionprueba": "34",
+      "CATEG": "MBM",
+      "tiempo": "01:10:45.892"
+    },
+    {
+      "posicion": "184",
+      "SEXO": "",
+      "dorsal": "597",
+      "nombre": "CARLOS VARONA SANZ",
+      "club": "CLUB GUERREROS DE LA GUZMAN",
+      "posicionprueba": "35",
+      "CATEG": "MBM",
+      "tiempo": "01:10:46.501"
+    },
+    {
+      "posicion": "185",
+      "SEXO": "",
+      "dorsal": "351",
+      "nombre": "ANTONIO JESUS PORCUNA POZO",
+      "club": "EPA MIGUEL RIOS",
+      "posicionprueba": "36",
+      "CATEG": "MBM",
+      "tiempo": "01:10:49.003"
+    },
+    {
+      "posicion": "186",
+      "SEXO": "",
+      "dorsal": "430",
+      "nombre": "JUAN ANTONIO LUQUE CORRIENTE",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "42",
+      "CATEG": "MCM",
+      "tiempo": "01:10:51.090"
+    },
+    {
+      "posicion": "187",
+      "SEXO": "14",
+      "dorsal": "396",
+      "nombre": "CARMEN COOKIES ORIA RATIA",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "1",
+      "CATEG": "MDF",
+      "tiempo": "01:10:55.224"
+    },
+    {
+      "posicion": "188",
+      "SEXO": "",
+      "dorsal": "41",
+      "nombre": "DAVID PANADERO LUQUE",
+      "club": "ATLETICO GRAN CAPITAN",
+      "posicionprueba": "43",
+      "CATEG": "MCM",
+      "tiempo": "01:10:56.323"
+    },
+    {
+      "posicion": "189",
+      "SEXO": "",
+      "dorsal": "132",
+      "nombre": "FERNANDO GUILLAUME REQUENA",
+      "club": "TREXIMO CD",
+      "posicionprueba": "25",
+      "CATEG": "MAM",
+      "tiempo": "01:11:01.256"
+    },
+    {
+      "posicion": "190",
+      "SEXO": "",
+      "dorsal": "82",
+      "nombre": "TOMAS JESUS AGUADO SEDANO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "37",
+      "CATEG": "MBM",
+      "tiempo": "01:11:02.567"
+    },
+    {
+      "posicion": "191",
+      "SEXO": "",
+      "dorsal": "679",
+      "nombre": "RIENTS RUIZ LIÑAN",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "44",
+      "CATEG": "MCM",
+      "tiempo": "01:11:05.125"
+    },
+    {
+      "posicion": "192",
+      "SEXO": "",
+      "dorsal": "182",
+      "nombre": "ALONSO ROMERO MIGUEL",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "38",
+      "CATEG": "MBM",
+      "tiempo": "01:11:09.930"
+    },
+    {
+      "posicion": "193",
+      "SEXO": "",
+      "dorsal": "549",
+      "nombre": "MARIO SERRANO PAREJAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "20",
+      "CATEG": "SM",
+      "tiempo": "01:11:15.121"
+    },
+    {
+      "posicion": "194",
+      "SEXO": "",
+      "dorsal": "397",
+      "nombre": "RAFAEL FERNANDEZ LOPEZ",
+      "club": "GRAN FONDO",
+      "posicionprueba": "9",
+      "CATEG": "MFM",
+      "tiempo": "01:11:15.538"
+    },
+    {
+      "posicion": "195",
+      "SEXO": "",
+      "dorsal": "623",
+      "nombre": "FRANCISCO JAVIER JIMENEZ FERNANDEZ",
+      "club": "CA LA LUISIANA-EL CAMPILLO",
+      "posicionprueba": "30",
+      "CATEG": "MDM",
+      "tiempo": "01:11:18.731"
+    },
+    {
+      "posicion": "196",
+      "SEXO": "",
+      "dorsal": "582",
+      "nombre": "PABLO OJEDA GONZALEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "21",
+      "CATEG": "SM",
+      "tiempo": "01:11:19.873"
+    },
+    {
+      "posicion": "197",
+      "SEXO": "",
+      "dorsal": "445",
+      "nombre": "MARIANO MUÑOZ DIAZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "31",
+      "CATEG": "MDM",
+      "tiempo": "01:11:20.200"
+    },
+    {
+      "posicion": "198",
+      "SEXO": "15",
+      "dorsal": "508",
+      "nombre": "MASUMI UCHINO",
+      "club": "TRIATLON MONTILLA",
+      "posicionprueba": "1",
+      "CATEG": "MEF",
+      "tiempo": "01:11:20.781"
+    },
+    {
+      "posicion": "199",
+      "SEXO": "16",
+      "dorsal": "92",
+      "nombre": "ANGELA MARIA GONZALEZ LOPEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "3",
+      "CATEG": "MCF",
+      "tiempo": "01:11:27.535"
+    },
+    {
+      "posicion": "200",
+      "SEXO": "",
+      "dorsal": "608",
+      "nombre": "JOSE MUÑOZ DEL MORAL",
+      "club": "AMO ALLA",
+      "posicionprueba": "45",
+      "CATEG": "MCM",
+      "tiempo": "01:11:28.954"
+    },
+    {
+      "posicion": "201",
+      "SEXO": "",
+      "dorsal": "114",
+      "nombre": "JOSE IGNACIO REVUELTO GIL",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "46",
+      "CATEG": "MCM",
+      "tiempo": "01:11:29.140"
+    },
+    {
+      "posicion": "202",
+      "SEXO": "",
+      "dorsal": "523",
+      "nombre": "RAFAEL BARROSO GALVEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "47",
+      "CATEG": "MCM",
+      "tiempo": "01:11:34.235"
+    },
+    {
+      "posicion": "203",
+      "SEXO": "",
+      "dorsal": "470",
+      "nombre": "DANIEL VALERA GONZALEZ",
+      "club": "CD INDEA",
+      "posicionprueba": "22",
+      "CATEG": "SM",
+      "tiempo": "01:11:36.955"
+    },
+    {
+      "posicion": "204",
+      "SEXO": "",
+      "dorsal": "505",
+      "nombre": "ALVARO JESUS PEDRAZA TRENAS",
+      "club": "CD INDEA",
+      "posicionprueba": "48",
+      "CATEG": "MCM",
+      "tiempo": "01:11:37.079"
+    },
+    {
+      "posicion": "205",
+      "SEXO": "",
+      "dorsal": "304",
+      "nombre": "DAVID ARANDA CARMONA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "32",
+      "CATEG": "MDM",
+      "tiempo": "01:11:42.271"
+    },
+    {
+      "posicion": "206",
+      "SEXO": "",
+      "dorsal": "198",
+      "nombre": "JAVIER ISIDRO POSADAS  LOZANO",
+      "club": "CORDOBA TRAIL",
+      "posicionprueba": "49",
+      "CATEG": "MCM",
+      "tiempo": "01:11:46.424"
+    },
+    {
+      "posicion": "207",
+      "SEXO": "",
+      "dorsal": "320",
+      "nombre": "JOSE JAVIER GOMEZ GONZALEZ",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "26",
+      "CATEG": "MAM",
+      "tiempo": "01:11:51.333"
+    },
+    {
+      "posicion": "208",
+      "SEXO": "17",
+      "dorsal": "338",
+      "nombre": "PILAR MOLINA URBANO",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "5",
+      "CATEG": "SF",
+      "tiempo": "01:11:52.169"
+    },
+    {
+      "posicion": "209",
+      "SEXO": "",
+      "dorsal": "460",
+      "nombre": "JUAN JOSE MARTIN PORRAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "50",
+      "CATEG": "MCM",
+      "tiempo": "01:11:53.699"
+    },
+    {
+      "posicion": "210",
+      "SEXO": "",
+      "dorsal": "562",
+      "nombre": "RAFAEL GRANADOS FLORES",
+      "club": "MIGUEL RIOS",
+      "posicionprueba": "51",
+      "CATEG": "MCM",
+      "tiempo": "01:11:56.769"
+    },
+    {
+      "posicion": "211",
+      "SEXO": "",
+      "dorsal": "292",
+      "nombre": "ANGEL FRANCO AVILA",
+      "club": "CORDOBAMANIA RUNNERS",
+      "posicionprueba": "39",
+      "CATEG": "MBM",
+      "tiempo": "01:11:57.033"
+    },
+    {
+      "posicion": "212",
+      "SEXO": "",
+      "dorsal": "459",
+      "nombre": "FRANCISCO ALBUERA OBREGON",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "27",
+      "CATEG": "MAM",
+      "tiempo": "01:12:00.563"
+    },
+    {
+      "posicion": "213",
+      "SEXO": "",
+      "dorsal": "455",
+      "nombre": "LUIS IGNACIO GONZALEZ NIEVES",
+      "club": "KAYTO TEAM",
+      "posicionprueba": "28",
+      "CATEG": "MAM",
+      "tiempo": "01:12:01.278"
+    },
+    {
+      "posicion": "214",
+      "SEXO": "",
+      "dorsal": "454",
+      "nombre": "MANUEL JESUS GODOY LOPEZ",
+      "club": "KAYTO TEAM",
+      "posicionprueba": "29",
+      "CATEG": "MAM",
+      "tiempo": "01:12:02.632"
+    },
+    {
+      "posicion": "215",
+      "SEXO": "18",
+      "dorsal": "651",
+      "nombre": "MARIA DEL MAR TORES TORRONTERAS",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "5",
+      "CATEG": "MBF",
+      "tiempo": "01:12:04.773"
+    },
+    {
+      "posicion": "216",
+      "SEXO": "",
+      "dorsal": "145",
+      "nombre": "JOSE CARLOS CALERO CARRASCO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "40",
+      "CATEG": "MBM",
+      "tiempo": "01:12:05.930"
+    },
+    {
+      "posicion": "217",
+      "SEXO": "",
+      "dorsal": "148",
+      "nombre": "JUAN PABLO PEREZ LEON",
+      "club": "KABRASLOKAS TRAIL",
+      "posicionprueba": "52",
+      "CATEG": "MCM",
+      "tiempo": "01:12:09.041"
+    },
+    {
+      "posicion": "218",
+      "SEXO": "",
+      "dorsal": "302",
+      "nombre": "LUIS PEREZ ALMIRON",
+      "club": "VERTIVALIA",
+      "posicionprueba": "10",
+      "CATEG": "MFM",
+      "tiempo": "01:12:14.295"
+    },
+    {
+      "posicion": "219",
+      "SEXO": "",
+      "dorsal": "540",
+      "nombre": "JOSE YEPES JIMENEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "53",
+      "CATEG": "MCM",
+      "tiempo": "01:12:17.577"
+    },
+    {
+      "posicion": "220",
+      "SEXO": "",
+      "dorsal": "527",
+      "nombre": "FRANCISCO JAVIER PEREZ HURTADO DE ROJAS",
+      "club": "CD KOMOMOLOS",
+      "posicionprueba": "54",
+      "CATEG": "MCM",
+      "tiempo": "01:12:22.682"
+    },
+    {
+      "posicion": "221",
+      "SEXO": "",
+      "dorsal": "50",
+      "nombre": "ALVARO MOLINA AYUSO",
+      "club": "ALMUNIATEAM",
+      "posicionprueba": "41",
+      "CATEG": "MBM",
+      "tiempo": "01:12:24.440"
+    },
+    {
+      "posicion": "222",
+      "SEXO": "19",
+      "dorsal": "486",
+      "nombre": "MERCEDES VISO MOSCOSO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "4",
+      "CATEG": "MCF",
+      "tiempo": "01:12:30.596"
+    },
+    {
+      "posicion": "223",
+      "SEXO": "",
+      "dorsal": "538",
+      "nombre": "RAFAEL ROJAS CRESPO",
+      "club": "ZAMPABOLLOS DE CORDOBA",
+      "posicionprueba": "55",
+      "CATEG": "MCM",
+      "tiempo": "01:12:35.121"
+    },
+    {
+      "posicion": "224",
+      "SEXO": "",
+      "dorsal": "10",
+      "nombre": "RAFAEL NIETO MORENO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "42",
+      "CATEG": "MBM",
+      "tiempo": "01:12:36.336"
+    },
+    {
+      "posicion": "225",
+      "SEXO": "",
+      "dorsal": "567",
+      "nombre": "ALEJANDRO ENA BERNAD",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "23",
+      "CATEG": "SM",
+      "tiempo": "01:12:50.626"
+    },
+    {
+      "posicion": "226",
+      "SEXO": "",
+      "dorsal": "163",
+      "nombre": "RAFAEL LEON PASTOR",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "56",
+      "CATEG": "MCM",
+      "tiempo": "01:12:52.227"
+    },
+    {
+      "posicion": "227",
+      "SEXO": "",
+      "dorsal": "72",
+      "nombre": "OSCAR RODRIGUEZ DUEÑAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "24",
+      "CATEG": "SM",
+      "tiempo": "01:12:58.665"
+    },
+    {
+      "posicion": "228",
+      "SEXO": "",
+      "dorsal": "294",
+      "nombre": "ANTONIO RUMI ORTEGA",
+      "club": "CORREBULLY",
+      "posicionprueba": "33",
+      "CATEG": "MDM",
+      "tiempo": "01:13:00.064"
+    },
+    {
+      "posicion": "229",
+      "SEXO": "",
+      "dorsal": "225",
+      "nombre": "SERGIO BARRERA LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "57",
+      "CATEG": "MCM",
+      "tiempo": "01:13:02.959"
+    },
+    {
+      "posicion": "230",
+      "SEXO": "",
+      "dorsal": "139",
+      "nombre": "RAFAEL PEREZ SINOGA",
+      "club": "TROTACALLES",
+      "posicionprueba": "58",
+      "CATEG": "MCM",
+      "tiempo": "01:13:12.203"
+    },
+    {
+      "posicion": "231",
+      "SEXO": "",
+      "dorsal": "73",
+      "nombre": "GABRIEL RUIZ RAMIREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "25",
+      "CATEG": "SM",
+      "tiempo": "01:13:15.162"
+    },
+    {
+      "posicion": "232",
+      "SEXO": "",
+      "dorsal": "40",
+      "nombre": "FELIPE DE LA FUENTE RUANO",
+      "club": "CLUB ATLETISMO LA CARLOTA",
+      "posicionprueba": "59",
+      "CATEG": "MCM",
+      "tiempo": "01:13:21.444"
+    },
+    {
+      "posicion": "233",
+      "SEXO": "",
+      "dorsal": "91",
+      "nombre": "ENRIQUE JESUS VILLALBA MONTORO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "11",
+      "CATEG": "MFM",
+      "tiempo": "01:13:24.170"
+    },
+    {
+      "posicion": "234",
+      "SEXO": "",
+      "dorsal": "144",
+      "nombre": "MANU RUIZ REDONDO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "26",
+      "CATEG": "SM",
+      "tiempo": "01:13:26.064"
+    },
+    {
+      "posicion": "235",
+      "SEXO": "",
+      "dorsal": "525",
+      "nombre": "JAVIER MARQUEZ LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "60",
+      "CATEG": "MCM",
+      "tiempo": "01:13:26.224"
+    },
+    {
+      "posicion": "236",
+      "SEXO": "20",
+      "dorsal": "65",
+      "nombre": "GLORIA MONTORI MARISCAL",
+      "club": "CD INDEA",
+      "posicionprueba": "6",
+      "CATEG": "SF",
+      "tiempo": "01:13:27.777"
+    },
+    {
+      "posicion": "237",
+      "SEXO": "",
+      "dorsal": "150",
+      "nombre": "FRANCISCO ANTONIO TORRES MARTIN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "61",
+      "CATEG": "MCM",
+      "tiempo": "01:13:29.750"
+    },
+    {
+      "posicion": "238",
+      "SEXO": "21",
+      "dorsal": "71",
+      "nombre": "VERONICA POZUELO ARQUIMBAU",
+      "club": "MONTECOBRE TRAIL",
+      "posicionprueba": "5",
+      "CATEG": "MCF",
+      "tiempo": "01:13:30.468"
+    },
+    {
+      "posicion": "239",
+      "SEXO": "",
+      "dorsal": "93",
+      "nombre": "ANTONIO JESUS ESPEJO MARTINEZ",
+      "club": "MONTECOBRE TRAIL",
+      "posicionprueba": "62",
+      "CATEG": "MCM",
+      "tiempo": "01:13:30.562"
+    },
+    {
+      "posicion": "240",
+      "SEXO": "",
+      "dorsal": "606",
+      "nombre": "FRANCISCO CORDON LUQUE",
+      "club": "AMO ALLA",
+      "posicionprueba": "12",
+      "CATEG": "MFM",
+      "tiempo": "01:13:39.846"
+    },
+    {
+      "posicion": "241",
+      "SEXO": "",
+      "dorsal": "607",
+      "nombre": "FRANCISCO TOSCANO GALISTEO",
+      "club": "AMOA ALLA",
+      "posicionprueba": "13",
+      "CATEG": "MFM",
+      "tiempo": "01:13:40.641"
+    },
+    {
+      "posicion": "242",
+      "SEXO": "",
+      "dorsal": "620",
+      "nombre": "MANUEL RAYA MURILLO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "27",
+      "CATEG": "SM",
+      "tiempo": "01:13:40.953"
+    },
+    {
+      "posicion": "243",
+      "SEXO": "",
+      "dorsal": "161",
+      "nombre": "JORGE PINTO HERNANDEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "63",
+      "CATEG": "MCM",
+      "tiempo": "01:13:44.873"
+    },
+    {
+      "posicion": "244",
+      "SEXO": "",
+      "dorsal": "556",
+      "nombre": "CARLOS ZARANDIETA MENDEZ",
+      "club": "FISICOMED",
+      "posicionprueba": "30",
+      "CATEG": "MAM",
+      "tiempo": "01:13:50.280"
+    },
+    {
+      "posicion": "245",
+      "SEXO": "",
+      "dorsal": "448",
+      "nombre": "JORGE DANIEL VELASCO PARRAGA",
+      "club": "ATLETISMO  MONTEMAYOR",
+      "posicionprueba": "64",
+      "CATEG": "MCM",
+      "tiempo": "01:13:54.518"
+    },
+    {
+      "posicion": "246",
+      "SEXO": "",
+      "dorsal": "694",
+      "nombre": "ALFONSO LUCENA SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "65",
+      "CATEG": "MCM",
+      "tiempo": "01:13:55.170"
+    },
+    {
+      "posicion": "247",
+      "SEXO": "",
+      "dorsal": "131",
+      "nombre": "ALEJANDRO MADUEÑO RUIZ",
+      "club": "SATYSTRAIL CORDOBA TEAM",
+      "posicionprueba": "28",
+      "CATEG": "SM",
+      "tiempo": "01:14:02.535"
+    },
+    {
+      "posicion": "248",
+      "SEXO": "",
+      "dorsal": "204",
+      "nombre": "FRANCISCO EXPOSITO GONZALEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "43",
+      "CATEG": "MBM",
+      "tiempo": "01:14:12.069"
+    },
+    {
+      "posicion": "249",
+      "SEXO": "",
+      "dorsal": "109",
+      "nombre": "FRANCISCO JAVIER CASTRO MUÑOZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "34",
+      "CATEG": "MDM",
+      "tiempo": "01:14:14.274"
+    },
+    {
+      "posicion": "250",
+      "SEXO": "",
+      "dorsal": "329",
+      "nombre": "JOSE ANTONIO LOPEZ RODRIGUEZ",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "66",
+      "CATEG": "MCM",
+      "tiempo": "01:14:22.022"
+    },
+    {
+      "posicion": "251",
+      "SEXO": "",
+      "dorsal": "330",
+      "nombre": "JOSE SERRANO BERMUDEZ",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "44",
+      "CATEG": "MBM",
+      "tiempo": "01:14:23.091"
+    },
+    {
+      "posicion": "252",
+      "SEXO": "",
+      "dorsal": "429",
+      "nombre": "JUAN ANTONIO CENTELLA MARCILLO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "31",
+      "CATEG": "MAM",
+      "tiempo": "01:14:23.971"
+    },
+    {
+      "posicion": "253",
+      "SEXO": "",
+      "dorsal": "466",
+      "nombre": "ANTONIO JAVIER ZAMORA AGUILERA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "45",
+      "CATEG": "MBM",
+      "tiempo": "01:14:24.080"
+    },
+    {
+      "posicion": "254",
+      "SEXO": "22",
+      "dorsal": "476",
+      "nombre": "EVA AREVALO MUÑOZ",
+      "club": "VERTICALIA",
+      "posicionprueba": "6",
+      "CATEG": "MCF",
+      "tiempo": "01:14:25.428"
+    },
+    {
+      "posicion": "255",
+      "SEXO": "23",
+      "dorsal": "569",
+      "nombre": "ALICIA ESPINAR MARIN",
+      "club": "GRUPO DE MONTAÑA MONTE COBRE TRAIL",
+      "posicionprueba": "7",
+      "CATEG": "MCF",
+      "tiempo": "01:14:25.474"
+    },
+    {
+      "posicion": "256",
+      "SEXO": "",
+      "dorsal": "554",
+      "nombre": "ANTONIO JESUS GIL ROPERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "67",
+      "CATEG": "MCM",
+      "tiempo": "01:14:33.100"
+    },
+    {
+      "posicion": "257",
+      "SEXO": "",
+      "dorsal": "134",
+      "nombre": "SERGIO RIZOS ESPINOSA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "68",
+      "CATEG": "MCM",
+      "tiempo": "01:14:34.344"
+    },
+    {
+      "posicion": "258",
+      "SEXO": "",
+      "dorsal": "425",
+      "nombre": "VICTOR RAMOS CONTRERAS",
+      "club": "ATLETISMO  MONTEMAYOR",
+      "posicionprueba": "69",
+      "CATEG": "MCM",
+      "tiempo": "01:14:46.200"
+    },
+    {
+      "posicion": "259",
+      "SEXO": "",
+      "dorsal": "496",
+      "nombre": "JAVIER ESTEPA GOMEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "32",
+      "CATEG": "MAM",
+      "tiempo": "01:14:46.919"
+    },
+    {
+      "posicion": "260",
+      "SEXO": "",
+      "dorsal": "222",
+      "nombre": "JUAN FRANCISCO ROSAL JIMENEZ",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "46",
+      "CATEG": "MBM",
+      "tiempo": "01:14:48.433"
+    },
+    {
+      "posicion": "261",
+      "SEXO": "",
+      "dorsal": "633",
+      "nombre": "ANTONIO SANCHEZ",
+      "club": "CORRECAMINOSTRAILCORDOBA",
+      "posicionprueba": "29",
+      "CATEG": "SM",
+      "tiempo": "01:14:49.603"
+    },
+    {
+      "posicion": "262",
+      "SEXO": "",
+      "dorsal": "579",
+      "nombre": "RAFAEL JIMENEZ MAGAÑAS",
+      "club": "TROTASIERRA",
+      "posicionprueba": "70",
+      "CATEG": "MCM",
+      "tiempo": "01:14:49.914"
+    },
+    {
+      "posicion": "263",
+      "SEXO": "",
+      "dorsal": "638",
+      "nombre": "LORENZO LINARES BURGOS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "71",
+      "CATEG": "MCM",
+      "tiempo": "01:14:52.449"
+    },
+    {
+      "posicion": "264",
+      "SEXO": "",
+      "dorsal": "471",
+      "nombre": "JUAN ESTEVEZ  DOVAO",
+      "club": "SENDEROS CARLOTEÑOS 7600",
+      "posicionprueba": "14",
+      "CATEG": "MEM",
+      "tiempo": "01:15:00.583"
+    },
+    {
+      "posicion": "265",
+      "SEXO": "",
+      "dorsal": "366",
+      "nombre": "RAMON DEL OLMO CODES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "35",
+      "CATEG": "MDM",
+      "tiempo": "01:15:09.635"
+    },
+    {
+      "posicion": "266",
+      "SEXO": "",
+      "dorsal": "446",
+      "nombre": "RAFAEL PESQUERO DE TORRES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "36",
+      "CATEG": "MDM",
+      "tiempo": "01:15:11.814"
+    },
+    {
+      "posicion": "267",
+      "SEXO": "",
+      "dorsal": "423",
+      "nombre": "FRANCISCO JAVIER ARIZA RODRIGUEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "72",
+      "CATEG": "MCM",
+      "tiempo": "01:15:11.876"
+    },
+    {
+      "posicion": "268",
+      "SEXO": "",
+      "dorsal": "349",
+      "nombre": "JUAN ANTONIO RODRIGUEZ DIAZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "37",
+      "CATEG": "MDM",
+      "tiempo": "01:15:12.813"
+    },
+    {
+      "posicion": "269",
+      "SEXO": "",
+      "dorsal": "23",
+      "nombre": "GREGORIO GALVEZ VALDIVIESO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "38",
+      "CATEG": "MDM",
+      "tiempo": "01:15:15.479"
+    },
+    {
+      "posicion": "270",
+      "SEXO": "",
+      "dorsal": "311",
+      "nombre": "PABLO ROMERO HERRERA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "33",
+      "CATEG": "MAM",
+      "tiempo": "01:15:15.640"
+    },
+    {
+      "posicion": "271",
+      "SEXO": "",
+      "dorsal": "592",
+      "nombre": "RAFAEL CASTRO MAILLO",
+      "club": "CARRERITAS",
+      "posicionprueba": "73",
+      "CATEG": "MCM",
+      "tiempo": "01:15:16.118"
+    },
+    {
+      "posicion": "272",
+      "SEXO": "",
+      "dorsal": "305",
+      "nombre": "SERGIO TAPIA LEÑA",
+      "club": "MONTECOBRE TRAIL",
+      "posicionprueba": "34",
+      "CATEG": "MAM",
+      "tiempo": "01:15:22.575"
+    },
+    {
+      "posicion": "273",
+      "SEXO": "",
+      "dorsal": "9",
+      "nombre": "RAFAEL POYATO AGUAYO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "47",
+      "CATEG": "MBM",
+      "tiempo": "01:15:23.019"
+    },
+    {
+      "posicion": "274",
+      "SEXO": "",
+      "dorsal": "137",
+      "nombre": "ANTONIO BENZAL FERNANDEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "39",
+      "CATEG": "MDM",
+      "tiempo": "01:15:24.131"
+    },
+    {
+      "posicion": "275",
+      "SEXO": "",
+      "dorsal": "469",
+      "nombre": "JOSE MANUEL MORENO DOMINGUEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "35",
+      "CATEG": "MAM",
+      "tiempo": "01:15:24.133"
+    },
+    {
+      "posicion": "276",
+      "SEXO": "",
+      "dorsal": "686",
+      "nombre": "ESAU SANCHEZ REINA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "74",
+      "CATEG": "MCM",
+      "tiempo": "01:15:27.972"
+    },
+    {
+      "posicion": "277",
+      "SEXO": "",
+      "dorsal": "43",
+      "nombre": "CARLOS SOL PEREZ",
+      "club": "CD INDEA",
+      "posicionprueba": "36",
+      "CATEG": "MAM",
+      "tiempo": "01:15:29.547"
+    },
+    {
+      "posicion": "278",
+      "SEXO": "",
+      "dorsal": "301",
+      "nombre": "JOSE ANTONIO HIDALGO HORTELANO",
+      "club": "SATYSTRAIL CORDOBA",
+      "posicionprueba": "75",
+      "CATEG": "MCM",
+      "tiempo": "01:15:33.771"
+    },
+    {
+      "posicion": "279",
+      "SEXO": "24",
+      "dorsal": "630",
+      "nombre": "RAFAELA CABRERA PEREZ",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "2",
+      "CATEG": "MDF",
+      "tiempo": "01:15:35.502"
+    },
+    {
+      "posicion": "280",
+      "SEXO": "",
+      "dorsal": "578",
+      "nombre": "ALVARO JESUS MOLINA PINO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "76",
+      "CATEG": "MCM",
+      "tiempo": "01:15:37.879"
+    },
+    {
+      "posicion": "281",
+      "SEXO": "",
+      "dorsal": "57",
+      "nombre": "ANGEL RUIZ MORENO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "48",
+      "CATEG": "MBM",
+      "tiempo": "01:15:44.783"
+    },
+    {
+      "posicion": "282",
+      "SEXO": "",
+      "dorsal": "164",
+      "nombre": "PEDRO JAVIER ALJARO VELASCO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "49",
+      "CATEG": "MBM",
+      "tiempo": "01:15:57.703"
+    },
+    {
+      "posicion": "283",
+      "SEXO": "",
+      "dorsal": "209",
+      "nombre": "GUILLERMO DIAZ BERNIER",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "30",
+      "CATEG": "SM",
+      "tiempo": "01:16:01.278"
+    },
+    {
+      "posicion": "284",
+      "SEXO": "",
+      "dorsal": "212",
+      "nombre": "JUAN CARLOS BAENA LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "77",
+      "CATEG": "MCM",
+      "tiempo": "01:16:03.765"
+    },
+    {
+      "posicion": "285",
+      "SEXO": "",
+      "dorsal": "489",
+      "nombre": "ANTONIO SERRANO REYES",
+      "club": "G.M.TIÑOSA",
+      "posicionprueba": "40",
+      "CATEG": "MDM",
+      "tiempo": "01:16:18.010"
+    },
+    {
+      "posicion": "286",
+      "SEXO": "",
+      "dorsal": "369",
+      "nombre": "SANTIAGO VELARDE MENDEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "78",
+      "CATEG": "MCM",
+      "tiempo": "01:16:21.137"
+    },
+    {
+      "posicion": "287",
+      "SEXO": "",
+      "dorsal": "547",
+      "nombre": "JAVIER POLO COZAR",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "79",
+      "CATEG": "MCM",
+      "tiempo": "01:16:22.261"
+    },
+    {
+      "posicion": "288",
+      "SEXO": "",
+      "dorsal": "359",
+      "nombre": "JUAN CARLOS AGUERA SILLERO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "80",
+      "CATEG": "MCM",
+      "tiempo": "01:16:23.125"
+    },
+    {
+      "posicion": "289",
+      "SEXO": "",
+      "dorsal": "70",
+      "nombre": "ANTONIO RIVAS HEREDIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "15",
+      "CATEG": "MEM",
+      "tiempo": "01:16:26.318"
+    },
+    {
+      "posicion": "290",
+      "SEXO": "",
+      "dorsal": "285",
+      "nombre": "RAFAEL GUERRERO PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "81",
+      "CATEG": "MCM",
+      "tiempo": "01:16:26.474"
+    },
+    {
+      "posicion": "291",
+      "SEXO": "25",
+      "dorsal": "331",
+      "nombre": "MARIA GARCIA PEREZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "8",
+      "CATEG": "MCF",
+      "tiempo": "01:16:31.771"
+    },
+    {
+      "posicion": "292",
+      "SEXO": "",
+      "dorsal": "689",
+      "nombre": "FRANCISCO JAVIER RIOS ROLDAN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "41",
+      "CATEG": "MDM",
+      "tiempo": "01:16:44.434"
+    },
+    {
+      "posicion": "293",
+      "SEXO": "",
+      "dorsal": "512",
+      "nombre": "JUAN JOSE CHUPS WALS",
+      "club": "LYNX TRAIL",
+      "posicionprueba": "82",
+      "CATEG": "MCM",
+      "tiempo": "01:16:44.553"
+    },
+    {
+      "posicion": "294",
+      "SEXO": "",
+      "dorsal": "95",
+      "nombre": "JOSE MARIA VALERO MOLINA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "83",
+      "CATEG": "MCM",
+      "tiempo": "01:16:45.877"
+    },
+    {
+      "posicion": "295",
+      "SEXO": "26",
+      "dorsal": "668",
+      "nombre": "SARA MARIA GALISTEO PEREZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "4",
+      "CATEG": "MAF",
+      "tiempo": "01:16:48.745"
+    },
+    {
+      "posicion": "296",
+      "SEXO": "",
+      "dorsal": "245",
+      "nombre": "RAFAEL LUQUE ESCUDERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "37",
+      "CATEG": "MAM",
+      "tiempo": "01:16:50.486"
+    },
+    {
+      "posicion": "297",
+      "SEXO": "",
+      "dorsal": "593",
+      "nombre": "PEDRO GAVILAN GUIRAO",
+      "club": "TROTACALLES",
+      "posicionprueba": "42",
+      "CATEG": "MDM",
+      "tiempo": "01:16:55.319"
+    },
+    {
+      "posicion": "298",
+      "SEXO": "",
+      "dorsal": "337",
+      "nombre": "MANUEL VAZQUEZ DE LA TORRE MAS",
+      "club": "TROTACALLES",
+      "posicionprueba": "84",
+      "CATEG": "MCM",
+      "tiempo": "01:16:55.557"
+    },
+    {
+      "posicion": "299",
+      "SEXO": "",
+      "dorsal": "533",
+      "nombre": "ALEJANDRO LOPEZ MIRANDA",
+      "club": "MOUNSTRUOS DEL TRAIL",
+      "posicionprueba": "85",
+      "CATEG": "MCM",
+      "tiempo": "01:16:58.331"
+    },
+    {
+      "posicion": "300",
+      "SEXO": "27",
+      "dorsal": "49",
+      "nombre": "LARA DOMINGUEZ BLANCO",
+      "club": "ALMUNIATEAM",
+      "posicionprueba": "5",
+      "CATEG": "MAF",
+      "tiempo": "01:16:58.675"
+    },
+    {
+      "posicion": "301",
+      "SEXO": "",
+      "dorsal": "151",
+      "nombre": "MANUEL GAMA LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "43",
+      "CATEG": "MDM",
+      "tiempo": "01:17:02.673"
+    },
+    {
+      "posicion": "302",
+      "SEXO": "",
+      "dorsal": "101",
+      "nombre": "DAVID HIDALGO CABALLERO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "38",
+      "CATEG": "MAM",
+      "tiempo": "01:17:12.474"
+    },
+    {
+      "posicion": "303",
+      "SEXO": "",
+      "dorsal": "190",
+      "nombre": "ANTONIO JOSE BRAVO TORRES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "39",
+      "CATEG": "MAM",
+      "tiempo": "01:17:12.770"
+    },
+    {
+      "posicion": "304",
+      "SEXO": "",
+      "dorsal": "83",
+      "nombre": "ANTONIO JOSE TORRALBO HUERTAS",
+      "club": "CAÑETE",
+      "posicionprueba": "40",
+      "CATEG": "MAM",
+      "tiempo": "01:17:14.713"
+    },
+    {
+      "posicion": "305",
+      "SEXO": "",
+      "dorsal": "503",
+      "nombre": "MANUEL JOSE CUEVAS RAMIREZ",
+      "club": "CD CAMALEONES",
+      "posicionprueba": "86",
+      "CATEG": "MCM",
+      "tiempo": "01:17:15.643"
+    },
+    {
+      "posicion": "306",
+      "SEXO": "",
+      "dorsal": "146",
+      "nombre": "JOSE BONILLAS BRIALES",
+      "club": "CAMINA CORRE REVIENTA",
+      "posicionprueba": "16",
+      "CATEG": "MEM",
+      "tiempo": "01:17:17.949"
+    },
+    {
+      "posicion": "307",
+      "SEXO": "",
+      "dorsal": "667",
+      "nombre": "ISIDORO FERNANDEZ SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "87",
+      "CATEG": "MCM",
+      "tiempo": "01:17:18.661"
+    },
+    {
+      "posicion": "308",
+      "SEXO": "",
+      "dorsal": "28",
+      "nombre": "LEOVIGILDO MARTINEZ ARROYO",
+      "club": "CORDOBA PATRIMONIO CAC",
+      "posicionprueba": "3",
+      "CATEG": "SUB23M",
+      "tiempo": "01:17:24.721"
+    },
+    {
+      "posicion": "309",
+      "SEXO": "",
+      "dorsal": "106",
+      "nombre": "IVAN CAMBRONERO MARTINEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "31",
+      "CATEG": "SM",
+      "tiempo": "01:17:32.048"
+    },
+    {
+      "posicion": "310",
+      "SEXO": "",
+      "dorsal": "502",
+      "nombre": "RAFAEL QUINTANA SALCEDO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "41",
+      "CATEG": "MAM",
+      "tiempo": "01:17:32.810"
+    },
+    {
+      "posicion": "311",
+      "SEXO": "",
+      "dorsal": "482",
+      "nombre": "EDUARDO SALGADO FRANCO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "42",
+      "CATEG": "MAM",
+      "tiempo": "01:17:35.752"
+    },
+    {
+      "posicion": "312",
+      "SEXO": "28",
+      "dorsal": "688",
+      "nombre": "SANDRA JIMENEZ CARDENAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "9",
+      "CATEG": "MCF",
+      "tiempo": "01:17:37.585"
+    },
+    {
+      "posicion": "313",
+      "SEXO": "",
+      "dorsal": "291",
+      "nombre": "JOSE ANTONIO MARTINEZ FERNANDEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "43",
+      "CATEG": "MAM",
+      "tiempo": "01:17:42.567"
+    },
+    {
+      "posicion": "314",
+      "SEXO": "",
+      "dorsal": "118",
+      "nombre": "MANUEL GARCIA CARMONA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "44",
+      "CATEG": "MAM",
+      "tiempo": "01:17:45.462"
+    },
+    {
+      "posicion": "315",
+      "SEXO": "",
+      "dorsal": "117",
+      "nombre": "JUAN ALFONSO MORAL GAMEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "32",
+      "CATEG": "SM",
+      "tiempo": "01:17:45.992"
+    },
+    {
+      "posicion": "316",
+      "SEXO": "",
+      "dorsal": "681",
+      "nombre": "ANTONIO YEPES ROMERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "88",
+      "CATEG": "MCM",
+      "tiempo": "01:17:50.490"
+    },
+    {
+      "posicion": "317",
+      "SEXO": "",
+      "dorsal": "370",
+      "nombre": "JUAN JOSE GARNICA CRUZ",
+      "club": "TROTACALLES",
+      "posicionprueba": "50",
+      "CATEG": "MBM",
+      "tiempo": "01:17:51.582"
+    },
+    {
+      "posicion": "318",
+      "SEXO": "",
+      "dorsal": "625",
+      "nombre": "JUAN CARO PALMA",
+      "club": "CA LA LUISIANA-EL CAMPILLO",
+      "posicionprueba": "14",
+      "CATEG": "MFM",
+      "tiempo": "01:17:52.582"
+    },
+    {
+      "posicion": "319",
+      "SEXO": "",
+      "dorsal": "68",
+      "nombre": "ANTONIO SANCHEZ CORPAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "89",
+      "CATEG": "MCM",
+      "tiempo": "01:18:05.991"
+    },
+    {
+      "posicion": "320",
+      "SEXO": "",
+      "dorsal": "169",
+      "nombre": "RAFAEL BOJOLLO MORA",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "90",
+      "CATEG": "MCM",
+      "tiempo": "01:18:07.599"
+    },
+    {
+      "posicion": "321",
+      "SEXO": "",
+      "dorsal": "296",
+      "nombre": "JOSE MANUEL BARBERO REDONDO",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "44",
+      "CATEG": "MDM",
+      "tiempo": "01:18:09.027"
+    },
+    {
+      "posicion": "322",
+      "SEXO": "",
+      "dorsal": "315",
+      "nombre": "MANUEL TERRON JIMENEZ",
+      "club": "TROTACALLES",
+      "posicionprueba": "45",
+      "CATEG": "MDM",
+      "tiempo": "01:18:13.107"
+    },
+    {
+      "posicion": "323",
+      "SEXO": "29",
+      "dorsal": "257",
+      "nombre": "FUENSANTA GAVILAN GUIRAO",
+      "club": "TROTACALLES",
+      "posicionprueba": "2",
+      "CATEG": "MEF",
+      "tiempo": "01:18:14.068"
+    },
+    {
+      "posicion": "324",
+      "SEXO": "30",
+      "dorsal": "283",
+      "nombre": "TERESA LOPEZ FUENTES",
+      "club": "TROTASIERRA",
+      "posicionprueba": "3",
+      "CATEG": "MDF",
+      "tiempo": "01:18:15.303"
+    },
+    {
+      "posicion": "325",
+      "SEXO": "",
+      "dorsal": "284",
+      "nombre": "AGUSTIN DORADO RAMIREZ",
+      "club": "TROTASIERRA",
+      "posicionprueba": "46",
+      "CATEG": "MDM",
+      "tiempo": "01:18:17.267"
+    },
+    {
+      "posicion": "326",
+      "SEXO": "31",
+      "dorsal": "272",
+      "nombre": "ANA GUADIX ORTEGA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "1",
+      "CATEG": "SUB23F",
+      "tiempo": "01:18:21.848"
+    },
+    {
+      "posicion": "327",
+      "SEXO": "",
+      "dorsal": "548",
+      "nombre": "RAFA LINARES BURGOS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "91",
+      "CATEG": "MCM",
+      "tiempo": "01:18:24.056"
+    },
+    {
+      "posicion": "328",
+      "SEXO": "",
+      "dorsal": "234",
+      "nombre": "RAFAEL JAVIER PEREZ MURILLO",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "51",
+      "CATEG": "MBM",
+      "tiempo": "01:18:32.545"
+    },
+    {
+      "posicion": "329",
+      "SEXO": "32",
+      "dorsal": "253",
+      "nombre": "RAQUEL GONZALEZ MUÑOZ",
+      "club": "VERTICALIA",
+      "posicionprueba": "10",
+      "CATEG": "MCF",
+      "tiempo": "01:18:47.483"
+    },
+    {
+      "posicion": "330",
+      "SEXO": "",
+      "dorsal": "416",
+      "nombre": "RAFAEL PORTERO SALINAS",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "47",
+      "CATEG": "MDM",
+      "tiempo": "01:18:59.631"
+    },
+    {
+      "posicion": "331",
+      "SEXO": "",
+      "dorsal": "263",
+      "nombre": "JOSE ANTONIO JURADO DEL POZO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "17",
+      "CATEG": "MEM",
+      "tiempo": "01:19:02.017"
+    },
+    {
+      "posicion": "332",
+      "SEXO": "33",
+      "dorsal": "223",
+      "nombre": "LIDIA BARRERA LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "MBF",
+      "tiempo": "01:19:08.715"
+    },
+    {
+      "posicion": "333",
+      "SEXO": "",
+      "dorsal": "224",
+      "nombre": "FRANCISCO PALMA GALAN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "52",
+      "CATEG": "MBM",
+      "tiempo": "01:19:11.525"
+    },
+    {
+      "posicion": "334",
+      "SEXO": "",
+      "dorsal": "122",
+      "nombre": "FRANCISCO RUIZ  DE SANTA QUITERIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "48",
+      "CATEG": "MDM",
+      "tiempo": "01:19:11.574"
+    },
+    {
+      "posicion": "335",
+      "SEXO": "",
+      "dorsal": "352",
+      "nombre": "EMILIO CAMACHO POYATO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "15",
+      "CATEG": "MFM",
+      "tiempo": "01:19:15.479"
+    },
+    {
+      "posicion": "336",
+      "SEXO": "",
+      "dorsal": "295",
+      "nombre": "PABLO SOLER CALLEJA",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "33",
+      "CATEG": "SM",
+      "tiempo": "01:19:16.650"
+    },
+    {
+      "posicion": "337",
+      "SEXO": "",
+      "dorsal": "1",
+      "nombre": "JOSE MANUEL PERALES CRUZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "53",
+      "CATEG": "MBM",
+      "tiempo": "01:19:16.650"
+    },
+    {
+      "posicion": "338",
+      "SEXO": "",
+      "dorsal": "147",
+      "nombre": "JUAN JOSE PEREZ QUESADA DE ARROSPIDE",
+      "club": "CLUB APROSOR",
+      "posicionprueba": "92",
+      "CATEG": "MCM",
+      "tiempo": "01:19:26.080"
+    },
+    {
+      "posicion": "339",
+      "SEXO": "",
+      "dorsal": "683",
+      "nombre": "ALFONSO CASTILLEJO JURADO",
+      "club": "AMIGOS DEL COCHE ESCOBA",
+      "posicionprueba": "4",
+      "CATEG": "SUB23M",
+      "tiempo": "01:19:26.534"
+    },
+    {
+      "posicion": "340",
+      "SEXO": "",
+      "dorsal": "383",
+      "nombre": "JOAQUIN GAVILAN GUIRAO",
+      "club": "TROTACALLES",
+      "posicionprueba": "18",
+      "CATEG": "MEM",
+      "tiempo": "01:19:29.787"
+    },
+    {
+      "posicion": "341",
+      "SEXO": "",
+      "dorsal": "478",
+      "nombre": "CARLOS MORRUGARES ESPINO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "93",
+      "CATEG": "MCM",
+      "tiempo": "01:19:43.077"
+    },
+    {
+      "posicion": "342",
+      "SEXO": "",
+      "dorsal": "594",
+      "nombre": "JOSE RAFAEL GARCIA LEON",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "19",
+      "CATEG": "MEM",
+      "tiempo": "01:19:43.681"
+    },
+    {
+      "posicion": "343",
+      "SEXO": "",
+      "dorsal": "179",
+      "nombre": "MIGUEL ANGEL GONZALEZ  RUZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "94",
+      "CATEG": "MCM",
+      "tiempo": "01:19:46.449"
+    },
+    {
+      "posicion": "344",
+      "SEXO": "",
+      "dorsal": "15",
+      "nombre": "JUAN REPULLO MARTINEZ",
+      "club": "CABRA RUNNING",
+      "posicionprueba": "49",
+      "CATEG": "MDM",
+      "tiempo": "01:19:47.842"
+    },
+    {
+      "posicion": "345",
+      "SEXO": "",
+      "dorsal": "642",
+      "nombre": "RAFAEL GUERRERO DOMINGO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "50",
+      "CATEG": "MDM",
+      "tiempo": "01:19:48.546"
+    },
+    {
+      "posicion": "346",
+      "SEXO": "",
+      "dorsal": "313",
+      "nombre": "LUIS MUÑOZ GARCIA",
+      "club": "SATYSTRAIL",
+      "posicionprueba": "95",
+      "CATEG": "MCM",
+      "tiempo": "01:19:52.577"
+    },
+    {
+      "posicion": "347",
+      "SEXO": "",
+      "dorsal": "490",
+      "nombre": "SERGIO MARTIN PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "34",
+      "CATEG": "SM",
+      "tiempo": "01:19:57.247"
+    },
+    {
+      "posicion": "348",
+      "SEXO": "",
+      "dorsal": "125",
+      "nombre": "FRANCISCO MANUEL MONTES AGUILAR",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "51",
+      "CATEG": "MDM",
+      "tiempo": "01:19:58.774"
+    },
+    {
+      "posicion": "349",
+      "SEXO": "",
+      "dorsal": "405",
+      "nombre": "JESUS MUÑOZ CABRERA",
+      "club": "APRIETALAGRIETA",
+      "posicionprueba": "45",
+      "CATEG": "MAM",
+      "tiempo": "01:20:03.062"
+    },
+    {
+      "posicion": "350",
+      "SEXO": "34",
+      "dorsal": "89",
+      "nombre": "MARINA TOSCANO ROMAN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "2",
+      "CATEG": "SUB23F",
+      "tiempo": "01:20:05.409"
+    },
+    {
+      "posicion": "351",
+      "SEXO": "",
+      "dorsal": "542",
+      "nombre": "JOSE MANUEL ESCRIBANO BLASCO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "54",
+      "CATEG": "MBM",
+      "tiempo": "01:20:05.409"
+    },
+    {
+      "posicion": "352",
+      "SEXO": "35",
+      "dorsal": "322",
+      "nombre": "IRENE CANTADOR LOPEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "7",
+      "CATEG": "SF",
+      "tiempo": "01:20:12.742"
+    },
+    {
+      "posicion": "353",
+      "SEXO": "36",
+      "dorsal": "85",
+      "nombre": "EVA MARIA CRESPO REYES",
+      "club": "MALAS HIERBAS",
+      "posicionprueba": "4",
+      "CATEG": "MDF",
+      "tiempo": "01:20:26.536"
+    },
+    {
+      "posicion": "354",
+      "SEXO": "",
+      "dorsal": "127",
+      "nombre": "JOSE RAFAEL DELGADO HINOJOSA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "96",
+      "CATEG": "MCM",
+      "tiempo": "01:20:27.631"
+    },
+    {
+      "posicion": "355",
+      "SEXO": "",
+      "dorsal": "17",
+      "nombre": "ANGEL LLAMAS",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "52",
+      "CATEG": "MDM",
+      "tiempo": "01:20:27.774"
+    },
+    {
+      "posicion": "356",
+      "SEXO": "",
+      "dorsal": "188",
+      "nombre": "MANUEL ANGEL MARIN HUERTAS",
+      "club": "TIKISMIKIS",
+      "posicionprueba": "97",
+      "CATEG": "MCM",
+      "tiempo": "01:20:32.229"
+    },
+    {
+      "posicion": "357",
+      "SEXO": "",
+      "dorsal": "236",
+      "nombre": "JAVIER LOPEZ SECILLA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "98",
+      "CATEG": "MCM",
+      "tiempo": "01:20:41.619"
+    },
+    {
+      "posicion": "358",
+      "SEXO": "",
+      "dorsal": "648",
+      "nombre": "ANGEL ARCIS PAVON",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "53",
+      "CATEG": "MDM",
+      "tiempo": "01:20:44.987"
+    },
+    {
+      "posicion": "359",
+      "SEXO": "",
+      "dorsal": "500",
+      "nombre": "JOSE RAMON GRANADOS VAZQUEZ",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "54",
+      "CATEG": "MDM",
+      "tiempo": "01:20:47.828"
+    },
+    {
+      "posicion": "360",
+      "SEXO": "",
+      "dorsal": "76",
+      "nombre": "MARCO ANTONIO GONZALEZ URBANO",
+      "club": "GRUPO DE MONTAÑA MONTE COBRE",
+      "posicionprueba": "55",
+      "CATEG": "MDM",
+      "tiempo": "01:20:49.525"
+    },
+    {
+      "posicion": "361",
+      "SEXO": "37",
+      "dorsal": "447",
+      "nombre": "MANUELA LOPEZ TORIL",
+      "club": "ATLETISMO CORDOBES",
+      "posicionprueba": "3",
+      "CATEG": "MEF",
+      "tiempo": "01:21:02.029"
+    },
+    {
+      "posicion": "362",
+      "SEXO": "",
+      "dorsal": "596",
+      "nombre": "JUAN ORDEN MOLINA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "35",
+      "CATEG": "SM",
+      "tiempo": "01:21:09.597"
+    },
+    {
+      "posicion": "363",
+      "SEXO": "",
+      "dorsal": "38",
+      "nombre": "JOSE MARIA FERNANDEZ ARIZA",
+      "club": "VERTICALIA",
+      "posicionprueba": "99",
+      "CATEG": "MCM",
+      "tiempo": "01:21:10.877"
+    },
+    {
+      "posicion": "364",
+      "SEXO": "",
+      "dorsal": "116",
+      "nombre": "JUAN CARLOS MORENO VALIENTE",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "20",
+      "CATEG": "MEM",
+      "tiempo": "01:21:12.873"
+    },
+    {
+      "posicion": "365",
+      "SEXO": "38",
+      "dorsal": "348",
+      "nombre": "MIGUELI CERRO CARPIO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "11",
+      "CATEG": "MCF",
+      "tiempo": "01:21:14.436"
+    },
+    {
+      "posicion": "366",
+      "SEXO": "",
+      "dorsal": "46",
+      "nombre": "PEDRO CAMINO MARTINEZ",
+      "club": "ATLETISMO  MONTEMAYOR",
+      "posicionprueba": "55",
+      "CATEG": "MBM",
+      "tiempo": "01:21:15.137"
+    },
+    {
+      "posicion": "367",
+      "SEXO": "",
+      "dorsal": "343",
+      "nombre": "RAFAEL ROMAN SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "56",
+      "CATEG": "MBM",
+      "tiempo": "01:21:15.804"
+    },
+    {
+      "posicion": "368",
+      "SEXO": "",
+      "dorsal": "472",
+      "nombre": "JOSE ESTEVEZ DOVAO",
+      "club": "SENDEROS CARLOTEÑOS 7600",
+      "posicionprueba": "56",
+      "CATEG": "MDM",
+      "tiempo": "01:21:16.428"
+    },
+    {
+      "posicion": "369",
+      "SEXO": "",
+      "dorsal": "99",
+      "nombre": "ALFONSO GARCIA JURADO",
+      "club": "C.D. KOMOMOLOS",
+      "posicionprueba": "57",
+      "CATEG": "MDM",
+      "tiempo": "01:21:17.695"
+    },
+    {
+      "posicion": "370",
+      "SEXO": "",
+      "dorsal": "371",
+      "nombre": "ANGEL MARIN JURADO",
+      "club": "SATYS TRAIL",
+      "posicionprueba": "57",
+      "CATEG": "MBM",
+      "tiempo": "01:21:22.457"
+    },
+    {
+      "posicion": "371",
+      "SEXO": "",
+      "dorsal": "535",
+      "nombre": "JUAN MANUEL ALVAREZ VALENZUELA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "21",
+      "CATEG": "MEM",
+      "tiempo": "01:21:35.117"
+    },
+    {
+      "posicion": "372",
+      "SEXO": "",
+      "dorsal": "656",
+      "nombre": "JUAN PEDRO CABRERA CECILIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "58",
+      "CATEG": "MBM",
+      "tiempo": "01:21:38.181"
+    },
+    {
+      "posicion": "373",
+      "SEXO": "39",
+      "dorsal": "641",
+      "nombre": "CHARI YEPES VELASCO",
+      "club": "VERTICALIAC",
+      "posicionprueba": "4",
+      "CATEG": "MEF",
+      "tiempo": "01:21:40.452"
+    },
+    {
+      "posicion": "374",
+      "SEXO": "",
+      "dorsal": "113",
+      "nombre": "JOSE LUIS MONTERO ALCANTARA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "59",
+      "CATEG": "MBM",
+      "tiempo": "01:21:43.369"
+    },
+    {
+      "posicion": "375",
+      "SEXO": "",
+      "dorsal": "268",
+      "nombre": "JULIO CESAR MUÑOZ FERNANDEZ",
+      "club": "SATYSTRAIL CORDOBA TESM",
+      "posicionprueba": "22",
+      "CATEG": "MEM",
+      "tiempo": "01:21:44.075"
+    },
+    {
+      "posicion": "376",
+      "SEXO": "",
+      "dorsal": "431",
+      "nombre": "ANGEL MUÑOZ MUÑOZ",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "60",
+      "CATEG": "MBM",
+      "tiempo": "01:21:47.676"
+    },
+    {
+      "posicion": "377",
+      "SEXO": "",
+      "dorsal": "246",
+      "nombre": "EMILIO GARCIA CAÑAS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "23",
+      "CATEG": "MEM",
+      "tiempo": "01:21:56.602"
+    },
+    {
+      "posicion": "378",
+      "SEXO": "",
+      "dorsal": "464",
+      "nombre": "JUAN GONZALEZ RASO",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "36",
+      "CATEG": "SM",
+      "tiempo": "01:21:59.555"
+    },
+    {
+      "posicion": "379",
+      "SEXO": "40",
+      "dorsal": "318",
+      "nombre": "GEMA REY MARTIN",
+      "club": "TROTACALLES",
+      "posicionprueba": "12",
+      "CATEG": "MCF",
+      "tiempo": "01:21:59.834"
+    },
+    {
+      "posicion": "380",
+      "SEXO": "",
+      "dorsal": "84",
+      "nombre": "JAVIER CABEZAS SIERRA",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "61",
+      "CATEG": "MBM",
+      "tiempo": "01:22:02.364"
+    },
+    {
+      "posicion": "381",
+      "SEXO": "41",
+      "dorsal": "581",
+      "nombre": "ARACELI PERALBO GIL",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "13",
+      "CATEG": "MCF",
+      "tiempo": "01:22:04.102"
+    },
+    {
+      "posicion": "382",
+      "SEXO": "",
+      "dorsal": "462",
+      "nombre": "NICOLAS MUÑOZ PRIEGO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "46",
+      "CATEG": "MAM",
+      "tiempo": "01:22:05.515"
+    },
+    {
+      "posicion": "383",
+      "SEXO": "",
+      "dorsal": "487",
+      "nombre": "ALEJANDRO TENA AYALA",
+      "club": "LOBOS TRAIL",
+      "posicionprueba": "37",
+      "CATEG": "SM",
+      "tiempo": "01:22:06.584"
+    },
+    {
+      "posicion": "384",
+      "SEXO": "",
+      "dorsal": "458",
+      "nombre": "MIGUEL ANGEL GARCIA SALAZAR",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "24",
+      "CATEG": "MEM",
+      "tiempo": "01:22:08.094"
+    },
+    {
+      "posicion": "385",
+      "SEXO": "",
+      "dorsal": "660",
+      "nombre": "RAFAEL MACHIN RAMIREZ",
+      "club": "H CRUZ ROJA",
+      "posicionprueba": "58",
+      "CATEG": "MDM",
+      "tiempo": "01:22:09.087"
+    },
+    {
+      "posicion": "386",
+      "SEXO": "",
+      "dorsal": "456",
+      "nombre": "MANUEL ALEJANDRO MADUEÑO FERNANDEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "100",
+      "CATEG": "MCM",
+      "tiempo": "01:22:12.437"
+    },
+    {
+      "posicion": "387",
+      "SEXO": "",
+      "dorsal": "559",
+      "nombre": "FRANCISCO RUBIO JURADO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "59",
+      "CATEG": "MDM",
+      "tiempo": "01:22:15.174"
+    },
+    {
+      "posicion": "388",
+      "SEXO": "",
+      "dorsal": "160",
+      "nombre": "RAFAEL ORTIZ GOMEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "60",
+      "CATEG": "MDM",
+      "tiempo": "01:22:15.466"
+    },
+    {
+      "posicion": "389",
+      "SEXO": "",
+      "dorsal": "437",
+      "nombre": "ALBERTO GOMEZ GARCIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "38",
+      "CATEG": "SM",
+      "tiempo": "01:22:16.597"
+    },
+    {
+      "posicion": "390",
+      "SEXO": "",
+      "dorsal": "619",
+      "nombre": "MANUEL RAYA CASTRO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "16",
+      "CATEG": "MFM",
+      "tiempo": "01:22:18.215"
+    },
+    {
+      "posicion": "391",
+      "SEXO": "",
+      "dorsal": "544",
+      "nombre": "ANTONIO MOYANO GOMEZ",
+      "club": "VERTICALIA",
+      "posicionprueba": "47",
+      "CATEG": "MAM",
+      "tiempo": "01:22:29.317"
+    },
+    {
+      "posicion": "392",
+      "SEXO": "",
+      "dorsal": "621",
+      "nombre": "CARLOS MARTIN CAMPOS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "61",
+      "CATEG": "MDM",
+      "tiempo": "01:22:30.343"
+    },
+    {
+      "posicion": "393",
+      "SEXO": "",
+      "dorsal": "228",
+      "nombre": "FRANCISCO JOSE GONZALEZ BLANCAT",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "62",
+      "CATEG": "MDM",
+      "tiempo": "01:22:32.662"
+    },
+    {
+      "posicion": "394",
+      "SEXO": "",
+      "dorsal": "545",
+      "nombre": "JOSE RAFAEL RUIZ SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "62",
+      "CATEG": "MBM",
+      "tiempo": "01:22:33.052"
+    },
+    {
+      "posicion": "395",
+      "SEXO": "",
+      "dorsal": "33",
+      "nombre": "LUIS RAFAEL REYES BRAVO",
+      "club": "CLUB MARATON LUCENA",
+      "posicionprueba": "63",
+      "CATEG": "MDM",
+      "tiempo": "01:22:44.056"
+    },
+    {
+      "posicion": "396",
+      "SEXO": "",
+      "dorsal": "418",
+      "nombre": "ANTONIO CORREDOR WIC",
+      "club": "VERTICALIA",
+      "posicionprueba": "25",
+      "CATEG": "MEM",
+      "tiempo": "01:22:48.216"
+    },
+    {
+      "posicion": "397",
+      "SEXO": "",
+      "dorsal": "537",
+      "nombre": "FRAN RAMOS RODRIGUEZ",
+      "club": "LOBOS TRAIL",
+      "posicionprueba": "39",
+      "CATEG": "SM",
+      "tiempo": "01:22:50.688"
+    },
+    {
+      "posicion": "398",
+      "SEXO": "",
+      "dorsal": "56",
+      "nombre": "FRANCISCO BOUDRY",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "48",
+      "CATEG": "MAM",
+      "tiempo": "01:22:55.943"
+    },
+    {
+      "posicion": "399",
+      "SEXO": "42",
+      "dorsal": "192",
+      "nombre": "JULIA HERNANDEZ ALCARAZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "SF",
+      "tiempo": "01:22:56.319"
+    },
+    {
+      "posicion": "400",
+      "SEXO": "",
+      "dorsal": "20",
+      "nombre": "VICTOR SABARIEGO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "40",
+      "CATEG": "SM",
+      "tiempo": "01:22:56.367"
+    },
+    {
+      "posicion": "401",
+      "SEXO": "",
+      "dorsal": "55",
+      "nombre": "DAVID SANCHEZ URBANO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "49",
+      "CATEG": "MAM",
+      "tiempo": "01:22:57.827"
+    },
+    {
+      "posicion": "402",
+      "SEXO": "",
+      "dorsal": "340",
+      "nombre": "MANUEL CARRASCO E LARRIVA",
+      "club": "LANVERT",
+      "posicionprueba": "101",
+      "CATEG": "MCM",
+      "tiempo": "01:23:04.363"
+    },
+    {
+      "posicion": "403",
+      "SEXO": "",
+      "dorsal": "583",
+      "nombre": "JULIO FUNES CANTON",
+      "club": "CD BOQUERON",
+      "posicionprueba": "102",
+      "CATEG": "MCM",
+      "tiempo": "01:23:04.599"
+    },
+    {
+      "posicion": "404",
+      "SEXO": "",
+      "dorsal": "323",
+      "nombre": "IGNACIO DE CABO MORENO",
+      "club": "BOQUERON RUNNING",
+      "posicionprueba": "103",
+      "CATEG": "MCM",
+      "tiempo": "01:23:05.205"
+    },
+    {
+      "posicion": "405",
+      "SEXO": "",
+      "dorsal": "539",
+      "nombre": "ANTONIO PALACIOS HERRUZO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "104",
+      "CATEG": "MCM",
+      "tiempo": "01:23:05.299"
+    },
+    {
+      "posicion": "406",
+      "SEXO": "",
+      "dorsal": "658",
+      "nombre": "DANIEL ROMERO MATA",
+      "club": "HURS",
+      "posicionprueba": "105",
+      "CATEG": "MCM",
+      "tiempo": "01:23:05.989"
+    },
+    {
+      "posicion": "407",
+      "SEXO": "",
+      "dorsal": "374",
+      "nombre": "MIGUEL ANGEL GOMEZ TORRES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "50",
+      "CATEG": "MAM",
+      "tiempo": "01:23:06.661"
+    },
+    {
+      "posicion": "408",
+      "SEXO": "43",
+      "dorsal": "572",
+      "nombre": "RAQUEL SEPULCRE AGULLO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "9",
+      "CATEG": "SF",
+      "tiempo": "01:23:07.630"
+    },
+    {
+      "posicion": "409",
+      "SEXO": "44",
+      "dorsal": "206",
+      "nombre": "PATRICIA RENCO SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "MAF",
+      "tiempo": "01:23:09.608"
+    },
+    {
+      "posicion": "410",
+      "SEXO": "",
+      "dorsal": "580",
+      "nombre": "SANTIAGO TEXEIRA  LEAL",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "51",
+      "CATEG": "MAM",
+      "tiempo": "01:23:10.864"
+    },
+    {
+      "posicion": "411",
+      "SEXO": "",
+      "dorsal": "357",
+      "nombre": "TOMAS HIDALGO MARTINEZ",
+      "club": "ATLETISMO  MONTEMAYOR",
+      "posicionprueba": "106",
+      "CATEG": "MCM",
+      "tiempo": "01:23:13.661"
+    },
+    {
+      "posicion": "412",
+      "SEXO": "",
+      "dorsal": "230",
+      "nombre": "ALEJANDRO CRIADO ORELLANA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "5",
+      "CATEG": "SUB23M",
+      "tiempo": "01:23:15.092"
+    },
+    {
+      "posicion": "413",
+      "SEXO": "",
+      "dorsal": "213",
+      "nombre": "ANGEL CRIADO MACHADO",
+      "club": "WILD TRAIL",
+      "posicionprueba": "64",
+      "CATEG": "MDM",
+      "tiempo": "01:23:16.098"
+    },
+    {
+      "posicion": "414",
+      "SEXO": "",
+      "dorsal": "532",
+      "nombre": "FRANCISCO PEREZ MUÑOZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "107",
+      "CATEG": "MCM",
+      "tiempo": "01:23:18.766"
+    },
+    {
+      "posicion": "415",
+      "SEXO": "45",
+      "dorsal": "19",
+      "nombre": "MARIA ISABEL GOMEZ GOMEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "7",
+      "CATEG": "MAF",
+      "tiempo": "01:23:19.999"
+    },
+    {
+      "posicion": "416",
+      "SEXO": "46",
+      "dorsal": "156",
+      "nombre": "CLEMENCIA LOPEZ CARRASCO",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "5",
+      "CATEG": "MDF",
+      "tiempo": "01:23:20.248"
+    },
+    {
+      "posicion": "417",
+      "SEXO": "",
+      "dorsal": "654",
+      "nombre": "FRANCISCO GUTIERREZ",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "26",
+      "CATEG": "MEM",
+      "tiempo": "01:23:30.252"
+    },
+    {
+      "posicion": "418",
+      "SEXO": "",
+      "dorsal": "640",
+      "nombre": "JOSE MONTES MEDINA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "17",
+      "CATEG": "MFM",
+      "tiempo": "01:23:30.580"
+    },
+    {
+      "posicion": "419",
+      "SEXO": "",
+      "dorsal": "232",
+      "nombre": "ANDRES UREÑA CAMAS",
+      "club": "VERTICALIA",
+      "posicionprueba": "65",
+      "CATEG": "MDM",
+      "tiempo": "01:23:31.034"
+    },
+    {
+      "posicion": "420",
+      "SEXO": "47",
+      "dorsal": "162",
+      "nombre": "MAITE MONTILLA GUADIX",
+      "club": "VERTICALIA",
+      "posicionprueba": "6",
+      "CATEG": "MDF",
+      "tiempo": "01:23:31.776"
+    },
+    {
+      "posicion": "421",
+      "SEXO": "",
+      "dorsal": "546",
+      "nombre": "MIGUEL ANGEL AVILA CUADRA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "18",
+      "CATEG": "MFM",
+      "tiempo": "01:23:32.544"
+    },
+    {
+      "posicion": "422",
+      "SEXO": "",
+      "dorsal": "247",
+      "nombre": "DIEGO RUBI MEDINA",
+      "club": "WILD  TRAIL",
+      "posicionprueba": "52",
+      "CATEG": "MAM",
+      "tiempo": "01:23:32.592"
+    },
+    {
+      "posicion": "423",
+      "SEXO": "48",
+      "dorsal": "434",
+      "nombre": "ANGELA MARIA RUIZ SERRANO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "14",
+      "CATEG": "MCF",
+      "tiempo": "01:23:35.721"
+    },
+    {
+      "posicion": "424",
+      "SEXO": "",
+      "dorsal": "115",
+      "nombre": "MANUEL PEREZ NOGAREDA",
+      "club": "KABRAS LOKAS",
+      "posicionprueba": "27",
+      "CATEG": "MEM",
+      "tiempo": "01:23:41.017"
+    },
+    {
+      "posicion": "425",
+      "SEXO": "",
+      "dorsal": "121",
+      "nombre": "JUAN FRANCISCO OPORTO CANTARERO",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "28",
+      "CATEG": "MEM",
+      "tiempo": "01:23:43.001"
+    },
+    {
+      "posicion": "426",
+      "SEXO": "",
+      "dorsal": "120",
+      "nombre": "RAFAEL GIL SIERRA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "41",
+      "CATEG": "SM",
+      "tiempo": "01:23:43.998"
+    },
+    {
+      "posicion": "427",
+      "SEXO": "",
+      "dorsal": "271",
+      "nombre": "ANTONIO LLAVERO AGUILAR",
+      "club": "CRONOS JAEN",
+      "posicionprueba": "66",
+      "CATEG": "MDM",
+      "tiempo": "01:23:51.797"
+    },
+    {
+      "posicion": "428",
+      "SEXO": "",
+      "dorsal": "687",
+      "nombre": "ANTONIO RAFAEL BERNAL FERNANDEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "108",
+      "CATEG": "MCM",
+      "tiempo": "01:23:58.667"
+    },
+    {
+      "posicion": "429",
+      "SEXO": "",
+      "dorsal": "634",
+      "nombre": "RAFAEL GARCIA MARTINEZ",
+      "club": "CORRECAMINOS TRAIL CORDOBA",
+      "posicionprueba": "19",
+      "CATEG": "MFM",
+      "tiempo": "01:24:04.575"
+    },
+    {
+      "posicion": "430",
+      "SEXO": "",
+      "dorsal": "138",
+      "nombre": "FRANCISCO JAVIER PALMERO ROLDAN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "63",
+      "CATEG": "MBM",
+      "tiempo": "01:24:05.136"
+    },
+    {
+      "posicion": "431",
+      "SEXO": "",
+      "dorsal": "214",
+      "nombre": "ALEJANDRO MOYA MONTERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "42",
+      "CATEG": "SM",
+      "tiempo": "01:24:10.701"
+    },
+    {
+      "posicion": "432",
+      "SEXO": "",
+      "dorsal": "98",
+      "nombre": "ANTONIO SERRANO MUÑOZ",
+      "club": "AL-ANDALUS",
+      "posicionprueba": "109",
+      "CATEG": "MCM",
+      "tiempo": "01:24:22.331"
+    },
+    {
+      "posicion": "433",
+      "SEXO": "",
+      "dorsal": "664",
+      "nombre": "JUAN BERNAL SAMPER",
+      "club": "HURS",
+      "posicionprueba": "67",
+      "CATEG": "MDM",
+      "tiempo": "01:24:27.975"
+    },
+    {
+      "posicion": "434",
+      "SEXO": "",
+      "dorsal": "86",
+      "nombre": "ELOY RELAÑO LEON",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "53",
+      "CATEG": "MAM",
+      "tiempo": "01:24:49.407"
+    },
+    {
+      "posicion": "435",
+      "SEXO": "",
+      "dorsal": "290",
+      "nombre": "DAVID GONZALEZ LAGO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "64",
+      "CATEG": "MBM",
+      "tiempo": "01:25:09.485"
+    },
+    {
+      "posicion": "436",
+      "SEXO": "",
+      "dorsal": "601",
+      "nombre": "ALFREDO LAGUNA SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "29",
+      "CATEG": "MEM",
+      "tiempo": "01:25:15.386"
+    },
+    {
+      "posicion": "437",
+      "SEXO": "",
+      "dorsal": "409",
+      "nombre": "ANTONIO LOPEZ MEDINA",
+      "club": "VERTICALIA",
+      "posicionprueba": "110",
+      "CATEG": "MCM",
+      "tiempo": "01:25:22.804"
+    },
+    {
+      "posicion": "438",
+      "SEXO": "",
+      "dorsal": "297",
+      "nombre": "EMILIO FERNANDEZ GOMEZ",
+      "club": "TRIATLON MEZQUITA",
+      "posicionprueba": "20",
+      "CATEG": "MFM",
+      "tiempo": "01:25:25.539"
+    },
+    {
+      "posicion": "439",
+      "SEXO": "",
+      "dorsal": "463",
+      "nombre": "JUAN TUÑON RUIZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "65",
+      "CATEG": "MBM",
+      "tiempo": "01:25:26.815"
+    },
+    {
+      "posicion": "440",
+      "SEXO": "",
+      "dorsal": "468",
+      "nombre": "ALBERTO MARIN RUBIO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "30",
+      "CATEG": "MEM",
+      "tiempo": "01:25:27.269"
+    },
+    {
+      "posicion": "441",
+      "SEXO": "49",
+      "dorsal": "672",
+      "nombre": "NOELIA MUÑOZ GUILLEN",
+      "club": "COORDINACION TRASPLANTES H CRUZ ROJA",
+      "posicionprueba": "10",
+      "CATEG": "SF",
+      "tiempo": "01:25:27.877"
+    },
+    {
+      "posicion": "442",
+      "SEXO": "50",
+      "dorsal": "657",
+      "nombre": "PURIFICACION CARMONA SANCHEZ",
+      "club": "COORDINACION TRASPLANTES HURS",
+      "posicionprueba": "8",
+      "CATEG": "MAF",
+      "tiempo": "01:25:28.001"
+    },
+    {
+      "posicion": "443",
+      "SEXO": "51",
+      "dorsal": "229",
+      "nombre": "MONTSERRAT FERNANDEZ BUSTOS",
+      "club": "VERTICALIA",
+      "posicionprueba": "5",
+      "CATEG": "MEF",
+      "tiempo": "01:25:31.285"
+    },
+    {
+      "posicion": "444",
+      "SEXO": "52",
+      "dorsal": "29",
+      "nombre": "MARIA LUISA RUDILLA GONZALEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "7",
+      "CATEG": "MDF",
+      "tiempo": "01:25:32.949"
+    },
+    {
+      "posicion": "445",
+      "SEXO": "",
+      "dorsal": "413",
+      "nombre": "CARLOS SOLORZANO PEREZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "111",
+      "CATEG": "MCM",
+      "tiempo": "01:25:35.867"
+    },
+    {
+      "posicion": "446",
+      "SEXO": "53",
+      "dorsal": "266",
+      "nombre": "MARIA GARCIA ALDANA",
+      "club": "OMEYAS",
+      "posicionprueba": "9",
+      "CATEG": "MAF",
+      "tiempo": "01:25:47.295"
+    },
+    {
+      "posicion": "447",
+      "SEXO": "54",
+      "dorsal": "421",
+      "nombre": "ESPERANZA MIRANDA GOMEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "MEF",
+      "tiempo": "01:26:02.513"
+    },
+    {
+      "posicion": "448",
+      "SEXO": "55",
+      "dorsal": "90",
+      "nombre": "INMACULADA ROMAN GAVILAN",
+      "club": "ALUA",
+      "posicionprueba": "7",
+      "CATEG": "MEF",
+      "tiempo": "01:26:03.651"
+    },
+    {
+      "posicion": "449",
+      "SEXO": "",
+      "dorsal": "267",
+      "nombre": "EDUARDO MARTINEZ GUAL",
+      "club": "ALUA",
+      "posicionprueba": "31",
+      "CATEG": "MEM",
+      "tiempo": "01:26:04.179"
+    },
+    {
+      "posicion": "450",
+      "SEXO": "",
+      "dorsal": "325",
+      "nombre": "ANTONIO MUÑOZ RIVERA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "68",
+      "CATEG": "MDM",
+      "tiempo": "01:26:21.150"
+    },
+    {
+      "posicion": "451",
+      "SEXO": "",
+      "dorsal": "424",
+      "nombre": "MARCO ANTONIO PEREZ PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "69",
+      "CATEG": "MDM",
+      "tiempo": "01:26:21.308"
+    },
+    {
+      "posicion": "452",
+      "SEXO": "56",
+      "dorsal": "235",
+      "nombre": "PILAR JURADO GARCIA",
+      "club": "VERTICALIA",
+      "posicionprueba": "8",
+      "CATEG": "MEF",
+      "tiempo": "01:26:29.133"
+    },
+    {
+      "posicion": "453",
+      "SEXO": "",
+      "dorsal": "226",
+      "nombre": "EMILIO GALLEGOS  BENITEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "66",
+      "CATEG": "MBM",
+      "tiempo": "01:26:40.556"
+    },
+    {
+      "posicion": "454",
+      "SEXO": "",
+      "dorsal": "473",
+      "nombre": "CARMELO MARTIN VIDAL",
+      "club": "SENDEROS CARLOTEÑOS 7600",
+      "posicionprueba": "21",
+      "CATEG": "MFM",
+      "tiempo": "01:26:45.451"
+    },
+    {
+      "posicion": "455",
+      "SEXO": "",
+      "dorsal": "186",
+      "nombre": "CANDIDO NOGALES GRANADOS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "70",
+      "CATEG": "MDM",
+      "tiempo": "01:26:45.849"
+    },
+    {
+      "posicion": "456",
+      "SEXO": "57",
+      "dorsal": "197",
+      "nombre": "SACRAMENTO ROSEL CASTRO",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "7",
+      "CATEG": "MBF",
+      "tiempo": "01:26:46.925"
+    },
+    {
+      "posicion": "457",
+      "SEXO": "",
+      "dorsal": "474",
+      "nombre": "LUIS SANCHEZ ROMERO",
+      "club": "SENDEROS CARLOTEÑOS 7600",
+      "posicionprueba": "22",
+      "CATEG": "MFM",
+      "tiempo": "01:26:47.079"
+    },
+    {
+      "posicion": "458",
+      "SEXO": "",
+      "dorsal": "202",
+      "nombre": "MIGUEL VALCUENDE SILLERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "54",
+      "CATEG": "MAM",
+      "tiempo": "01:26:47.684"
+    },
+    {
+      "posicion": "459",
+      "SEXO": "",
+      "dorsal": "201",
+      "nombre": "FRANCISCO JAVIER BAENA MORALES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "55",
+      "CATEG": "MAM",
+      "tiempo": "01:26:47.813"
+    },
+    {
+      "posicion": "460",
+      "SEXO": "",
+      "dorsal": "381",
+      "nombre": "JOSE ALBERTO COTA CONSUEGRA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "32",
+      "CATEG": "MEM",
+      "tiempo": "01:26:49.047"
+    },
+    {
+      "posicion": "461",
+      "SEXO": "",
+      "dorsal": "208",
+      "nombre": "RAFAEL LINARES LUCENA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "71",
+      "CATEG": "MDM",
+      "tiempo": "01:26:51.725"
+    },
+    {
+      "posicion": "462",
+      "SEXO": "",
+      "dorsal": "376",
+      "nombre": "JUAN CARLOS FERNANDEZ CESPEDES",
+      "club": "VERTICALIA",
+      "posicionprueba": "72",
+      "CATEG": "MDM",
+      "tiempo": "01:26:53.037"
+    },
+    {
+      "posicion": "463",
+      "SEXO": "",
+      "dorsal": "64",
+      "nombre": "LUIS CARLOS LARA SANCHEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "56",
+      "CATEG": "MAM",
+      "tiempo": "01:27:19.230"
+    },
+    {
+      "posicion": "464",
+      "SEXO": "",
+      "dorsal": "355",
+      "nombre": "RAFAEL VADILLO LUQUE",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "33",
+      "CATEG": "MEM",
+      "tiempo": "01:27:26.994"
+    },
+    {
+      "posicion": "465",
+      "SEXO": "",
+      "dorsal": "61",
+      "nombre": "JOSE LUIS SANTANDER BARDAJI",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "34",
+      "CATEG": "MEM",
+      "tiempo": "01:27:28.549"
+    },
+    {
+      "posicion": "466",
+      "SEXO": "",
+      "dorsal": "129",
+      "nombre": "MOHAMAD ALI EL CHAMI",
+      "club": "VERTICALIA",
+      "posicionprueba": "43",
+      "CATEG": "SM",
+      "tiempo": "01:27:31.795"
+    },
+    {
+      "posicion": "467",
+      "SEXO": "",
+      "dorsal": "335",
+      "nombre": "FRANCISCO JAVIER BERMEJO BERBEL",
+      "club": "VERTICALIA",
+      "posicionprueba": "73",
+      "CATEG": "MDM",
+      "tiempo": "01:27:58.814"
+    },
+    {
+      "posicion": "468",
+      "SEXO": "58",
+      "dorsal": "336",
+      "nombre": "GLORIA MOHEDANO PRIETO",
+      "club": "VERTICALIA",
+      "posicionprueba": "8",
+      "CATEG": "MDF",
+      "tiempo": "01:27:58.863"
+    },
+    {
+      "posicion": "469",
+      "SEXO": "",
+      "dorsal": "155",
+      "nombre": "JOSE ANTONIO MARTINEZ JIMENEZ",
+      "club": "CLUB TROTACALLES",
+      "posicionprueba": "74",
+      "CATEG": "MDM",
+      "tiempo": "01:28:00.383"
+    },
+    {
+      "posicion": "470",
+      "SEXO": "",
+      "dorsal": "277",
+      "nombre": "PEDRO LUIS CEPAS GARCIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "112",
+      "CATEG": "MCM",
+      "tiempo": "01:28:00.851"
+    },
+    {
+      "posicion": "471",
+      "SEXO": "",
+      "dorsal": "159",
+      "nombre": "ENRIQUE PULIDO MUÑOZ",
+      "club": "SATYSTRAIL CORDOBA TEAM",
+      "posicionprueba": "75",
+      "CATEG": "MDM",
+      "tiempo": "01:28:01.973"
+    },
+    {
+      "posicion": "472",
+      "SEXO": "",
+      "dorsal": "79",
+      "nombre": "JUAN MANUEL MONTILLA ROMERO",
+      "club": "SATYSTRAIL CORDOBA TEAM",
+      "posicionprueba": "76",
+      "CATEG": "MDM",
+      "tiempo": "01:28:02.308"
+    },
+    {
+      "posicion": "473",
+      "SEXO": "",
+      "dorsal": "501",
+      "nombre": "DANIEL ARRIAZA MORENO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "57",
+      "CATEG": "MAM",
+      "tiempo": "01:28:03.544"
+    },
+    {
+      "posicion": "474",
+      "SEXO": "59",
+      "dorsal": "494",
+      "nombre": "LUCIA CONDE CALERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "9",
+      "CATEG": "MDF",
+      "tiempo": "01:28:06.843"
+    },
+    {
+      "posicion": "475",
+      "SEXO": "",
+      "dorsal": "382",
+      "nombre": "MANUEL GONZALEZ MANCHADO",
+      "club": "CABRA RUNNING",
+      "posicionprueba": "35",
+      "CATEG": "MEM",
+      "tiempo": "01:28:07.260"
+    },
+    {
+      "posicion": "476",
+      "SEXO": "60",
+      "dorsal": "259",
+      "nombre": "MARIA ANTONIA MALFEITO PEREZ",
+      "club": "KABRAS LOKAS TRAIL",
+      "posicionprueba": "9",
+      "CATEG": "MEF",
+      "tiempo": "01:28:29.194"
+    },
+    {
+      "posicion": "477",
+      "SEXO": "",
+      "dorsal": "485",
+      "nombre": "CARLOS JODRAL FERRANDIZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "44",
+      "CATEG": "SM",
+      "tiempo": "01:28:30.426"
+    },
+    {
+      "posicion": "478",
+      "SEXO": "",
+      "dorsal": "558",
+      "nombre": "ALEJANDRO MARTINEZ GARCIA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "58",
+      "CATEG": "MAM",
+      "tiempo": "01:28:31.837"
+    },
+    {
+      "posicion": "479",
+      "SEXO": "",
+      "dorsal": "587",
+      "nombre": "JUAN ANTONIO MORALES GARCIA",
+      "club": "GRUPO SENDERISTA PALMEÑO",
+      "posicionprueba": "36",
+      "CATEG": "MEM",
+      "tiempo": "01:28:47.545"
+    },
+    {
+      "posicion": "480",
+      "SEXO": "",
+      "dorsal": "154",
+      "nombre": "MANUEL M PRETEL GAROFANO",
+      "club": "VERTICALIA",
+      "posicionprueba": "113",
+      "CATEG": "MCM",
+      "tiempo": "01:28:48.793"
+    },
+    {
+      "posicion": "481",
+      "SEXO": "",
+      "dorsal": "227",
+      "nombre": "JOSE ANTONIO RUIZ DIAZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "77",
+      "CATEG": "MDM",
+      "tiempo": "01:29:09.606"
+    },
+    {
+      "posicion": "482",
+      "SEXO": "",
+      "dorsal": "35",
+      "nombre": "JOSE LUIS MONEDERO HERNANDEZ",
+      "club": "CLUB MARATON LUCENA",
+      "posicionprueba": "78",
+      "CATEG": "MDM",
+      "tiempo": "01:29:28.368"
+    },
+    {
+      "posicion": "483",
+      "SEXO": "61",
+      "dorsal": "252",
+      "nombre": "BEATRIZ MORALES MURILLO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "15",
+      "CATEG": "MCF",
+      "tiempo": "01:29:33.646"
+    },
+    {
+      "posicion": "484",
+      "SEXO": "62",
+      "dorsal": "408",
+      "nombre": "SONIA GOMEZ VERGARA",
+      "club": "VERTICALIA",
+      "posicionprueba": "10",
+      "CATEG": "MDF",
+      "tiempo": "01:29:34.959"
+    },
+    {
+      "posicion": "485",
+      "SEXO": "63",
+      "dorsal": "143",
+      "nombre": "PILAR GONZALEZ CONTRERAS",
+      "club": "VERTICALIA",
+      "posicionprueba": "11",
+      "CATEG": "MDF",
+      "tiempo": "01:29:35.198"
+    },
+    {
+      "posicion": "486",
+      "SEXO": "",
+      "dorsal": "392",
+      "nombre": "ALONSO GOMEZ SANCHEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "79",
+      "CATEG": "MDM",
+      "tiempo": "01:29:49.753"
+    },
+    {
+      "posicion": "487",
+      "SEXO": "",
+      "dorsal": "427",
+      "nombre": "FCO JAVIER LEON MARTIN",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "37",
+      "CATEG": "MEM",
+      "tiempo": "01:30:00.064"
+    },
+    {
+      "posicion": "488",
+      "SEXO": "",
+      "dorsal": "670",
+      "nombre": "MARTIN LOPEZ MURILLO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "114",
+      "CATEG": "MCM",
+      "tiempo": "01:30:05.748"
+    },
+    {
+      "posicion": "489",
+      "SEXO": "",
+      "dorsal": "411",
+      "nombre": "JOSE DAVID ROJAS LOPEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "59",
+      "CATEG": "MAM",
+      "tiempo": "01:30:09.258"
+    },
+    {
+      "posicion": "490",
+      "SEXO": "",
+      "dorsal": "281",
+      "nombre": "JUAN COBACHO GOMEZ",
+      "club": "MONTECOBRE TRAIL",
+      "posicionprueba": "23",
+      "CATEG": "MFM",
+      "tiempo": "01:30:12.972"
+    },
+    {
+      "posicion": "491",
+      "SEXO": "",
+      "dorsal": "499",
+      "nombre": "MIGUEL LUQUE ARROYO",
+      "club": "LOS CALIFAS – UCO",
+      "posicionprueba": "24",
+      "CATEG": "MFM",
+      "tiempo": "01:30:17.129"
+    },
+    {
+      "posicion": "492",
+      "SEXO": "",
+      "dorsal": "303",
+      "nombre": "JUAN ZACARIAS RUIZ COBOS",
+      "club": "CLUB VERTICALIA",
+      "posicionprueba": "80",
+      "CATEG": "MDM",
+      "tiempo": "01:30:18.942"
+    },
+    {
+      "posicion": "493",
+      "SEXO": "64",
+      "dorsal": "571",
+      "nombre": "MARI LUZ RODRIGUEZ BUENO",
+      "club": "VERTICALIA",
+      "posicionprueba": "1",
+      "CATEG": "MFF",
+      "tiempo": "01:30:20.141"
+    },
+    {
+      "posicion": "494",
+      "SEXO": "",
+      "dorsal": "465",
+      "nombre": "MELCHOR GUZMAN GUERRERO",
+      "club": "LOS CALIFAS",
+      "posicionprueba": "25",
+      "CATEG": "MFM",
+      "tiempo": "01:30:20.758"
+    },
+    {
+      "posicion": "495",
+      "SEXO": "",
+      "dorsal": "96",
+      "nombre": "JOSE MARIA ALBA DELGADO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "115",
+      "CATEG": "MCM",
+      "tiempo": "01:30:34.451"
+    },
+    {
+      "posicion": "496",
+      "SEXO": "65",
+      "dorsal": "181",
+      "nombre": "ROSARIO JIMENEZ MORENO",
+      "club": "CLUB ATLETISMO LOS CALIFAS",
+      "posicionprueba": "16",
+      "CATEG": "MCF",
+      "tiempo": "01:30:34.883"
+    },
+    {
+      "posicion": "497",
+      "SEXO": "",
+      "dorsal": "22",
+      "nombre": "CARLOS SERRANO",
+      "club": "ALUA",
+      "posicionprueba": "116",
+      "CATEG": "MCM",
+      "tiempo": "01:30:45.394"
+    },
+    {
+      "posicion": "498",
+      "SEXO": "66",
+      "dorsal": "170",
+      "nombre": "CARMEN LUQUE GONZALEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "10",
+      "CATEG": "MEF",
+      "tiempo": "01:30:57.393"
+    },
+    {
+      "posicion": "499",
+      "SEXO": "",
+      "dorsal": "255",
+      "nombre": "RAFAEL POZUELO JURADO",
+      "club": "VERTICALIA",
+      "posicionprueba": "38",
+      "CATEG": "MEM",
+      "tiempo": "01:30:57.583"
+    },
+    {
+      "posicion": "500",
+      "SEXO": "",
+      "dorsal": "157",
+      "nombre": "MIGUEL ANGEL RINCON",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "6",
+      "CATEG": "SUB23M",
+      "tiempo": "01:30:58.073"
+    },
+    {
+      "posicion": "501",
+      "SEXO": "",
+      "dorsal": "384",
+      "nombre": "CARLOS CRUZADO CRIADO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "45",
+      "CATEG": "SM",
+      "tiempo": "01:31:18.788"
+    },
+    {
+      "posicion": "502",
+      "SEXO": "",
+      "dorsal": "386",
+      "nombre": "JUAN CARLOS CRUZADO ESPARRAGA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "26",
+      "CATEG": "MFM",
+      "tiempo": "01:31:20.002"
+    },
+    {
+      "posicion": "503",
+      "SEXO": "",
+      "dorsal": "219",
+      "nombre": "PABLO CRIADO CONEJERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "7",
+      "CATEG": "SUB23M",
+      "tiempo": "01:31:20.740"
+    },
+    {
+      "posicion": "504",
+      "SEXO": "67",
+      "dorsal": "372",
+      "nombre": "MICAELA TRIGO GIL",
+      "club": "CD GUERREROS DE LA GUZMAN",
+      "posicionprueba": "17",
+      "CATEG": "MCF",
+      "tiempo": "01:31:23.670"
+    },
+    {
+      "posicion": "505",
+      "SEXO": "",
+      "dorsal": "250",
+      "nombre": "SALVADOR SIBAJA VARO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "67",
+      "CATEG": "MBM",
+      "tiempo": "01:31:25.240"
+    },
+    {
+      "posicion": "506",
+      "SEXO": "68",
+      "dorsal": "342",
+      "nombre": "MARIA JOSE GARRIDO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "11",
+      "CATEG": "SF",
+      "tiempo": "01:31:30.747"
+    },
+    {
+      "posicion": "507",
+      "SEXO": "69",
+      "dorsal": "690",
+      "nombre": "MERCEDES GALLEGO MATA",
+      "club": "TROTASIERRA",
+      "posicionprueba": "2",
+      "CATEG": "MFF",
+      "tiempo": "01:31:39.580"
+    },
+    {
+      "posicion": "508",
+      "SEXO": "",
+      "dorsal": "433",
+      "nombre": "FRANCISCO JAVIER MARISCAL VEGA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "117",
+      "CATEG": "MCM",
+      "tiempo": "01:31:42.205"
+    },
+    {
+      "posicion": "509",
+      "SEXO": "",
+      "dorsal": "566",
+      "nombre": "RAMON VILLEGAS RODRIGUEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "118",
+      "CATEG": "MCM",
+      "tiempo": "01:31:48.442"
+    },
+    {
+      "posicion": "510",
+      "SEXO": "70",
+      "dorsal": "407",
+      "nombre": "TRANSITO FERNANDEZ RIVERA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "11",
+      "CATEG": "MEF",
+      "tiempo": "01:31:51.329"
+    },
+    {
+      "posicion": "511",
+      "SEXO": "",
+      "dorsal": "111",
+      "nombre": "VICTOR TRIGO CAMPOS",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "81",
+      "CATEG": "MDM",
+      "tiempo": "01:31:51.694"
+    },
+    {
+      "posicion": "512",
+      "SEXO": "71",
+      "dorsal": "507",
+      "nombre": "ALMUDENA MARTIN BALSERA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "12",
+      "CATEG": "SF",
+      "tiempo": "01:32:14.888"
+    },
+    {
+      "posicion": "513",
+      "SEXO": "",
+      "dorsal": "48",
+      "nombre": "RAUL GONZALEZ JIMENEZ",
+      "club": "ALMUNIATEAM",
+      "posicionprueba": "119",
+      "CATEG": "MCM",
+      "tiempo": "01:32:18.613"
+    },
+    {
+      "posicion": "514",
+      "SEXO": "",
+      "dorsal": "47",
+      "nombre": "JOSE CABALLERO",
+      "club": "ALMUNIATEAM",
+      "posicionprueba": "120",
+      "CATEG": "MCM",
+      "tiempo": "01:32:19.518"
+    },
+    {
+      "posicion": "515",
+      "SEXO": "",
+      "dorsal": "406",
+      "nombre": "ANTONIO MARISCAL VEGA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "82",
+      "CATEG": "MDM",
+      "tiempo": "01:32:20.637"
+    },
+    {
+      "posicion": "516",
+      "SEXO": "",
+      "dorsal": "519",
+      "nombre": "ANTONIO LOPEZ DEL REY",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "68",
+      "CATEG": "MBM",
+      "tiempo": "01:32:21.187"
+    },
+    {
+      "posicion": "517",
+      "SEXO": "",
+      "dorsal": "520",
+      "nombre": "RICARDO LOPEZ MATA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "27",
+      "CATEG": "MFM",
+      "tiempo": "01:32:22.471"
+    },
+    {
+      "posicion": "518",
+      "SEXO": "",
+      "dorsal": "385",
+      "nombre": "OSCAR HINOJOSA CRIADO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "60",
+      "CATEG": "MAM",
+      "tiempo": "01:32:28.650"
+    },
+    {
+      "posicion": "519",
+      "SEXO": "",
+      "dorsal": "218",
+      "nombre": "MANUEL MONTAÑEZ BOLIVAR",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "39",
+      "CATEG": "MEM",
+      "tiempo": "01:32:37.531"
+    },
+    {
+      "posicion": "520",
+      "SEXO": "72",
+      "dorsal": "403",
+      "nombre": "ANTONIA GAVRILA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "13",
+      "CATEG": "SF",
+      "tiempo": "01:32:45.545"
+    },
+    {
+      "posicion": "521",
+      "SEXO": "",
+      "dorsal": "135",
+      "nombre": "ANTONIO JOSE MARTINEZ CAMPUZANO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "121",
+      "CATEG": "MCM",
+      "tiempo": "01:33:00.876"
+    },
+    {
+      "posicion": "522",
+      "SEXO": "73",
+      "dorsal": "103",
+      "nombre": "ANTONIA CAMACHO POYATO",
+      "club": "TROTASIERRA",
+      "posicionprueba": "12",
+      "CATEG": "MEF",
+      "tiempo": "01:33:05.286"
+    },
+    {
+      "posicion": "523",
+      "SEXO": "",
+      "dorsal": "42",
+      "nombre": "RAFAEL MADUEÑO TOLEDANO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "69",
+      "CATEG": "MBM",
+      "tiempo": "01:33:14.738"
+    },
+    {
+      "posicion": "524",
+      "SEXO": "74",
+      "dorsal": "395",
+      "nombre": "MARIA MANUELA JIMENEZ SANCHEZ",
+      "club": "TRAILRUNNING. ES",
+      "posicionprueba": "13",
+      "CATEG": "MEF",
+      "tiempo": "01:33:30.171"
+    },
+    {
+      "posicion": "525",
+      "SEXO": "",
+      "dorsal": "636",
+      "nombre": "JUAN DE LA HABA RODRIGUEZ",
+      "club": "PATROCINADOR PALOMA OJEL",
+      "posicionprueba": "40",
+      "CATEG": "MEM",
+      "tiempo": "01:33:32.220"
+    },
+    {
+      "posicion": "526",
+      "SEXO": "",
+      "dorsal": "560",
+      "nombre": "JOSE MARIA LLAMAS MORATO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "70",
+      "CATEG": "MBM",
+      "tiempo": "01:33:38.348"
+    },
+    {
+      "posicion": "527",
+      "SEXO": "",
+      "dorsal": "666",
+      "nombre": "ADRIAN FERNANDEZ CRUZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "SUB23M",
+      "tiempo": "01:33:38.443"
+    },
+    {
+      "posicion": "528",
+      "SEXO": "",
+      "dorsal": "565",
+      "nombre": "MANUEL FERNANDEZ ALMANSA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "41",
+      "CATEG": "MEM",
+      "tiempo": "01:33:39.308"
+    },
+    {
+      "posicion": "529",
+      "SEXO": "",
+      "dorsal": "576",
+      "nombre": "FERNANDO ROJO PESO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "83",
+      "CATEG": "MDM",
+      "tiempo": "01:33:42.492"
+    },
+    {
+      "posicion": "530",
+      "SEXO": "",
+      "dorsal": "142",
+      "nombre": "J JAVIER NAVAS",
+      "club": "CORDOBATRAIL RUNNING",
+      "posicionprueba": "42",
+      "CATEG": "MEM",
+      "tiempo": "01:33:42.936"
+    },
+    {
+      "posicion": "531",
+      "SEXO": "",
+      "dorsal": "484",
+      "nombre": "FRANCISCO MOLINA BEJARANO",
+      "club": "TROTACALLES",
+      "posicionprueba": "28",
+      "CATEG": "MFM",
+      "tiempo": "01:34:06.976"
+    },
+    {
+      "posicion": "532",
+      "SEXO": "",
+      "dorsal": "617",
+      "nombre": "JOSE CLEMENTE GONZALEZ",
+      "club": "TROTACALLES",
+      "posicionprueba": "29",
+      "CATEG": "MFM",
+      "tiempo": "01:34:26.088"
+    },
+    {
+      "posicion": "533",
+      "SEXO": "",
+      "dorsal": "237",
+      "nombre": "FRANCISCO J MERIDA MARTINEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "43",
+      "CATEG": "MEM",
+      "tiempo": "01:34:28.260"
+    },
+    {
+      "posicion": "534",
+      "SEXO": "",
+      "dorsal": "615",
+      "nombre": "JOSE MARIA SEGURA SANTGERON",
+      "club": "TROTACALLES",
+      "posicionprueba": "30",
+      "CATEG": "MFM",
+      "tiempo": "01:34:29.292"
+    },
+    {
+      "posicion": "535",
+      "SEXO": "",
+      "dorsal": "453",
+      "nombre": "DAVID GALAZO LEVA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "84",
+      "CATEG": "MDM",
+      "tiempo": "01:34:45.210"
+    },
+    {
+      "posicion": "536",
+      "SEXO": "",
+      "dorsal": "217",
+      "nombre": "PEDRO P CHAMORRO BARRANCO",
+      "club": "CLUB SP",
+      "posicionprueba": "85",
+      "CATEG": "MDM",
+      "tiempo": "01:34:49.777"
+    },
+    {
+      "posicion": "537",
+      "SEXO": "",
+      "dorsal": "167",
+      "nombre": "RAFAEL FIGUEROA LEON",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "31",
+      "CATEG": "MFM",
+      "tiempo": "01:34:50.322"
+    },
+    {
+      "posicion": "538",
+      "SEXO": "",
+      "dorsal": "662",
+      "nombre": "JOSE MARIA DUEÑAS JURADO",
+      "club": "HURS",
+      "posicionprueba": "86",
+      "CATEG": "MDM",
+      "tiempo": "01:35:30.723"
+    },
+    {
+      "posicion": "539",
+      "SEXO": "",
+      "dorsal": "238",
+      "nombre": "ANTONIO RODRIGUEZ JIMENEZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "87",
+      "CATEG": "MDM",
+      "tiempo": "01:36:02.207"
+    },
+    {
+      "posicion": "540",
+      "SEXO": "",
+      "dorsal": "165",
+      "nombre": "JOSE MANUEL PEINADO CEPEDELLO",
+      "club": "KM DE VIDA",
+      "posicionprueba": "88",
+      "CATEG": "MDM",
+      "tiempo": "01:36:22.005"
+    },
+    {
+      "posicion": "541",
+      "SEXO": "75",
+      "dorsal": "450",
+      "nombre": "ESTRELLA CRUZ FERNANDEZ",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "18",
+      "CATEG": "MCF",
+      "tiempo": "01:37:26.620"
+    },
+    {
+      "posicion": "542",
+      "SEXO": "76",
+      "dorsal": "649",
+      "nombre": "ROCIO LOPEZ CASTILLA",
+      "club": "CD AMIGOS DEL COCHE ESCOBA",
+      "posicionprueba": "19",
+      "CATEG": "MCF",
+      "tiempo": "01:37:43.840"
+    },
+    {
+      "posicion": "543",
+      "SEXO": "77",
+      "dorsal": "506",
+      "nombre": "MAYKA MONTENEGRO HURTADO",
+      "club": "TROTASIERRA",
+      "posicionprueba": "14",
+      "CATEG": "MEF",
+      "tiempo": "01:37:45.372"
+    },
+    {
+      "posicion": "544",
+      "SEXO": "",
+      "dorsal": "481",
+      "nombre": "JOAQUIN VADILLO CASTRO",
+      "club": "VERTICALIA",
+      "posicionprueba": "32",
+      "CATEG": "MFM",
+      "tiempo": "01:37:46.123"
+    },
+    {
+      "posicion": "545",
+      "SEXO": "",
+      "dorsal": "387",
+      "nombre": "RAFAEL GIL DIAZ GOMEZ",
+      "club": "OCHO PICOS TRAIL PUENTE GENIL",
+      "posicionprueba": "44",
+      "CATEG": "MEM",
+      "tiempo": "01:37:53.839"
+    },
+    {
+      "posicion": "546",
+      "SEXO": "78",
+      "dorsal": "377",
+      "nombre": "ELENA PERICET CAMARA",
+      "club": "TROTACALLES",
+      "posicionprueba": "20",
+      "CATEG": "MCF",
+      "tiempo": "01:38:03.886"
+    },
+    {
+      "posicion": "547",
+      "SEXO": "79",
+      "dorsal": "365",
+      "nombre": "CARMEN MARTINEZ GARCIA",
+      "club": "CLUB TROTACALLES",
+      "posicionprueba": "15",
+      "CATEG": "MEF",
+      "tiempo": "01:38:17.133"
+    },
+    {
+      "posicion": "548",
+      "SEXO": "",
+      "dorsal": "524",
+      "nombre": "ANTONIO PRIETO MARTINEZ",
+      "club": "TROTACALLES",
+      "posicionprueba": "33",
+      "CATEG": "MFM",
+      "tiempo": "01:38:17.262"
+    },
+    {
+      "posicion": "549",
+      "SEXO": "80",
+      "dorsal": "367",
+      "nombre": "ROSA MARIA PEREZ CANTERO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "16",
+      "CATEG": "MEF",
+      "tiempo": "01:38:22.506"
+    },
+    {
+      "posicion": "550",
+      "SEXO": "",
+      "dorsal": "289",
+      "nombre": "PABLO CANO ALCALDE",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "9",
+      "CATEG": "SUB23M",
+      "tiempo": "01:38:23.083"
+    },
+    {
+      "posicion": "551",
+      "SEXO": "",
+      "dorsal": "514",
+      "nombre": "IGNACIO SALAZAR ALMAGRO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "46",
+      "CATEG": "SM",
+      "tiempo": "01:38:24.190"
+    },
+    {
+      "posicion": "552",
+      "SEXO": "",
+      "dorsal": "643",
+      "nombre": "JOSE ANTONIO RUIZ MONTORO",
+      "club": "VERTICALIA",
+      "posicionprueba": "122",
+      "CATEG": "MCM",
+      "tiempo": "01:38:56.096"
+    },
+    {
+      "posicion": "553",
+      "SEXO": "",
+      "dorsal": "536",
+      "nombre": "AGUSTIN RAFAEL VARGAS VENTURA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "89",
+      "CATEG": "MDM",
+      "tiempo": "01:38:56.401"
+    },
+    {
+      "posicion": "554",
+      "SEXO": "81",
+      "dorsal": "477",
+      "nombre": "MYRIAM JURADO LEON",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "8",
+      "CATEG": "MBF",
+      "tiempo": "01:39:41.527"
+    },
+    {
+      "posicion": "555",
+      "SEXO": "",
+      "dorsal": "393",
+      "nombre": "ANTONIO LOPEZ CASASOLA",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "45",
+      "CATEG": "MEM",
+      "tiempo": "01:39:42.041"
+    },
+    {
+      "posicion": "556",
+      "SEXO": "",
+      "dorsal": "262",
+      "nombre": "FRANCISCO VALLE BALLESTEROS",
+      "club": "MONTECOBRE TRAIL",
+      "posicionprueba": "34",
+      "CATEG": "MFM",
+      "tiempo": "01:40:00.811"
+    },
+    {
+      "posicion": "557",
+      "SEXO": "",
+      "dorsal": "60",
+      "nombre": "JULIAN MANUEL DELGADO CRESPO",
+      "club": "OMEYAS TRAIL",
+      "posicionprueba": "47",
+      "CATEG": "SM",
+      "tiempo": "01:40:46.156"
+    },
+    {
+      "posicion": "558",
+      "SEXO": "82",
+      "dorsal": "361",
+      "nombre": "INES ALONSO CANALES",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "14",
+      "CATEG": "SF",
+      "tiempo": "01:41:00.798"
+    },
+    {
+      "posicion": "559",
+      "SEXO": "",
+      "dorsal": "362",
+      "nombre": "ANTONIO ALONSO TRIGUERO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "46",
+      "CATEG": "MEM",
+      "tiempo": "01:41:00.857"
+    },
+    {
+      "posicion": "560",
+      "SEXO": "83",
+      "dorsal": "205",
+      "nombre": "ALICIA VEGA RECIO",
+      "club": "AL-ANDALUS",
+      "posicionprueba": "9",
+      "CATEG": "MBF",
+      "tiempo": "01:41:41.540"
+    },
+    {
+      "posicion": "561",
+      "SEXO": "",
+      "dorsal": "233",
+      "nombre": "ANGEL MARIA MUÑOZ AVILA",
+      "club": "TIÑOSA",
+      "posicionprueba": "35",
+      "CATEG": "MFM",
+      "tiempo": "01:41:50.359"
+    },
+    {
+      "posicion": "562",
+      "SEXO": "84",
+      "dorsal": "415",
+      "nombre": "LUCIA MATOS JAVIER",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "12",
+      "CATEG": "MDF",
+      "tiempo": "01:42:17.455"
+    },
+    {
+      "posicion": "563",
+      "SEXO": "",
+      "dorsal": "522",
+      "nombre": "ANGEL DE LA MATA GARCIA",
+      "club": "GRUPO MONTAÑA TIÑOSA",
+      "posicionprueba": "36",
+      "CATEG": "MFM",
+      "tiempo": "01:43:18.394"
+    },
+    {
+      "posicion": "564",
+      "SEXO": "",
+      "dorsal": "239",
+      "nombre": "SANTI CHAMORRO PEREZ",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "47",
+      "CATEG": "MEM",
+      "tiempo": "01:43:45.529"
+    },
+    {
+      "posicion": "565",
+      "SEXO": "",
+      "dorsal": "394",
+      "nombre": "FRANCISCO GALLEGO SANTIAGO",
+      "club": "INDEPENDIENTE",
+      "posicionprueba": "71",
+      "CATEG": "MBM",
+      "tiempo": "01:44:07.100"
+    }
+  ]
+}

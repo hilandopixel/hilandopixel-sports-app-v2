@@ -1,0 +1,11 @@
+#AÑADIR MARCA DE AGUA
+node .\add-watermark.js .\carpeta\
+
+#EXTRAER FOTOS DEL ALBUM
+node .\extract-photos
+
+#ASIGNARLE TIEMPO DEL 1º CON EL UNIXTIME
+node .\generate-time UNIXTIME 00:53:11
+
+#DESCARGAR FICHERO DE RESULTADOS
+guardarlo en cada subcarpeta

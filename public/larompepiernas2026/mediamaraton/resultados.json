@@ -1,0 +1,1552 @@
+{
+  "data": [
+    {
+      "dorsal": "266",
+      "posicion": "1",
+      "nombre": "Andrés Santiago Garrido",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "C.D. Indea",
+      "tiempo": "01:17:48"
+    },
+    {
+      "dorsal": "308",
+      "posicion": "2",
+      "nombre": "José Antonio Gutiérrez Alarcón",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente ",
+      "tiempo": "01:18:26"
+    },
+    {
+      "dorsal": "276",
+      "posicion": "3",
+      "nombre": "Antonio Manuel Paquico Palacios",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "01:19:46"
+    },
+    {
+      "dorsal": "271",
+      "posicion": "4",
+      "nombre": "Antonio Jose Paez Rodriguez",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Atletismo Virgen De Belen",
+      "tiempo": "01:19:51"
+    },
+    {
+      "dorsal": "196",
+      "posicion": "5",
+      "nombre": "Manuel Vicente Delgado Cascos",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Gazapos Rabones ",
+      "tiempo": "01:22:53"
+    },
+    {
+      "dorsal": "252",
+      "posicion": "6",
+      "nombre": "Manuel Felipe Martinez Márquez",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "No",
+      "tiempo": "01:30:22"
+    },
+    {
+      "dorsal": "263",
+      "posicion": "7",
+      "nombre": "Rosendo Dominguez Muñoz",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Indea",
+      "tiempo": "01:32:48"
+    },
+    {
+      "dorsal": "287",
+      "posicion": "8",
+      "nombre": "Manuel Angel Alcalde Gonzalez ",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "La Rompepiernas",
+      "tiempo": "01:32:49"
+    },
+    {
+      "dorsal": "170",
+      "posicion": "9",
+      "nombre": "Angel Nevado",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Independiente",
+      "tiempo": "01:32:58"
+    },
+    {
+      "dorsal": "127",
+      "posicion": "10",
+      "nombre": "Fidi García ",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Gazapos Rabones",
+      "tiempo": "01:34:37"
+    },
+    {
+      "dorsal": "267",
+      "posicion": "11",
+      "nombre": "Bejamin Ramirez Fernandez",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Cd Gazapos Rabones",
+      "tiempo": "01:34:49"
+    },
+    {
+      "dorsal": "214",
+      "posicion": "12",
+      "nombre": "Jesús Molina Ollero",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Trotacalles",
+      "tiempo": "01:34:50"
+    },
+    {
+      "dorsal": "193",
+      "posicion": "13",
+      "nombre": "Andres Alberto Perez Cañete",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Trotacalles ",
+      "tiempo": "01:35:05"
+    },
+    {
+      "dorsal": "269",
+      "posicion": "14",
+      "nombre": "Manuel Enrique  Martín Sedano",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Pag Peñarroya ",
+      "tiempo": "01:35:47"
+    },
+    {
+      "dorsal": "106",
+      "posicion": "15",
+      "nombre": "Fernando Del Rey Montesinos",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "C.D. Verticalia",
+      "tiempo": "01:36:22"
+    },
+    {
+      "dorsal": "262",
+      "posicion": "16",
+      "nombre": "Francisco  Sánchez Torralbo ",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Club Atletismo Villanueva De Córdoba ",
+      "tiempo": "01:36:34"
+    },
+    {
+      "dorsal": "136",
+      "posicion": "17",
+      "nombre": "Agustin Lorite Partal",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Más Salud",
+      "tiempo": "01:36:47"
+    },
+    {
+      "dorsal": "111",
+      "posicion": "18",
+      "nombre": "Ismael  Romero Orts ",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Cd Tréximo ",
+      "tiempo": "01:37:12"
+    },
+    {
+      "dorsal": "232",
+      "posicion": "19",
+      "nombre": "Francisco Carlos Barbero Olmo",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:37:33"
+    },
+    {
+      "dorsal": "143",
+      "posicion": "20",
+      "nombre": "Pedro Cabrera",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente ",
+      "tiempo": "01:37:50"
+    },
+    {
+      "dorsal": "113",
+      "posicion": "21",
+      "nombre": "David Pastor Baena",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Indea",
+      "tiempo": "01:38:01"
+    },
+    {
+      "dorsal": "146",
+      "posicion": "22",
+      "nombre": "Luis Maria Rosa Martin",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Los Califas-Uco",
+      "tiempo": "01:38:05"
+    },
+    {
+      "dorsal": "314",
+      "posicion": "23",
+      "nombre": "Rafael  Garcia Torrero",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Cd Gazapos Rabones ",
+      "tiempo": "01:38:27"
+    },
+    {
+      "dorsal": "268",
+      "posicion": "24",
+      "nombre": "Jose Manuel López Agudo",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Cd Gazapos Rabones ",
+      "tiempo": "01:38:28"
+    },
+    {
+      "dorsal": "138",
+      "posicion": "25",
+      "nombre": "Jesus Camacho Alcantara",
+      "Sexo": "M",
+      "CATEG": "Discapacitado a pie M",
+      "club": "Independiente ",
+      "tiempo": "01:38:33"
+    },
+    {
+      "dorsal": "160",
+      "posicion": "26",
+      "nombre": "Raúl Herencia Cabezas",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente",
+      "tiempo": "01:38:39"
+    },
+    {
+      "dorsal": "155",
+      "posicion": "27",
+      "nombre": "José  Galán Lozano",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Más Salud Andujar",
+      "tiempo": "01:39:13"
+    },
+    {
+      "dorsal": "221",
+      "posicion": "28",
+      "nombre": "Inmaculada Rivera González ",
+      "Sexo": "F",
+      "CATEG": "Master C Fem",
+      "club": "Indea",
+      "tiempo": "01:39:22"
+    },
+    {
+      "dorsal": "192",
+      "posicion": "29",
+      "nombre": "David Nieto Garcia",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independientemente ",
+      "tiempo": "01:40:11"
+    },
+    {
+      "dorsal": "101",
+      "posicion": "30",
+      "nombre": "Manuel Carlos Carranco Falcón",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "01:41:04"
+    },
+    {
+      "dorsal": "283",
+      "posicion": "31",
+      "nombre": "Emilio Jose  Ruiz Peñas",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "01:41:52"
+    },
+    {
+      "dorsal": "159",
+      "posicion": "32",
+      "nombre": "José María Roldán Gil",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "01:42:09"
+    },
+    {
+      "dorsal": "255",
+      "posicion": "33",
+      "nombre": "David  Suescum Morales",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "01:42:21"
+    },
+    {
+      "dorsal": "201",
+      "posicion": "34",
+      "nombre": "Lorenzo Ruz Pérez ",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "01:42:26"
+    },
+    {
+      "dorsal": "200",
+      "posicion": "35",
+      "nombre": "Manuel Ángel León Barba",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "01:42:27"
+    },
+    {
+      "dorsal": "279",
+      "posicion": "36",
+      "nombre": "Cristian Gonzalez Prados",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "01:42:38"
+    },
+    {
+      "dorsal": "122",
+      "posicion": "37",
+      "nombre": "Ivan Zea Soria",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "01:42:43"
+    },
+    {
+      "dorsal": "177",
+      "posicion": "38",
+      "nombre": "José Luis  Davila Moya",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "A 8000 Metros",
+      "tiempo": "01:43:00"
+    },
+    {
+      "dorsal": "239",
+      "posicion": "39",
+      "nombre": "Jose Manuel Infante Gavilan",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:43:52"
+    },
+    {
+      "dorsal": "315",
+      "posicion": "40",
+      "nombre": "Jesús García Martín",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Running Series ",
+      "tiempo": "01:44:13"
+    },
+    {
+      "dorsal": "216",
+      "posicion": "41",
+      "nombre": "Francisco Javier González Martín",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "01:44:15"
+    },
+    {
+      "dorsal": "172",
+      "posicion": "42",
+      "nombre": "Ángel Luis Silveria García",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "01:44:22"
+    },
+    {
+      "dorsal": "296",
+      "posicion": "43",
+      "nombre": "Lester Rey Rodríguez ",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Duque Trail Runners (Dtr)",
+      "tiempo": "01:44:27"
+    },
+    {
+      "dorsal": "181",
+      "posicion": "44",
+      "nombre": "Jose Miguel Hans Alcaide",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Ca La Luisiana-El Campillo",
+      "tiempo": "01:44:29"
+    },
+    {
+      "dorsal": "180",
+      "posicion": "45",
+      "nombre": "Domingo Hans Alcaide",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Ca La Luisiana-El Campillo",
+      "tiempo": "01:44:30"
+    },
+    {
+      "dorsal": "182",
+      "posicion": "46",
+      "nombre": "Javier Álvarez",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Ca La Luisiana-El Campillo",
+      "tiempo": "01:44:32"
+    },
+    {
+      "dorsal": "226",
+      "posicion": "47",
+      "nombre": "Luis Miguel Jimenez Martos",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "Cludeca",
+      "tiempo": "01:44:34"
+    },
+    {
+      "dorsal": "189",
+      "posicion": "48",
+      "nombre": "Salvador Ortiz Albalá",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Ca La Luisiana-El Campillo",
+      "tiempo": "01:44:40"
+    },
+    {
+      "dorsal": "238",
+      "posicion": "49",
+      "nombre": "Jairo Gomez Fernánez",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:44:55"
+    },
+    {
+      "dorsal": "117",
+      "posicion": "50",
+      "nombre": "Javier Merida Martinez",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Independiente",
+      "tiempo": "01:45:22"
+    },
+    {
+      "dorsal": "147",
+      "posicion": "51",
+      "nombre": "Agustin Jimenez Ruiz",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "No",
+      "tiempo": "01:45:28"
+    },
+    {
+      "dorsal": "167",
+      "posicion": "52",
+      "nombre": "Natalio Pérez Pedregosa",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "01:45:37"
+    },
+    {
+      "dorsal": "184",
+      "posicion": "53",
+      "nombre": "Mariló  Franco Luque",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "Indea",
+      "tiempo": "01:45:43"
+    },
+    {
+      "dorsal": "212",
+      "posicion": "54",
+      "nombre": "Gerardo López García",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Panteres Grogues",
+      "tiempo": "01:45:48"
+    },
+    {
+      "dorsal": "119",
+      "posicion": "55",
+      "nombre": "Ilena Fernández Moreno",
+      "Sexo": "F",
+      "CATEG": ".Senior Femenino",
+      "club": "Running Portugalete",
+      "tiempo": "01:46:10"
+    },
+    {
+      "dorsal": "118",
+      "posicion": "56",
+      "nombre": "Borja Roma Bernardino",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "01:46:11"
+    },
+    {
+      "dorsal": "303",
+      "posicion": "57",
+      "nombre": "Aurelio Estepa Oñate",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Fondistas Pacenses",
+      "tiempo": "01:46:53"
+    },
+    {
+      "dorsal": "225",
+      "posicion": "58",
+      "nombre": "Montserrat Martínez Janeiro",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "Pag Peñarroya",
+      "tiempo": "01:47:00"
+    },
+    {
+      "dorsal": "128",
+      "posicion": "59",
+      "nombre": "Antonio Velez Galvez",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Dos Tontos Muy Tontos",
+      "tiempo": "01:47:02"
+    },
+    {
+      "dorsal": "157",
+      "posicion": "60",
+      "nombre": "Rafael Castilla Arenas",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "C.D. Indea",
+      "tiempo": "01:47:14"
+    },
+    {
+      "dorsal": "178",
+      "posicion": "61",
+      "nombre": "Francisco Javier Jiménez Fernández",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Ca La Luisiana-El Campillo",
+      "tiempo": "01:47:26"
+    },
+    {
+      "dorsal": "218",
+      "posicion": "62",
+      "nombre": "Javier Flor Sánchez ",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "01:47:34"
+    },
+    {
+      "dorsal": "217",
+      "posicion": "63",
+      "nombre": "Anastasio Garcia-Retamero Robas",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Mtbfuenteobejuna ",
+      "tiempo": "01:47:52"
+    },
+    {
+      "dorsal": "162",
+      "posicion": "64",
+      "nombre": "Juan Manuel Cáceres Nevado",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "01:48:16"
+    },
+    {
+      "dorsal": "144",
+      "posicion": "65",
+      "nombre": "Antonio Benzal Fernandez",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Independiente ",
+      "tiempo": "01:48:17"
+    },
+    {
+      "dorsal": "316",
+      "posicion": "66",
+      "nombre": "Francisco Javier  Jimenez Castellano ",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Omeyas Trail",
+      "tiempo": "01:48:20"
+    },
+    {
+      "dorsal": "235",
+      "posicion": "67",
+      "nombre": "José Miguel Cruz Carrasco",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:48:34"
+    },
+    {
+      "dorsal": "228",
+      "posicion": "68",
+      "nombre": "Publio Calderón Pérez",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independientemente ",
+      "tiempo": "01:49:02"
+    },
+    {
+      "dorsal": "190",
+      "posicion": "69",
+      "nombre": "Rafael Chacon Parejo",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente",
+      "tiempo": "01:49:04"
+    },
+    {
+      "dorsal": "256",
+      "posicion": "70",
+      "nombre": "Javier  Orozco Murillo ",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Independiente ",
+      "tiempo": "01:49:11"
+    },
+    {
+      "dorsal": "112",
+      "posicion": "71",
+      "nombre": "Miguel De La Torre Gavilán",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente",
+      "tiempo": "01:49:12"
+    },
+    {
+      "dorsal": "280",
+      "posicion": "72",
+      "nombre": "David Sanchez Porras",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "01:49:48"
+    },
+    {
+      "dorsal": "294",
+      "posicion": "73",
+      "nombre": "Francisco Javier Cañete Calleja",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente",
+      "tiempo": "01:49:59"
+    },
+    {
+      "dorsal": "317",
+      "posicion": "74",
+      "nombre": "Candido Nogales Granados ",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "E.P.A Miguel Rios ",
+      "tiempo": "01:50:24"
+    },
+    {
+      "dorsal": "234",
+      "posicion": "75",
+      "nombre": "Antonio Castro Lopez",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:50:33"
+    },
+    {
+      "dorsal": "137",
+      "posicion": "76",
+      "nombre": "Antonio Ruiz Gomez ",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "Atletismo Peñarroya ",
+      "tiempo": "01:50:56"
+    },
+    {
+      "dorsal": "185",
+      "posicion": "77",
+      "nombre": "Francisco Lopez Mellado",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "Independiente ",
+      "tiempo": "01:51:00"
+    },
+    {
+      "dorsal": "164",
+      "posicion": "78",
+      "nombre": "Jose Manuel Garcia Pelaez",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "A 8.000 Metros Peñarroya",
+      "tiempo": "01:51:01"
+    },
+    {
+      "dorsal": "195",
+      "posicion": "79",
+      "nombre": "Miguel Gallardo Justicia",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "A. D. Maratón Jaén ",
+      "tiempo": "01:51:05"
+    },
+    {
+      "dorsal": "246",
+      "posicion": "80",
+      "nombre": "Juan Carlos Moure Gallego",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:52:52"
+    },
+    {
+      "dorsal": "298",
+      "posicion": "81",
+      "nombre": "Ivan Moyano Notario ",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Duque Trail Runners ",
+      "tiempo": "01:53:14"
+    },
+    {
+      "dorsal": "187",
+      "posicion": "82",
+      "nombre": "Juan Caro Palma",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "Ca La Luisiana-El Campillo",
+      "tiempo": "01:53:15"
+    },
+    {
+      "dorsal": "161",
+      "posicion": "83",
+      "nombre": "Enzo Duquenoy",
+      "Sexo": "M",
+      "CATEG": " Sub23 Masc (Junior)",
+      "club": "Indendiente",
+      "tiempo": "01:53:19"
+    },
+    {
+      "dorsal": "304",
+      "posicion": "84",
+      "nombre": "Antonio José Ruiz Barbero",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Ejerpedroche Team ",
+      "tiempo": "01:53:50"
+    },
+    {
+      "dorsal": "259",
+      "posicion": "85",
+      "nombre": "Gloria Caballero Garcia",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "Independiente ",
+      "tiempo": "01:53:58"
+    },
+    {
+      "dorsal": "248",
+      "posicion": "86",
+      "nombre": "Pedro Luis Sepulveda Luna",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:54:12"
+    },
+    {
+      "dorsal": "284",
+      "posicion": "87",
+      "nombre": "Fco Manuel Murillo Perez",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "01:54:17"
+    },
+    {
+      "dorsal": "223",
+      "posicion": "88",
+      "nombre": "Mercedes Granados Pérez",
+      "Sexo": "F",
+      "CATEG": "Master E Fem",
+      "club": "Cd Mtb Fuente Obejuna",
+      "tiempo": "01:54:22"
+    },
+    {
+      "dorsal": "115",
+      "posicion": "89",
+      "nombre": "Antonio Hurgal Gallart",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Indeferente",
+      "tiempo": "01:54:53"
+    },
+    {
+      "dorsal": "114",
+      "posicion": "90",
+      "nombre": "Ángel  Franco Avila",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Córdobamania Runners ",
+      "tiempo": "01:56:34"
+    },
+    {
+      "dorsal": "253",
+      "posicion": "91",
+      "nombre": "Juan Jesús De La Torre Mata",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Besport",
+      "tiempo": "01:57:22"
+    },
+    {
+      "dorsal": "310",
+      "posicion": "92",
+      "nombre": "Emiliano Jimenez Millán",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Dos Tontos Muy Tontos",
+      "tiempo": "01:57:24"
+    },
+    {
+      "dorsal": "300",
+      "posicion": "93",
+      "nombre": "Francisco Fidel Núñez Sedano",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente ",
+      "tiempo": "01:57:38"
+    },
+    {
+      "dorsal": "110",
+      "posicion": "94",
+      "nombre": "Carlos Merino Gonzalez",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "01:57:46"
+    },
+    {
+      "dorsal": "103",
+      "posicion": "95",
+      "nombre": "Guillermo Dorado",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente ",
+      "tiempo": "01:57:56"
+    },
+    {
+      "dorsal": "207",
+      "posicion": "96",
+      "nombre": "Teresa Pellicer Climent",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "Cd L`Espenta",
+      "tiempo": "01:58:02"
+    },
+    {
+      "dorsal": "286",
+      "posicion": "97",
+      "nombre": "Leticia Exposito Medina",
+      "Sexo": "F",
+      "CATEG": "Master A Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "01:58:03"
+    },
+    {
+      "dorsal": "265",
+      "posicion": "98",
+      "nombre": "Vanessa  Alcalde Fernández",
+      "Sexo": "F",
+      "CATEG": "Master C Fem",
+      "club": "Independiente",
+      "tiempo": "01:58:37"
+    },
+    {
+      "dorsal": "288",
+      "posicion": "99",
+      "nombre": "Mª Remedios Figueroba Troncoso",
+      "Sexo": "F",
+      "CATEG": "Master C Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "01:58:42"
+    },
+    {
+      "dorsal": "166",
+      "posicion": "100",
+      "nombre": "Sergio Carmona Cambron",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Independiente",
+      "tiempo": "01:58:56"
+    },
+    {
+      "dorsal": "291",
+      "posicion": "101",
+      "nombre": "Raquel Muñoz Orive",
+      "Sexo": "F",
+      "CATEG": "Master C Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "01:59:05"
+    },
+    {
+      "dorsal": "151",
+      "posicion": "102",
+      "nombre": "Javier Fuentes Merino",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Zampabollos",
+      "tiempo": "01:59:10"
+    },
+    {
+      "dorsal": "273",
+      "posicion": "103",
+      "nombre": "Africa Helena Pulido Lopez",
+      "Sexo": "F",
+      "CATEG": "Master A Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "01:59:23"
+    },
+    {
+      "dorsal": "237",
+      "posicion": "104",
+      "nombre": "Genaro Fierro Caballero",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "01:59:28"
+    },
+    {
+      "dorsal": "152",
+      "posicion": "105",
+      "nombre": "Jose Antonio Luna Lorenzo",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "01:59:39"
+    },
+    {
+      "dorsal": "154",
+      "posicion": "106",
+      "nombre": "Laura Bejarano García ",
+      "Sexo": "F",
+      "CATEG": ".Senior Femenino",
+      "club": "Independiente ",
+      "tiempo": "01:59:40"
+    },
+    {
+      "dorsal": "307",
+      "posicion": "107",
+      "nombre": "Fernando Vallejo Hidalgo",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "02:00:01"
+    },
+    {
+      "dorsal": "219",
+      "posicion": "108",
+      "nombre": "Ismael Gomez Morales",
+      "Sexo": "M",
+      "CATEG": " Sub23 Masc (Junior)",
+      "club": "Independiente ",
+      "tiempo": "02:00:57"
+    },
+    {
+      "dorsal": "222",
+      "posicion": "109",
+      "nombre": "Alejandro Gomez Calderon",
+      "Sexo": "M",
+      "CATEG": " Sub23 Masc (Junior)",
+      "club": "Independiente",
+      "tiempo": "02:01:04"
+    },
+    {
+      "dorsal": "250",
+      "posicion": "110",
+      "nombre": "Carlos Barbero Mellado",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "",
+      "tiempo": "02:01:42"
+    },
+    {
+      "dorsal": "231",
+      "posicion": "111",
+      "nombre": "Manuel Angel  Barbero Abril",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:01:45"
+    },
+    {
+      "dorsal": "251",
+      "posicion": "112",
+      "nombre": "Angel Barbero Mellado",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "",
+      "tiempo": "02:01:46"
+    },
+    {
+      "dorsal": "249",
+      "posicion": "113",
+      "nombre": "Sergio De La Torre Vazquez",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "No",
+      "tiempo": "02:01:48"
+    },
+    {
+      "dorsal": "292",
+      "posicion": "114",
+      "nombre": "Sandra Martin Benavente",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "02:02:00"
+    },
+    {
+      "dorsal": "186",
+      "posicion": "114",
+      "nombre": "Isaac Tapia Fernandez",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Club Atletismo Los Califas / Uco",
+      "tiempo": "02:02:05"
+    },
+    {
+      "dorsal": "278",
+      "posicion": "115",
+      "nombre": "Cipriano Marquez Medina",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "02:02:08"
+    },
+    {
+      "dorsal": "264",
+      "posicion": "116",
+      "nombre": "José Antonio Pérez Serrano",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "02:02:18"
+    },
+    {
+      "dorsal": "299",
+      "posicion": "117",
+      "nombre": "Juan Jose Larrea Diaz",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Atletismo Villa Del Río ",
+      "tiempo": "02:02:20"
+    },
+    {
+      "dorsal": "295",
+      "posicion": "118",
+      "nombre": "Pedro Suarez Mengual",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Villa Del Río ",
+      "tiempo": "02:02:25"
+    },
+    {
+      "dorsal": "231",
+      "posicion": "119",
+      "nombre": "Manuel Angel  Barbero Abril",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:02:27"
+    },
+    {
+      "dorsal": "131",
+      "posicion": "120",
+      "nombre": "Fco Javier Sánchez Barrena",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "02:02:56"
+    },
+    {
+      "dorsal": "107",
+      "posicion": "121",
+      "nombre": "Daniel Fernandez Cuadrado",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente",
+      "tiempo": "02:02:58"
+    },
+    {
+      "dorsal": "108",
+      "posicion": "122",
+      "nombre": "Omar Lopez Muñoz",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente",
+      "tiempo": "02:04:05"
+    },
+    {
+      "dorsal": "302",
+      "posicion": "123",
+      "nombre": "Rafael Estepa Alonso",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Fondistas Pacenses",
+      "tiempo": "02:04:21"
+    },
+    {
+      "dorsal": "153",
+      "posicion": "124",
+      "nombre": "Juan Manuel Gómez Morales",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "02:05:34"
+    },
+    {
+      "dorsal": "220",
+      "posicion": "125",
+      "nombre": "Sacramento Rosel Castro",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "Los Califas-Uco",
+      "tiempo": "02:05:35"
+    },
+    {
+      "dorsal": "227",
+      "posicion": "126",
+      "nombre": "Abel Luis Reguera Bernier",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Los Califas Uco ",
+      "tiempo": "02:06:47"
+    },
+    {
+      "dorsal": "281",
+      "posicion": "127",
+      "nombre": "Elena  Romero Navarrete",
+      "Sexo": "F",
+      "CATEG": "Master C Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "02:07:14"
+    },
+    {
+      "dorsal": "272",
+      "posicion": "128",
+      "nombre": "Inma Villanueva Rodriguez",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "No",
+      "tiempo": "02:07:44"
+    },
+    {
+      "dorsal": "140",
+      "posicion": "129",
+      "nombre": "Manuel Gonzalez Manchado",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Cabra Running ",
+      "tiempo": "02:08:20"
+    },
+    {
+      "dorsal": "236",
+      "posicion": "130",
+      "nombre": "Juan José  Cruz Gómez ",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:08:35"
+    },
+    {
+      "dorsal": "257",
+      "posicion": "131",
+      "nombre": "Francisca Leal Remujo",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "Independiente ",
+      "tiempo": "02:08:57"
+    },
+    {
+      "dorsal": "197",
+      "posicion": "132",
+      "nombre": "Manuel Viedma Benítez",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Trotacalles",
+      "tiempo": "02:09:09"
+    },
+    {
+      "dorsal": "242",
+      "posicion": "133",
+      "nombre": "Mercedes Lorenzo Martin",
+      "Sexo": "F",
+      "CATEG": "Master D Fem",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:09:10"
+    },
+    {
+      "dorsal": "241",
+      "posicion": "134",
+      "nombre": "Yolanda Lorenzo Martín",
+      "Sexo": "F",
+      "CATEG": "Master D Fem",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:09:11"
+    },
+    {
+      "dorsal": "243",
+      "posicion": "135",
+      "nombre": "Jose Antonio Luna Mansilla",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:09:17"
+    },
+    {
+      "dorsal": "158",
+      "posicion": "136",
+      "nombre": "Antonio Serafin Sierra Moyano",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "C.D.Atletismo Peñarroya",
+      "tiempo": "02:09:38"
+    },
+    {
+      "dorsal": "224",
+      "posicion": "137",
+      "nombre": "José Manuel Castro Carrasco",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "02:10:19"
+    },
+    {
+      "dorsal": "206",
+      "posicion": "138",
+      "nombre": "Alexandra Calina",
+      "Sexo": "F",
+      "CATEG": "Master A Fem",
+      "club": "Cd L`Espenta",
+      "tiempo": "02:11:24"
+    },
+    {
+      "dorsal": "205",
+      "posicion": "139",
+      "nombre": "Francisco Jesús Gómez Gálvez",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Trotacalles",
+      "tiempo": "02:11:25"
+    },
+    {
+      "dorsal": "245",
+      "posicion": "140",
+      "nombre": "Iván Medina Torres",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:12:01"
+    },
+    {
+      "dorsal": "198",
+      "posicion": "141",
+      "nombre": "Samuel Sánchez Fernández ",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente ",
+      "tiempo": "02:12:02"
+    },
+    {
+      "dorsal": "199",
+      "posicion": "142",
+      "nombre": "José Ignacio  Herrero Illana ",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente ",
+      "tiempo": "02:12:22"
+    },
+    {
+      "dorsal": "209",
+      "posicion": "143",
+      "nombre": "Zoa Belén Ortiz Ramírez",
+      "Sexo": "F",
+      "CATEG": "Master A Fem",
+      "club": "No",
+      "tiempo": "02:13:28"
+    },
+    {
+      "dorsal": "171",
+      "posicion": "144",
+      "nombre": "Maria Perez Duran",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "A 8000 Metros Outdoor",
+      "tiempo": "02:13:59"
+    },
+    {
+      "dorsal": "233",
+      "posicion": "145",
+      "nombre": "Antonio Manuel Barbero Olmo",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:15:13"
+    },
+    {
+      "dorsal": "210",
+      "posicion": "146",
+      "nombre": "Juan Miguel  Coronado Pérez",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Club Atletismo Montoro ",
+      "tiempo": "02:17:08"
+    },
+    {
+      "dorsal": "133",
+      "posicion": "147",
+      "nombre": "Carlos Jesu Soto Ramirez",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Independiente",
+      "tiempo": "02:18:16"
+    },
+    {
+      "dorsal": "270",
+      "posicion": "148",
+      "nombre": "Antonio  Fernández Márquez ",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "02:18:50"
+    },
+    {
+      "dorsal": "165",
+      "posicion": "149",
+      "nombre": "Alejandro García García",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "02:18:54"
+    },
+    {
+      "dorsal": "247",
+      "posicion": "150",
+      "nombre": "Javier Paños Ortiz",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Atletismo Espiel",
+      "tiempo": "02:18:59"
+    },
+    {
+      "dorsal": "230",
+      "posicion": "151",
+      "nombre": "Manuel Dominguez Ballesteros",
+      "Sexo": "M",
+      "CATEG": "Master E Masc",
+      "club": "Cludeca",
+      "tiempo": "02:19:45"
+    },
+    {
+      "dorsal": "275",
+      "posicion": "152",
+      "nombre": "Alejandro Rodríguez Martínez ",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "La Rompepiernas",
+      "tiempo": "02:21:36"
+    },
+    {
+      "dorsal": "260",
+      "posicion": "153",
+      "nombre": "Jaime González Fernández",
+      "Sexo": "M",
+      "CATEG": "Master A Masc",
+      "club": "Club Maratón Pozoblanco ",
+      "tiempo": "02:21:37"
+    },
+    {
+      "dorsal": "261",
+      "posicion": "154",
+      "nombre": "José Angel  López Sánchez ",
+      "Sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Club Maratón Pozoblanco ",
+      "tiempo": "02:22:02"
+    },
+    {
+      "dorsal": "309",
+      "posicion": "155",
+      "nombre": "Isabel Fernández Morales",
+      "Sexo": "F",
+      "CATEG": ".Senior Femenino",
+      "club": "Independiente",
+      "tiempo": "02:22:42"
+    },
+    {
+      "dorsal": "176",
+      "posicion": "156",
+      "nombre": "María Del Pilar Murillo Morales",
+      "Sexo": "F",
+      "CATEG": " Sub23 Fem (Junior)",
+      "club": "Independiente ",
+      "tiempo": "02:22:43"
+    },
+    {
+      "dorsal": "175",
+      "posicion": "157",
+      "nombre": "Miguel Ángel  Murillo Caballero",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Independiente ",
+      "tiempo": "02:23:19"
+    },
+    {
+      "dorsal": "520",
+      "posicion": "158",
+      "nombre": "Claudia Pérez Jurado",
+      "Sexo": "F",
+      "CATEG": " Sub23 Fem (Junior)",
+      "club": "",
+      "tiempo": "02:23:27"
+    },
+    {
+      "dorsal": "258",
+      "posicion": "159",
+      "nombre": "David Luna Mansilla",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente ",
+      "tiempo": "02:25:26"
+    },
+    {
+      "dorsal": "191",
+      "posicion": "160",
+      "nombre": "Johann Duquenoy",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "Independiente",
+      "tiempo": "02:27:19"
+    },
+    {
+      "dorsal": "102",
+      "posicion": "161",
+      "nombre": "Manuel Escolar Moreno",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Independiente",
+      "tiempo": "02:29:35"
+    },
+    {
+      "dorsal": "282",
+      "posicion": "162",
+      "nombre": "Elena  Zarza Gallardo",
+      "Sexo": "F",
+      "CATEG": "Master B Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "02:29:36"
+    },
+    {
+      "dorsal": "290",
+      "posicion": "163",
+      "nombre": "Miguel Gomez Granados ",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente",
+      "tiempo": "02:31:50"
+    },
+    {
+      "dorsal": "126",
+      "posicion": "164",
+      "nombre": "Francisco Galán Cano",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Independiente",
+      "tiempo": "02:32:00"
+    },
+    {
+      "dorsal": "129",
+      "posicion": "165",
+      "nombre": "Francisco Javier  Osuna López ",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "Trotabad ",
+      "tiempo": "02:36:07"
+    },
+    {
+      "dorsal": "208",
+      "posicion": "166",
+      "nombre": "Javier Garcia Perez",
+      "Sexo": "M",
+      "CATEG": "Master B Masc",
+      "club": "Cludeca",
+      "tiempo": "02:45:27"
+    },
+    {
+      "dorsal": "293",
+      "posicion": "167",
+      "nombre": "Jose Antonio Torquemada Daza",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "02:50:02"
+    },
+    {
+      "dorsal": "277",
+      "posicion": "168",
+      "nombre": "Antonio Sedano Pérez",
+      "Sexo": "M",
+      "CATEG": "Master C Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "02:50:02"
+    },
+    {
+      "dorsal": "289",
+      "posicion": "169",
+      "nombre": "Mertxe Rodriguez Fermin",
+      "Sexo": "F",
+      "CATEG": "Master C Fem",
+      "club": "La Rompepiernas",
+      "tiempo": "02:50:02"
+    },
+    {
+      "dorsal": "285",
+      "posicion": "170",
+      "nombre": "Jaime Serrano Castillo",
+      "Sexo": "M",
+      "CATEG": "Master D Masc",
+      "club": "La Rompepiernas",
+      "tiempo": "02:50:29"
+    },
+    {
+      "dorsal": "301",
+      "posicion": "171",
+      "nombre": "Antonio  Estepa Garcia",
+      "Sexo": "M",
+      "CATEG": "Master F Masc",
+      "club": "Fondistas Pacenses",
+      "tiempo": "3:00:00"
+    }
+  ]
+}

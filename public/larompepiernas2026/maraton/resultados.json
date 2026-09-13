@@ -1,0 +1,202 @@
+{
+  "data": [
+    {
+      "dorsal": "921",
+      "posicion": "1",
+      "nombre": "Antonio  Sánchez Fernández",
+      "sexo": "M",
+      "CATEG": "Veterano 40 Masc",
+      "club": "Atletismo Espiel ",
+      "tiempo": "02:58:03"
+    },
+    {
+      "dorsal": "917",
+      "posicion": "2",
+      "nombre": "Juan José Mancera",
+      "sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Club Atletismo Malaga",
+      "tiempo": "02:58:30"
+    },
+    {
+      "dorsal": "905",
+      "posicion": "3",
+      "nombre": "Diego Gonzalez Blanco",
+      "sexo": "M",
+      "CATEG": "Veterano 45 Masc",
+      "club": "C.D O Corres O Mueres ",
+      "tiempo": "03:06:08"
+    },
+    {
+      "dorsal": "926",
+      "posicion": "4",
+      "nombre": "Luis Miguel Porras Muñoz",
+      "sexo": "M",
+      "CATEG": "Veterano 35 Masc",
+      "club": "A 8000 Metros Outdoor ",
+      "tiempo": "03:10:43"
+    },
+    {
+      "dorsal": "924",
+      "posicion": "5",
+      "nombre": "Miguel Suescun Alcántara",
+      "sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "A 8000 Metros Peñarroya",
+      "tiempo": "03:30:31"
+    },
+    {
+      "dorsal": "912",
+      "posicion": "6",
+      "nombre": "Mariano Fernández Jiménez ",
+      "sexo": "M",
+      "CATEG": "Veterano 40 Masc",
+      "club": "Virgen De Belén ",
+      "tiempo": "03:30:49"
+    },
+    {
+      "dorsal": "922",
+      "posicion": "7",
+      "nombre": "Rafael  Ramiro Merina ",
+      "sexo": "M",
+      "CATEG": "Veterano 50 Masc",
+      "club": "Independiente ",
+      "tiempo": "03:34:08"
+    },
+    {
+      "dorsal": "906",
+      "posicion": "8",
+      "nombre": "Francisco Javier  Ledesma Carrillo",
+      "sexo": "M",
+      "CATEG": "Veterano 45 Masc",
+      "club": "C.D O Corres O Mueres ",
+      "tiempo": "03:34:54"
+    },
+    {
+      "dorsal": "927",
+      "posicion": "9",
+      "nombre": "Ana Araceli Moreno Garcia",
+      "sexo": "F",
+      "CATEG": ".Senior Femenino",
+      "club": "Indea",
+      "tiempo": "03:37:26"
+    },
+    {
+      "dorsal": "928",
+      "posicion": "10",
+      "nombre": "Francisco Palma Muñoz",
+      "sexo": "M",
+      "CATEG": "Veterano 35 Masc",
+      "club": "Amo Allá ",
+      "tiempo": "03:37:26"
+    },
+    {
+      "dorsal": "903",
+      "posicion": "11",
+      "nombre": "Victor Manuel Revaliente Casilla",
+      "sexo": "M",
+      "CATEG": "Veterano 40 Masc",
+      "club": "A 8000 Metros Peñarroya",
+      "tiempo": "03:40:32"
+    },
+    {
+      "dorsal": "923",
+      "posicion": "12",
+      "nombre": "Javier Avila Molina",
+      "sexo": "M",
+      "CATEG": "Veterano 55 Masc",
+      "club": "C A Sierra Segura ",
+      "tiempo": "03:45:52"
+    },
+    {
+      "dorsal": "916",
+      "posicion": "13",
+      "nombre": "Alex Julián Marin Arrebola ",
+      "sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente ",
+      "tiempo": "03:50:16"
+    },
+    {
+      "dorsal": "919",
+      "posicion": "14",
+      "nombre": "Daniel  Suárez Munell",
+      "sexo": "M",
+      "CATEG": "Veterano 40 Masc",
+      "club": "Independientemente ",
+      "tiempo": "03:52:20"
+    },
+    {
+      "dorsal": "920",
+      "posicion": "15",
+      "nombre": "Cristian Damián Granados",
+      "sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "03:56:42"
+    },
+    {
+      "dorsal": "915",
+      "posicion": "16",
+      "nombre": "Andres Ramírez Blanco",
+      "sexo": "M",
+      "CATEG": "Veterano 45 Masc",
+      "club": "Trotacolonia",
+      "tiempo": "04:09:39"
+    },
+    {
+      "dorsal": "918",
+      "posicion": "17",
+      "nombre": "Antonio Pastrana",
+      "sexo": "M",
+      "CATEG": "Veterano 40 Masc",
+      "club": "Independiente ",
+      "tiempo": "04:15:52"
+    },
+    {
+      "dorsal": "908",
+      "posicion": "18",
+      "nombre": "Juli Cristi Pastor Laredo ",
+      "sexo": "F",
+      "CATEG": "Veterano 45 Fem",
+      "club": "Cabra Running ",
+      "tiempo": "04:22:18"
+    },
+    {
+      "dorsal": "907",
+      "posicion": "19",
+      "nombre": "Juan  Repullo Martínez ",
+      "sexo": "M",
+      "CATEG": "Veterano 50 Masc",
+      "club": "Cabra Running ",
+      "tiempo": "04:22:25"
+    },
+    {
+      "dorsal": "929",
+      "posicion": "20",
+      "nombre": "Ivan Ramos Fernandez",
+      "sexo": "M",
+      "CATEG": ".Senior Masculino",
+      "club": "Independiente",
+      "tiempo": "04:34:46"
+    },
+    {
+      "dorsal": "901",
+      "posicion": "21",
+      "nombre": "Jose María Ortega Fernández",
+      "sexo": "M",
+      "CATEG": "Veterano 60 Masc",
+      "club": "Club Atletismo Porcuna ",
+      "tiempo": "04:49:03"
+    },
+    {
+      "dorsal": "902",
+      "posicion": "22",
+      "nombre": "Toñi   Del Pino García",
+      "sexo": "F",
+      "CATEG": "Veterano 55 Fem",
+      "club": "Club Atletismo Porcuna ",
+      "tiempo": "04:49:05"
+    }
+  ]
+}

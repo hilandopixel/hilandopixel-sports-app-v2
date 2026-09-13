@@ -1,0 +1,190 @@
+.custom-hilandopixel {
+    background: #5da999 !important;
+    color: white !important;
+}
+
+.custom-hilandopixel-oposite {
+    color: #5da999 !important;
+    background: white !important;
+}
+
+.custom-black {
+    color: black !important;
+    background: white !important;
+}
+
+.width-full {
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.custom-text {
+    color: #5da999 !important;
+}
+
+.custom-text-secondary {
+    color: white !important;
+}
+
+.no-box {
+    box-shadow: none !important;
+}
+
+.no-border {
+    border: none !important;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.filter {
+    text-align: center;
+    margin-bottom: 20px; /* Increased margin for new section */
+}
+
+.filter-group {
+    margin-bottom: 10px;
+}
+
+input {
+    padding: 8px;
+    width: 250px; /* Adjusted width */
+    font-size: 16px;
+}
+
+button {
+    padding: 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.progress {
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card img {
+    width: auto;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    margin: auto;
+}
+
+.date {
+    padding: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.button-link {
+    /* Display & Sizing */
+    width: 75%;
+    display: inline-block; /* Allows setting padding, margin, height, and width */
+    padding: 10px 20px;
+    margin: 5px;
+    /* Appearance */
+    text-decoration: none; /* Removes the default link underline */
+    background-color: #007bff; /* Button background color (blue) */
+    color: white; /* Text color */
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer; /* Changes the mouse cursor to a hand icon */
+    /* Transition for hover effect */
+    transition: background-color 0.3s ease;
+}
+
+/* Hover Effect (Optional but Recommended) */
+.button-link:hover {
+    background-color: #0056b3; /* Darker blue on mouse-over */
+    border-color: #0056b3;
+}
+
+/* Force Header Hiding for the Card View Aesthetic on ALL screens */
+#dataTable thead {
+    display: none;
+}
+
+/* Adjust the search and control section to be slightly wider */
+.dataTables_wrapper .row:first-child {
+    margin-bottom: 20px;
+}
+
+/* Custom styles for the results card view */
+.result-card-container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa; /* Light background for the collapsible section */
+    border-radius: 8px;
+}
+
+.result-item-card {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-left: 5px solid var(--custom-black); /* Highlight border */
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    font-size: 0.9rem;
+}
+
+.result-item-card strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    color: var(--custom-text);
+}
+
+.result-item-card span {
+    display: block;
+    color: #6c757d;
+}
+
+.result-item-card .posicion {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--custom-hilandopixel);
+}
+
+.navbar {
+    color: white !important;
+    background-color: #5da999;
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}

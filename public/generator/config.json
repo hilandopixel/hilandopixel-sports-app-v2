@@ -1,0 +1,92 @@
+{
+  "carreras": [
+    {
+      "root": "rutadelamiel2025",
+      "title": "XXVI Ruta de la Miel 2025",
+      "date": "18/10/2025",
+      "keywords": "ruta miel",
+      "events": [
+        {
+          "root": "alevin-f",
+          "title": "AlevIn F"
+        },
+        {
+          "root": "alevin-m",
+          "title": "AlevIn M"
+        },
+        {
+          "root": "benjamin-f",
+          "title": "BenjamIn F"
+        },
+        {
+          "root": "benjamin-m",
+          "title": "BenjamIn M"
+        },
+        {
+          "root": "cadete-f",
+          "title": "Cadete F"
+        },
+        {
+          "root": "cadete-m",
+          "title": "Cadete M"
+        },
+        {
+          "root": "chupete-f",
+          "title": "Chupete F"
+        },
+        {
+          "root": "chupete-m",
+          "title": "Chupete M"
+        },
+        {
+          "root": "discaoacitado-a-pie",
+          "title": "Discapacitado a pie"
+        },
+        {
+          "root": "infantil-f",
+          "title": "Infantil F"
+        },
+        {
+          "root": "infantil-m",
+          "title": "Infantil M"
+        },
+        {
+          "root": "juvenil-f",
+          "title": "Juvenil F"
+        },
+        {
+          "root": "juvenil-m",
+          "title": "Juvenil M"
+        },
+        {
+          "root": "prebenjamin-f",
+          "title": "PrebenjamIn F"
+        },
+        {
+          "root": "prebenjamin-m",
+          "title": "PrebenjamIn M"
+        },
+        {
+          "root": "prueba-reina-f",
+          "title": "Prueba Reina F"
+        },
+        {
+          "root": "prueba-reina-m",
+          "title": "Prueba Reina M"
+        }
+      ]
+    },
+    {
+      "root": "subidaalasermitas2025",
+      "title": "XII Subida a Las Ermitas 2025",
+      "date": "14/12/2025",
+      "keywords": "subida ermitas",
+      "events": [
+        {
+          "root": "prueba-reina",
+          "title": "Prueba Reina"
+        }
+      ]
+    }
+  ]
+}
