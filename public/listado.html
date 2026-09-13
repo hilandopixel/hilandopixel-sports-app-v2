@@ -471,7 +471,7 @@
         listadoContent.classList.remove("hidden");
 
         if (!idEvento) {
-          mostrarError("No se ha especificado el parámetro 'idEvento' en la URL. Ejemplo: listado.html?idEvento=ID_DEL_EVENTO");
+          mostrarError("No se ha especificado el parámetro 'idEvento' en la URL. Ejemplo: listado?idEvento=ID_DEL_EVENTO");
         } else {
           await cargarInfoEvento(idEvento);
           escucharSolicitudes(idEvento);

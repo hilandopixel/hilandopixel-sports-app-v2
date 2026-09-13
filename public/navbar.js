@@ -6,7 +6,7 @@ class NavbarHeader extends HTMLElement {
           <div class="flex items-center justify-between h-16">
             
             <!-- BRAND / LOGO RESPONSIVO -->
-            <a href="inicio.html" class="navbar-brand-el flex items-center">
+            <a href="/" class="navbar-brand-el flex items-center">
               <img 
                 src="./logo.png" 
                 alt="Hilando Pixel Logo" 
@@ -16,7 +16,7 @@ class NavbarHeader extends HTMLElement {
             
             <!-- MENÚ DE NAVEGACIÓN DESKTOP -->
             <nav class="hidden md:flex items-center gap-2 sm:gap-4">
-              <a href="inicio.html" class="nav-link-el" id="nav-inicio">
+              <a href="/" class="nav-link-el" id="nav-inicio">
                 <span>📅 Eventos</span>
               </a>
             </nav>
@@ -46,7 +46,7 @@ class NavbarHeader extends HTMLElement {
         <!-- MENÚ DESPLEGABLE MÓVIL -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white shadow-lg">
           <div class="px-4 pt-3 pb-4 space-y-2">
-            <a href="inicio.html" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-inicio-mobile">
+            <a href="/" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-inicio-mobile">
               <span>📅 Eventos</span>
             </a>
           </div>
@@ -81,17 +81,17 @@ class NavbarHeader extends HTMLElement {
   }
 
   marcarEnlaceActivo() {
-    const currentPath = window.location.pathname.split("/").pop().toLowerCase() || "inicio.html";
+    const currentPath = window.location.pathname.split("/").pop().toLowerCase() || "/";
     
     const navInicio = this.querySelector("#nav-inicio");
     const navInicioMobile = this.querySelector("#nav-inicio-mobile");
     const navAdmin = this.querySelector("#nav-admin");
     const navAdminMobile = this.querySelector("#nav-admin-mobile");
 
-    if (currentPath === "inicio.html" || currentPath === "" || currentPath === "index.html") {
+    if (currentPath === "/" || currentPath === "" || currentPath === "index") {
       if (navInicio) navInicio.classList.add("active");
       if (navInicioMobile) navInicioMobile.classList.add("active");
-    } else if (currentPath === "admin.html") {
+    } else if (currentPath === "admin") {
       if (navAdmin) navAdmin.classList.add("active");
       if (navAdminMobile) navAdminMobile.classList.add("active");
     }

@@ -17,7 +17,7 @@ service cloud.firestore {
 
       // 🏆 Subcolección RESULTADOS
       match /resultados/{resultadoId} {
-        // Lectura pública para mostrar clasificaciones en resultados.html o evento.html
+        // Lectura pública para mostrar clasificaciones en resultados evento
         allow read: if true;
         
         // Crear, actualizar o eliminar resultados solo Admin
