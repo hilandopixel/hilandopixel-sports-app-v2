@@ -323,7 +323,6 @@ class PanelPreferencias extends HTMLElement {
                 const file = e.target.files[0];
                 if (!file) return;
                 
-                // Comprimimos la imagen antes de añadirla a la lista
                 const imagenComprimidaBase64 = await comprimirImagen(file, 1200, 0.7);
                 
                 this.listaImagenes.push(imagenComprimidaBase64);
@@ -341,7 +340,12 @@ class PanelPreferencias extends HTMLElement {
             const nuevoId = this.generarSlug(datos.slug);
 
             if (!this.eventoId) {
-                return alert("⚠️ Falta el ID del evento principal para guardar.");
+                const inputSlug = shadow.getElementById('input-res-slug');
+                const partesSlug = inputSlug ? inputSlug.value.split('-') : [];
+                this.eventoId = window.eventoActualId || partesSlug.slice(0, -1).join('-') || new URLSearchParams(window.location.search).get('evento');
+            }
+            if (!this.eventoId) {
+                return alert("⚠️ Error: No se ha detectado el ID del evento.");
             }
             if (!nuevoId) {
                 return alert("⚠️ El ID del resultado (Slug) es obligatorio.");
@@ -352,35 +356,43 @@ class PanelPreferencias extends HTMLElement {
             btn.textContent = "⏳ Guardando...";
 
             try {
-                        const resData = {
-                        nombre: datos.nombre,
-                        fecha: datos.fecha,
-                        tipo: datos.tipo,
-                        enlace: datos.enlace,
-                        url_qr_resultados: datos.url_qr_resultados,
-                        columnasMostrar: datos.columnasMostrar,
-                        ordenVisual: datos.ordenVisual,
-                        columnaOrden: datos.columnaOrden,
-                        sentidoOrden: datos.sentidoOrden,
-                        mostrarFiltros: datos.mostrarFiltros,
-                        directo: true,
-                        intervaloRefresco: datos.intervaloRefresco,
-                        tiempoImagenCarrusel: datos.tiempoImagenCarrusel,
-                        imagenes: [] // Dejamos el array del documento principal vacío o solo con URLs HTTP ligeras, evitando cadenas Base64 masivas
-                    };
+                const resData = {
+                    nombre: datos.nombre,
+                    fecha: datos.fecha,
+                    tipo: datos.tipo,
+                    enlace: datos.enlace,
+                    url_qr_resultados: datos.url_qr_resultados,
+                    columnasMostrar: datos.columnasMostrar,
+                    ordenVisual: datos.ordenVisual,
+                    columnaOrden: datos.columnaOrden,
+                    sentidoOrden: datos.sentidoOrden,
+                    mostrarFiltros: datos.mostrarFiltros,
+                    directo: true,
+                    intervaloRefresco: datos.intervaloRefresco,
+                    tiempoImagenCarrusel: datos.tiempoImagenCarrusel,
+                    imagenes: [] 
+                };
 
-                    // Guardamos las imágenes de manera independiente y fraccionada en la subcolección 'imagenes_cabecera'
-                    const subColRef = collection(db, "eventos", this.eventoId, "resultados", nuevoId, "imagenes_cabecera");
-                    const prevImgs = await getDocs(subColRef);
-                    for (const docItem of prevImgs.docs) {
-                        await deleteDoc(docItem.ref);
-                    }
+                const nuevoDocRef = doc(db, "eventos", this.eventoId, "resultados", nuevoId);
+                
+                if (this.resultadoId && this.resultadoId !== nuevoId) {
+                    await deleteDoc(doc(db, "eventos", this.eventoId, "resultados", this.resultadoId));
+                }
 
-                    for (let i = 0; i < this.listaImagenes.length; i++) {
-                        const imgDocRef = doc(subColRef, `img_${i + 1}`);
-                        // Cada imagen en su propio documento de subcolección evita reventar el límite del documento principal
-                        await setDoc(imgDocRef, { url: this.listaImagenes[i], orden: i + 1 });
-                    }
+                // 1. RESTAURADO: Guardar los datos del formulario en el documento principal de Firebase
+                await setDoc(nuevoDocRef, resData, { merge: true });
+
+                // 2. Guardar las imágenes en su subcolección independiente
+                const subColRef = collection(db, "eventos", this.eventoId, "resultados", nuevoId, "imagenes_cabecera");
+                const prevImgs = await getDocs(subColRef);
+                for (const docItem of prevImgs.docs) {
+                    await deleteDoc(docItem.ref);
+                }
+
+                for (let i = 0; i < this.listaImagenes.length; i++) {
+                    const imgDocRef = doc(subColRef, `img_${i + 1}`);
+                    await setDoc(imgDocRef, { url: this.listaImagenes[i], orden: i + 1 });
+                }
 
                 this.resultadoId = nuevoId;
                 alert("✅ ¡Sección de resultados guardada correctamente en Firebase!");
