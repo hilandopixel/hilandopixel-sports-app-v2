@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventajas del Evento</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="./navbar.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <navbar-header></navbar-header>
+
+    <!-- Contenedor principal con diseño de Tailwind -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full mx-4 border border-slate-200">
+        <div class="text-center">
+            <span class="bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Promoción Activa</span>
+            
+            <h1 class="text-2xl font-bold text-slate-800 mt-4 mb-2">¡Bienvenido!</h1>
+            
+            <!-- Mensaje dinámico -->
+            <p id="mensaje" class="text-slate-600 text-base leading-relaxed mt-4">
+                Cargando información del evento...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Obtener los parámetros de la URL actual
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        // 2. Extraer los valores de 'evento' y 'code'
+        const evento = urlParams.get('evento');
+        const code = urlParams.get('code');
+
+        // 3. Seleccionar el elemento del DOM donde mostraremos el mensaje
+        const mensajeElemento = document.getElementById('mensaje');
+
+        // 4. Validar si existen ambos parámetros y pintar con Tailwind
+        if (evento && code) {
+            mensajeElemento.innerHTML = `
+                Para usar tus ventajas del evento <span class="font-bold text-indigo-600">${evento}</span>, 
+                tu código será <span class="font-mono bg-slate-100 text-slate-800 px-2 py-1 rounded border border-slate-300 font-bold">${code}</span>.
+            `;
+        } else {
+            // Mensaje por si faltan parámetros en la URL
+            mensajeElemento.innerHTML = `
+                <span class="text-amber-600 font-medium">Por favor, asegúrate de incluir los parámetros <code class="bg-slate-100 px-1 rounded">?evento=...&code=...</code> en la URL.</span>
+            `;
+        }
+    </script>
+
+</body>
+</html>
