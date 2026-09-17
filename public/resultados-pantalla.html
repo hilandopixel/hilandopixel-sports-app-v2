@@ -476,6 +476,11 @@
                     </div>
                 </div>
 
+                <div class="campo-grupo">
+                        <label for="input-mostrar-x-resultados">Mostrar solo X resultados (opcional):</label>
+                        <input type="number" id="input-mostrar-x-resultados" class="input-numero" min="1" placeholder="Ej: 10">
+                    </div>
+
                 <div class="checkbox-container">
                     <input type="checkbox" id="checkbox-mostrar-filtros" checked>
                     <label for="checkbox-mostrar-filtros">Mostrar filtros de búsqueda</label>
@@ -653,14 +658,16 @@
 
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
-                document.getElementById('tituloResultado').textContent = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
-                document.title = configuracionResultado.nombre || 'Resultados';
+                var titulo = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
+                document.getElementById('tituloResultado').textContent = titulo + ' Mostrando (' + configuracionResultado.mostrarXResultados + ')';
+                document.title = titulo;
 
                 document.getElementById('input-res-nombre').value = configuracionResultado.nombre || '';
                 document.getElementById('input-res-slug').value = idResultadoParam || '';
                 document.getElementById('input-res-fecha').value = configuracionResultado.fecha || '';
                 document.getElementById('select-res-tipo').value = configuracionResultado.tipo || 'CSV';
                 document.getElementById('input-res-enlace').value = configuracionResultado.enlace || '';
+                document.getElementById('input-mostrar-x-resultados').value = configuracionResultado.mostrarXResultados || '';
 
 
                 const imgsSnap = await getDocs(collection(refResultadoDocActual, 'imagenes_cabecera'));
@@ -751,7 +758,9 @@
                     mostrarFiltros: mostrarFiltros,
                     intervaloRefresco: intervaloSegundosConfig,
                     tiempoImagenCarrusel: tiempoSecs,
-                    url_qr_resultados: urlQrResultados
+                    url_qr_resultados: urlQrResultados,
+                    mostrarXResultados: document.getElementById('input-mostrar-x-resultados').value
+
                 };
 
                 await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
@@ -1084,6 +1093,14 @@
                     return valCelda.includes(textoFiltro);
                 });
             });
+
+            // Limitar a X resultados si la propiedad tiene valor
+            if (configuracionResultado && configuracionResultado.mostrarXResultados) {
+                const limite = parseInt(configuracionResultado.mostrarXResultados, 10);
+                if (!isNaN(limite) && limite > 0) {
+                    datosProcesados = datosProcesados.slice(0, limite);
+                }
+            }
 
             if (columnaOrdenadaClave) {
                 const esCol = columnaOrdenadaClave.trim().toLowerCase().includes('tiempo') || columnaOrdenadaClave.trim().toLowerCase().includes('time') || columnaOrdenadaClave.trim().toLowerCase().includes('marca');

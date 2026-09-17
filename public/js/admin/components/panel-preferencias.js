@@ -269,6 +269,11 @@ class PanelPreferencias extends HTMLElement {
                         </div>
                     </div>
 
+                    <div class="campo-grupo">
+                        <label for="input-mostrar-x-resultados">Mostrar solo X resultados (opcional):</label>
+                        <input type="number" id="input-mostrar-x-resultados" class="input-numero" min="1" placeholder="Ej: 10">
+                    </div>
+
                     <div class="checkbox-container">
                         <input type="checkbox" id="checkbox-mostrar-filtros" checked>
                         <label for="checkbox-mostrar-filtros">Mostrar filtros de búsqueda</label>
@@ -495,6 +500,7 @@ class PanelPreferencias extends HTMLElement {
             if (el) el.value = val || '';
         };
 
+        setVal('input-mostrar-x-resultados', c.mostrarXResultados);
         setVal('input-res-nombre', c.nombre);
         setVal('input-res-slug', c.slug);
         setVal('input-res-fecha', c.fecha);
@@ -623,7 +629,8 @@ class PanelPreferencias extends HTMLElement {
             columnaOrden: shadow.getElementById('select-columna-orden').value,
             sentidoOrden: shadow.getElementById('select-sentido-orden').value,
             mostrarFiltros: shadow.getElementById('checkbox-mostrar-filtros').checked,
-            imagenes: this.listaImagenes
+            imagenes: this.listaImagenes,
+            mostrarXResultados: parseInt(shadow.getElementById('input-mostrar-x-resultados').value.trim(), 10) || 1000
         };
     }
 }
