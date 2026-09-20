@@ -30,6 +30,12 @@ service cloud.firestore {
         }
       }
 
+      // 🎁 Subcolección VENTAJAS (NUEVA)
+      match /ventajas/{ventajaId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+      }
+
       // Subcolección: STOCK
       match /stock/{tallaId} {
         allow read: if true;
@@ -62,6 +68,11 @@ service cloud.firestore {
     }
 
     match /{path=**}/imagenes_cabecera/{imgId} {
+      allow read: if true;
+    }
+
+    // Consulta global opcional para ventajas
+    match /{path=**}/ventajas/{ventajaId} {
       allow read: if true;
     }
   }

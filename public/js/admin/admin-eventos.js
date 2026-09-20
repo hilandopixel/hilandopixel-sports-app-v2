@@ -3,6 +3,7 @@ import { collection, doc, onSnapshot, setDoc, deleteDoc, getDocs } from "https:/
 import { cargarResultadosEvento } from './admin-resultados.js';
 import { cargarStockYRequestsEvento } from './admin-stock.js';
 import { cargarVoluntariosEvento } from './admin-voluntarios.js';
+import { cargarVentajasEvento } from './admin-ventajas.js';
 
 export let eventoActualId = null;
 let snapshotEventosGlobal = null;
@@ -109,6 +110,7 @@ function seleccionarEvento(id) {
   cargarResultadosEvento(id);
   cargarStockYRequestsEvento(id);
   cargarVoluntariosEvento(id);
+  cargarVentajasEvento(id);
 
   document.getElementById("seccionDetalleEvento").scrollIntoView({ behavior: 'smooth' });
 }
