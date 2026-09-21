@@ -71,16 +71,30 @@
         </div>
       </div>
 
-      <!-- Checkbox y campo dinámico para waypoints por kilómetros -->
+      <!-- Checkbox y configuración para waypoints automáticos por kilómetros -->
       <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
         <label class="flex items-center space-x-3 cursor-pointer">
           <input type="checkbox" id="genKmWaypoints" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
           <span class="font-semibold text-gray-700">Generar waypoints automáticos cada "X" kilómetros</span>
         </label>
         
-        <div id="kmIntervalContainer" class="hidden pl-8">
-          <label for="intervalDist" class="block text-sm font-medium text-gray-600 mb-1">Distancia entre waypoints automáticos (km):</label>
-          <input type="number" id="intervalDist" value="1" step="0.1" min="0.1" class="w-full md:w-1/3 border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500">
+        <div id="kmIntervalContainer" class="hidden pl-8 space-y-3">
+          <div>
+            <label for="intervalDist" class="block text-sm font-medium text-gray-600 mb-1">Distancia entre waypoints automáticos (km):</label>
+            <input type="number" id="intervalDist" value="1" step="0.1" min="0.1" class="w-full md:w-1/3 border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label for="kmWptSymbol" class="block text-sm font-medium text-gray-600 mb-1">Icono para los puntos kilométricos:</label>
+            <select id="kmWptSymbol" class="w-full md:w-1/3 border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="Waypoint">📍 Pin / Waypoint estándar</option>
+              <option value="Flag">🏁 Bandera</option>
+              <option value="Water">💧 Avituallamiento / Agua</option>
+              <option value="Food">🍏 Comida / Avituallamiento</option>
+              <option value="Medical">✚ Puesto Médico / Cruz Roja</option>
+              <option value="Summit">⛰️ Cima / Cumbre</option>
+              <option value="Danger">⚠️ Peligro / Precaución</option>
+            </select>
+          </div>
         </div>
       </div>
       
@@ -109,6 +123,7 @@
     <div style="width: 100%; height: 450px; margin-top: 25px; border-radius: 8px; border: 1px solid #d1d5db; position: relative; overflow: hidden;">
       <div id="map" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
     </div>
+    <p class="text-xs text-gray-500 mt-1">💡 Tip: Haz clic en cualquier parte del mapa para abrir una ventana emergente y añadir un waypoint manual seleccionando su nombre e icono.</p>
 
     <!-- Botones de Descarga -->
     <div class="mt-6 flex flex-wrap gap-3">
@@ -124,6 +139,7 @@
         <thead>
           <tr>
             <th>Waypoint</th>
+            <th>Símbolo</th>
             <th>Distancia Acumulada</th>
             <th>Tiempo 1º</th>
             <th>Hora 1º</th>
@@ -134,7 +150,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td colspan="8" class="text-center text-gray-500">Sube un archivo GPX para ver los datos</td></tr>
+          <tr><td colspan="9" class="text-center text-gray-500">Sube un archivo GPX para ver los datos</td></tr>
         </tbody>
       </table>
     </div>
@@ -155,7 +171,21 @@
     let outputFilenameBase = 'ruta';
     let currentGpxDoc = null; 
 
-    // Mostrar/ocultar el input de kilómetros según el estado del checkbox
+    // Mapa de correspondencia de símbolos a iconos visuales (Emoji)
+    const symbolIcons = {
+      'Waypoint': '📍',
+      'Flag': '🏁',
+      'Water': '💧',
+      'Food': '🍏',
+      'Medical': '✚',
+      'Summit': '⛰️',
+      'Danger': '⚠️'
+    };
+
+    function getSymbolIcon(sym) {
+      return symbolIcons[sym] || '📍';
+    }
+
     document.getElementById('genKmWaypoints').addEventListener('change', function(e) {
       const container = document.getElementById('kmIntervalContainer');
       if (e.target.checked) {
@@ -165,7 +195,6 @@
       }
     });
 
-    // Carga inicial y previsualización del archivo GPX seleccionado
     document.getElementById('gpxFile').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -210,8 +239,12 @@
         const nameEl = wpts[i].getElementsByTagName('name')[0];
         const wptName = nameEl ? nameEl.textContent : `Waypoint ${i+1}`;
 
+        const symEl = wpts[i].getElementsByTagName('sym')[0];
+        const wptSym = symEl ? symEl.textContent : 'Waypoint';
+        const iconEmoji = getSymbolIcon(wptSym);
+
         const descEl = wpts[i].getElementsByTagName('desc')[0];
-        let popupContent = `<b>${wptName}</b><br>Lat: ${lat.toFixed(5)}, Lon: ${lon.toFixed(5)}`;
+        let popupContent = `<b>${iconEmoji} ${wptName}</b><br>Lat: ${lat.toFixed(5)}, Lon: ${lon.toFixed(5)}`;
         if (descEl && descEl.textContent) {
           popupContent += `<br>${descEl.textContent.replace(/ \| /g, '<br>')}`;
         }
@@ -223,6 +256,106 @@
 
       setTimeout(() => { map.invalidateSize(); }, 200);
     }
+
+    // Clic en el mapa para abrir un popup interactivo y añadir waypoint manual
+    map.on('click', function(e) {
+      if (!currentGpxDoc) {
+        alert("Por favor, carga primero un fichero GPX.");
+        return;
+      }
+
+      const lat = e.latlng.lat;
+      const lon = e.latlng.lng;
+      
+      const popupContent = `
+        <div class="p-2 space-y-2">
+          <h4 class="font-bold text-sm text-gray-800">Añadir Waypoint Manual</h4>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">Nombre:</label>
+            <input type="text" id="popupWptName" value="Manual ${generatedWaypointsData.length + 1}" class="w-full border p-1 text-sm rounded">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">Símbolo / Icono:</label>
+            <select id="popupWptSym" class="w-full border p-1 text-sm rounded bg-white">
+              <option value="Waypoint">📍 Pin / Waypoint estándar</option>
+              <option value="Flag">🏁 Bandera</option>
+              <option value="Water">💧 Avituallamiento / Agua</option>
+              <option value="Food">🍏 Comida / Avituallamiento</option>
+              <option value="Medical">✚ Puesto Médico / Cruz Roja</option>
+              <option value="Summit">⛰️ Cima / Cumbre</option>
+              <option value="Danger">⚠️ Peligro / Precaución</option>
+            </select>
+          </div>
+          <button id="savePopupWpt" class="w-full bg-indigo-600 text-white text-xs font-semibold py-1.5 px-3 rounded hover:bg-indigo-700">Guardar Waypoint</button>
+        </div>
+      `;
+
+      const popup = L.popup()
+        .setLatLng([lat, lon])
+        .setContent(popupContent)
+        .openOn(map);
+
+      // Manejar el evento de guardado dentro del popup una vez insertado en el DOM
+      setTimeout(() => {
+        const saveBtn = document.getElementById('savePopupWpt');
+        if (saveBtn) {
+          saveBtn.onclick = function() {
+            const customName = document.getElementById('popupWptName').value;
+            const selectedSym = document.getElementById('popupWptSym').value;
+            if (!customName) return;
+
+            const startTime = document.getElementById('startTime').value;
+            const paceFirst = parseFloat(document.getElementById('paceFirst').value);
+            const paceLast = parseFloat(document.getElementById('paceLast').value);
+
+            const trkpts = currentGpxDoc.getElementsByTagName('trkpt');
+            const distMeters = findWaypointDistanceAlongTrack(lat, lon, trkpts);
+            const distKmVal = distMeters / 1000;
+
+            const timeFirstMin = distKmVal * paceFirst;
+            const timeLastMin = distKmVal * paceLast;
+
+            const newWp = {
+              lat: lat,
+              lon: lon,
+              name: customName,
+              sym: selectedSym,
+              distKmNum: distKmVal,
+              distKm: `${distKmVal.toFixed(2)} km`,
+              timeFirstStr: formatTime(timeFirstMin),
+              hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+              timeLastStr: formatTime(timeLastMin),
+              hourLastStr: addMinutesToTime(startTime, timeLastMin)
+            };
+
+            generatedWaypointsData.push(newWp);
+            generatedWaypointsData.sort((a, b) => a.distKmNum - b.distKmNum);
+
+            // Añadir al XML interno
+            const gpxRoot = currentGpxDoc.documentElement;
+            const wptEl = currentGpxDoc.createElement('wpt');
+            wptEl.setAttribute('lat', lat);
+            wptEl.setAttribute('lon', lon);
+            
+            const nameEl = currentGpxDoc.createElement('name');
+            nameEl.textContent = customName;
+            wptEl.appendChild(nameEl);
+
+            const symEl = currentGpxDoc.createElement('sym');
+            symEl.textContent = selectedSym;
+            wptEl.appendChild(symEl);
+
+            const descEl = currentGpxDoc.createElement('desc');
+            descEl.textContent = `Símbolo: ${selectedSym} | Dist: ${newWp.distKm} | Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)} | 1º: ${newWp.hourFirstStr} (${newWp.timeFirstStr}) | Últ: ${newWp.hourLastStr} (${newWp.timeLastStr})`;
+            wptEl.appendChild(descEl);
+            gpxRoot.insertBefore(wptEl, gpxRoot.firstChild);
+
+            map.closePopup();
+            renderMapAndTable();
+          };
+        }
+      }, 100);
+    });
 
     document.getElementById('gpxForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -237,8 +370,9 @@
       const paceLast = parseFloat(document.getElementById('paceLast').value);
       const includeKmWaypoints = document.getElementById('genKmWaypoints').checked;
       const intervalKm = includeKmWaypoints ? parseFloat(document.getElementById('intervalDist').value) : null;
+      const kmSym = document.getElementById('kmWptSymbol').value;
       
-      processGpxDataAndRender(currentGpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm);
+      processGpxDataAndRender(currentGpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm, kmSym);
     });
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -298,42 +432,25 @@
       return accumulatedAtWpt;
     }
 
-    function processGpxDataAndRender(gpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm) {
+    function processGpxDataAndRender(gpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm, kmSym) {
       const trkpts = gpxDoc.getElementsByTagName('trkpt');
       if (!trkpts.length) {
         alert("El archivo GPX no contiene puntos de track.");
         return;
       }
 
-      featureGroup.clearLayers();
-
-      let trackCoords = [];
-      let totalTrackDist = 0;
-      let prevLat = parseFloat(trkpts[0].getAttribute('lat'));
-      let prevLon = parseFloat(trkpts[0].getAttribute('lon'));
-      trackCoords.push([prevLat, prevLon]);
-
-      for (let i = 1; i < trkpts.length; i++) {
-        const currLat = parseFloat(trkpts[i].getAttribute('lat'));
-        const currLon = parseFloat(trkpts[i].getAttribute('lon'));
-        trackCoords.push([currLat, currLon]);
-        totalTrackDist += calculateDistance(prevLat, prevLon, currLat, currLon);
-        prevLat = currLat;
-        prevLon = currLon;
-      }
-
-      const polyline = L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
-      map.fitBounds(polyline.getBounds());
-
       generatedWaypointsData = [];
 
-      // 1. Procesar waypoints existentes en el archivo
+      // 1. Procesar waypoints existentes
       const wpts = gpxDoc.getElementsByTagName('wpt');
       for (let i = 0; i < wpts.length; i++) {
         const lat = parseFloat(wpts[i].getAttribute('lat'));
         const lon = parseFloat(wpts[i].getAttribute('lon'));
         const nameEl = wpts[i].getElementsByTagName('name')[0];
         const wptName = nameEl ? nameEl.textContent : `Waypoint ${i+1}`;
+        
+        const symEl = wpts[i].getElementsByTagName('sym')[0];
+        const wptSym = symEl ? symEl.textContent : 'Waypoint';
 
         const distMeters = findWaypointDistanceAlongTrack(lat, lon, trkpts);
         const distKmVal = distMeters / 1000;
@@ -345,6 +462,7 @@
           lat: lat,
           lon: lon,
           name: wptName,
+          sym: wptSym,
           distKmNum: distKmVal,
           distKm: `${distKmVal.toFixed(2)} km`,
           timeFirstStr: formatTime(timeFirstMin),
@@ -354,12 +472,7 @@
         });
       }
 
-      // 2. Generar waypoints adicionales por kilómetros si el checkbox está activo
-      const docClone = gpxDoc.cloneNode(true);
-      const gpxRoot = docClone.documentElement;
-
-      // Si se activaron los km automáticos, recorremos el track generando puntos adicionales
-      let newKmWaypoints = [];
+      // 2. Generar waypoints automáticos por kilómetros
       if (includeKmWaypoints && intervalKm && intervalKm > 0) {
         const intervalMeters = intervalKm * 1000;
         let accumulatedDistance = 0;
@@ -381,10 +494,11 @@
             const timeFirstMin = kmVal * paceFirst;
             const timeLastMin = kmVal * paceLast;
             
-            newKmWaypoints.push({ 
+            generatedWaypointsData.push({ 
               lat: cLat, 
               lon: cLon, 
               name: kmLabel, 
+              sym: kmSym,
               distKmNum: kmVal,
               distKm: `${kmVal.toFixed(1)} km`,
               timeFirstStr: formatTime(timeFirstMin),
@@ -399,9 +513,17 @@
         }
       }
 
-      // Combinar ambos conjuntos de waypoints
-      generatedWaypointsData = generatedWaypointsData.concat(newKmWaypoints);
       generatedWaypointsData.sort((a, b) => a.distKmNum - b.distKmNum);
+
+      let totalTrackDist = 0;
+      let pLat = parseFloat(trkpts[0].getAttribute('lat'));
+      let pLon = parseFloat(trkpts[0].getAttribute('lon'));
+      for (let i = 1; i < trkpts.length; i++) {
+        const cLat = parseFloat(trkpts[i].getAttribute('lat'));
+        const cLon = parseFloat(trkpts[i].getAttribute('lon'));
+        totalTrackDist += calculateDistance(pLat, pLon, cLat, cLon);
+        pLat = cLat; pLon = cLon;
+      }
 
       const totalDistanceKm = totalTrackDist / 1000;
       const durationFirstMin = totalDistanceKm * paceFirst;
@@ -414,12 +536,29 @@
       document.getElementById('resLastHour').textContent = `Llegada: ${addMinutesToTime(startTime, durationLastMin)}`;
       document.getElementById('summaryPanel').classList.remove('hidden');
 
+      renderMapAndTable();
+    }
+
+    function renderMapAndTable() {
+      if (!currentGpxDoc) return;
+      featureGroup.clearLayers();
+
+      const trkpts = currentGpxDoc.getElementsByTagName('trkpt');
+      let trackCoords = [];
+      for (let i = 0; i < trkpts.length; i++) {
+        trackCoords.push([
+          parseFloat(trkpts[i].getAttribute('lat')),
+          parseFloat(trkpts[i].getAttribute('lon'))
+        ]);
+      }
+      L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
+      
       setTimeout(() => { map.invalidateSize(); }, 200);
 
-      // Pintar en el mapa
       generatedWaypointsData.forEach(wp => {
+        const iconEmoji = getSymbolIcon(wp.sym);
         L.marker([wp.lat, wp.lon])
-          .bindPopup(`<b>${wp.name}</b><br>Dist: ${wp.distKm}<br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`)
+          .bindPopup(`<b>${iconEmoji} ${wp.name}</b><br>Dist: ${wp.distKm}<br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`)
           .addTo(featureGroup);
       });
 
@@ -431,7 +570,7 @@
       const downloadCsvBtn = document.getElementById('downloadCsvBtn');
 
       if (generatedWaypointsData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-500 font-semibold">No hay waypoints disponibles ni se han generado por kilómetros.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500">No hay waypoints. Haz clic en el mapa para añadir uno.</td></tr>`;
         downloadBtn.classList.add('hidden');
         downloadJsonBtn.classList.add('hidden');
         downloadCsvBtn.classList.add('hidden');
@@ -441,9 +580,11 @@
       generatedWaypointsData.forEach(wp => {
         const row = document.createElement('tr');
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
+        const iconEmoji = getSymbolIcon(wp.sym);
         
         row.innerHTML = `
           <td class="font-medium">${wp.name}</td>
+          <td><span class="text-xl" title="${wp.sym}">${iconEmoji}</span></td>
           <td>${wp.distKm}</td>
           <td><span class="text-gray-600">${wp.timeFirstStr}</span></td>
           <td><span class="font-semibold text-indigo-600">${wp.hourFirstStr}</span></td>
@@ -455,8 +596,9 @@
         tableBody.appendChild(row);
       });
 
-      // Actualizar / Añadir los waypoints en el XML clonado para la descarga
-      // Primero limpiamos los <wpt> antiguos del clon para reescribirlos limpios y ordenados
+      // Actualizar XML para descarga
+      const docClone = currentGpxDoc.cloneNode(true);
+      const gpxRoot = docClone.documentElement;
       const existingWpts = Array.from(docClone.getElementsByTagName('wpt'));
       existingWpts.forEach(el => el.parentNode.removeChild(el));
 
@@ -469,8 +611,12 @@
         nameEl.textContent = wp.name;
         wptEl.appendChild(nameEl);
 
+        const symEl = docClone.createElement('sym');
+        symEl.textContent = wp.sym;
+        wptEl.appendChild(symEl);
+
         const descEl = docClone.createElement('desc');
-        descEl.textContent = `Dist: ${wp.distKm} | Lat: ${wp.lat.toFixed(6)}, Lon: ${wp.lon.toFixed(6)} | 1º: ${wp.hourFirstStr} (${wp.timeFirstStr}) | Últ: ${wp.hourLastStr} (${wp.timeLastStr})`;
+        descEl.textContent = `Símbolo: ${wp.sym} | Dist: ${wp.distKm} | Lat: ${wp.lat.toFixed(6)}, Lon: ${wp.lon.toFixed(6)} | 1º: ${wp.hourFirstStr} (${wp.timeFirstStr}) | Últ: ${wp.hourLastStr} (${wp.timeLastStr})`;
         wptEl.appendChild(descEl);
         
         gpxRoot.insertBefore(wptEl, gpxRoot.firstChild);
@@ -516,11 +662,12 @@
       if (!generatedWaypointsData.length) return;
       
       let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-      csvContent += "Waypoint,Distancia_Acumulada,Tiempo_1º,Hora_1º,Tiempo_Último,Hora_Último,Latitud,Longitud\r\n";
+      csvContent += "Waypoint,Simbolo,Distancia_Acumulada,Tiempo_1º,Hora_1º,Tiempo_Último,Hora_Último,Latitud,Longitud\r\n";
       
       generatedWaypointsData.forEach(wp => {
         const row = [
           wp.name,
+          wp.sym,
           wp.distKm,
           wp.timeFirstStr,
           wp.hourFirstStr,
