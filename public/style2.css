@@ -22,12 +22,6 @@ body.event-theme-bg {
   background-color: var(--color-primary) !important;
 }
 
-img {
-  width: 100% !important;
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
 
 .text-primary { color: var(--color-primary);  }
 
@@ -145,11 +139,6 @@ navbar-header {
   flex-direction: column;
 }
 
-.card-img-el {
-  width: 100% !important;
-  object-fit: cover;
-}
-
 .modal-overlay-el {
   position: fixed;
   inset: 0;
@@ -171,12 +160,4 @@ navbar-header {
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-/* Opción A: Excluir los elementos de Leaflet */
-img:not(.leaflet-tile):not(.leaflet-marker-icon):not(.leaflet-marker-shadow) {
-  width: 100% !important;
-  max-width: 100%;
-  height: auto;
-  display: block;
 }
