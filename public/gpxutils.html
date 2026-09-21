@@ -41,7 +41,6 @@
     .map-btn:hover {
       background-color: #3367D6;
     }
-    /* Estilo para resetear los iconos div de Leaflet y mostrar los emojis correctamente */
     .custom-emoji-marker {
       background: transparent !important;
       border: none !important;
@@ -51,7 +50,7 @@
 </head>
 <body class="bg-gray-50 text-gray-900">
   <navbar-header></navbar-header>
-  <div class="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg my-10">
+  <div class="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-lg my-10">
     <h2 class="text-2xl font-bold mb-6 text-primary">Procesador de Ficheros GPX y Waypoints</h2>
     
     <!-- Formulario -->
@@ -128,7 +127,7 @@
     <div style="width: 100%; height: 450px; margin-top: 25px; border-radius: 8px; border: 1px solid #d1d5db; position: relative; overflow: hidden;">
       <div id="map" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
     </div>
-    <p class="text-xs text-gray-500 mt-1">💡 Tip: Haz clic en cualquier parte del mapa para abrir una ventana emergente y añadir un waypoint manual seleccionando su nombre e icono.</p>
+    <p class="text-xs text-gray-500 mt-1">💡 Tip: Haz clic en cualquier parte vacía del mapa para añadir un waypoint manual.</p>
 
     <!-- Botones de Descarga -->
     <div class="mt-6 flex flex-wrap gap-3">
@@ -161,13 +160,13 @@
           <tr>
             <th>Waypoint</th>
             <th>Símbolo</th>
-            <th>Distancia Acumulada</th>
+            <th>Distancia</th>
             <th>Tiempo 1º</th>
             <th>Hora 1º</th>
             <th>Tiempo Últ.</th>
             <th>Hora Últ.</th>
             <th>Coordenadas</th>
-            <th>Google Maps</th>
+            <th>Maps</th>
           </tr>
         </thead>
         <tbody>
@@ -217,6 +216,34 @@
       });
 
       return L.marker([lat, lon], { icon: customIcon }).bindPopup(popupHtml);
+    }
+
+    function getWaypointFormHtml(title, defaultName, currentSym, saveBtnId, showDelete = false) {
+      return `
+        <div class="p-2 space-y-2" style="min-width: 220px;">
+          <h4 class="font-bold text-sm text-gray-800">${title}</h4>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">Nombre:</label>
+            <input type="text" id="popupWptName" value="${defaultName}" class="w-full border p-1 text-sm rounded mt-1">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600">Símbolo / Icono:</label>
+            <select id="popupWptSym" class="w-full border p-1 text-sm rounded bg-white mt-1">
+              <option value="Waypoint" ${currentSym === 'Waypoint' ? 'selected' : ''}>📍 Pin / Waypoint estándar</option>
+              <option value="Flag" ${currentSym === 'Flag' ? 'selected' : ''}>🏁 Bandera</option>
+              <option value="Water" ${currentSym === 'Water' ? 'selected' : ''}>💧 Avituallamiento / Agua</option>
+              <option value="Food" ${currentSym === 'Food' ? 'selected' : ''}>🍏 Comida / Avituallamiento</option>
+              <option value="Medical" ${currentSym === 'Medical' ? 'selected' : ''}>✚ Puesto Médico / Cruz Roja</option>
+              <option value="Summit" ${currentSym === 'Summit' ? 'selected' : ''}>⛰️ Cima / Cumbre</option>
+              <option value="Danger" ${currentSym === 'Danger' ? 'selected' : ''}>⚠️ Peligro / Precaución</option>
+            </select>
+          </div>
+          <div class="flex space-x-1 mt-1">
+            <button id="${saveBtnId}" class="w-full bg-indigo-600 text-white text-xs font-semibold py-1.5 px-3 rounded hover:bg-indigo-700">Guardar</button>
+            ${showDelete ? `<button id="popupDeleteWpt" class="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold py-1.5 px-3 rounded" title="Eliminar waypoint">🗑️</button>` : ''}
+          </div>
+        </div>
+      `;
     }
 
     document.getElementById('genKmWaypoints').addEventListener('change', function(e) {
@@ -280,11 +307,14 @@
         const wptSym = symEl ? symEl.textContent : 'Waypoint';
         const iconEmoji = getSymbolIcon(wptSym);
 
-        const descEl = wpts[i].getElementsByTagName('desc')[0];
-        let popupContent = `<b>${iconEmoji} ${wptName}</b><br>Lat: ${lat.toFixed(5)}, Lon: ${lon.toFixed(5)}`;
-        if (descEl && descEl.textContent) {
-          popupContent += `<br>${descEl.textContent.replace(/ \| /g, '<br>')}`;
-        }
+        const popupContent = `
+          <div class="p-2 space-y-1 text-xs" style="min-width: 180px;">
+            <p class="font-bold text-sm text-gray-800">${iconEmoji} ${wptName}</p>
+            <p class="text-gray-600"><b>Símbolo:</b> ${wptSym}</p>
+            <p class="text-gray-600"><b>Lat/Lon:</b> ${lat.toFixed(5)}, ${lon.toFixed(5)}</p>
+            <p class="text-indigo-600 italic mt-1">💡 Procesa el archivo para ver tiempos detallados.</p>
+          </div>
+        `;
 
         createEmojiMarker(lat, lon, wptSym, popupContent).addTo(featureGroup);
       }
@@ -300,29 +330,9 @@
 
       const lat = e.latlng.lat;
       const lon = e.latlng.lng;
+      const defaultName = `Manual ${generatedWaypointsData.length + 1}`;
       
-      const popupContent = `
-        <div class="p-2 space-y-2">
-          <h4 class="font-bold text-sm text-gray-800">Añadir Waypoint Manual</h4>
-          <div>
-            <label class="block text-xs font-semibold text-gray-600">Nombre:</label>
-            <input type="text" id="popupWptName" value="Manual ${generatedWaypointsData.length + 1}" class="w-full border p-1 text-sm rounded">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-600">Símbolo / Icono:</label>
-            <select id="popupWptSym" class="w-full border p-1 text-sm rounded bg-white">
-              <option value="Waypoint">📍 Pin / Waypoint estándar</option>
-              <option value="Flag">🏁 Bandera</option>
-              <option value="Water">💧 Avituallamiento / Agua</option>
-              <option value="Food">🍏 Comida / Avituallamiento</option>
-              <option value="Medical">✚ Puesto Médico / Cruz Roja</option>
-              <option value="Summit">⛰️ Cima / Cumbre</option>
-              <option value="Danger">⚠️ Peligro / Precaución</option>
-            </select>
-          </div>
-          <button id="savePopupWpt" class="w-full bg-indigo-600 text-white text-xs font-semibold py-1.5 px-3 rounded hover:bg-indigo-700">Guardar Waypoint</button>
-        </div>
-      `;
+      const popupContent = getWaypointFormHtml("Añadir Waypoint Manual", defaultName, "Waypoint", "savePopupWpt", false);
 
       L.popup()
         .setLatLng([lat, lon])
@@ -363,24 +373,6 @@
 
             generatedWaypointsData.push(newWp);
             generatedWaypointsData.sort((a, b) => a.distKmNum - b.distKmNum);
-
-            const gpxRoot = currentGpxDoc.documentElement;
-            const wptEl = currentGpxDoc.createElement('wpt');
-            wptEl.setAttribute('lat', lat);
-            wptEl.setAttribute('lon', lon);
-            
-            const nameEl = currentGpxDoc.createElement('name');
-            nameEl.textContent = customName;
-            wptEl.appendChild(nameEl);
-
-            const symEl = currentGpxDoc.createElement('sym');
-            symEl.textContent = selectedSym;
-            wptEl.appendChild(symEl);
-
-            const descEl = currentGpxDoc.createElement('desc');
-            descEl.textContent = `Símbolo: ${selectedSym} | Dist: ${newWp.distKm} | Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)} | 1º: ${newWp.hourFirstStr} (${newWp.timeFirstStr}) | Últ: ${newWp.hourLastStr} (${newWp.timeLastStr})`;
-            wptEl.appendChild(descEl);
-            gpxRoot.insertBefore(wptEl, gpxRoot.firstChild);
 
             map.closePopup();
             renderMapAndTable();
@@ -569,6 +561,75 @@
       renderMapAndTable();
     }
 
+    // Función global para abrir el modal de edición/borrado al hacer clic en un marcador procesado
+    window.openEditPopup = function(index) {
+      const wp = generatedWaypointsData[index];
+      
+      const popupContent = `
+        <div class="p-2 space-y-2 text-xs" style="min-width: 220px;">
+          <h4 class="font-bold text-sm text-gray-800">Detalles y Edición</h4>
+          <p class="text-gray-600"><b>Distancia:</b> ${wp.distKm}</p>
+          <p class="text-gray-600"><b>1º Participante:</b> ${wp.hourFirstStr} (${wp.timeFirstStr})</p>
+          <p class="text-gray-600"><b>Últ. Participante:</b> ${wp.hourLastStr} (${wp.timeLastStr})</p>
+          <hr class="my-1">
+          <div>
+            <label class="block font-semibold text-gray-600">Nombre:</label>
+            <input type="text" id="popupWptName" value="${wp.name}" class="w-full border p-1 text-sm rounded mt-1">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-600">Símbolo / Icono:</label>
+            <select id="popupWptSym" class="w-full border p-1 text-sm rounded bg-white mt-1">
+              <option value="Waypoint" ${wp.sym === 'Waypoint' ? 'selected' : ''}>📍 Pin / Waypoint estándar</option>
+              <option value="Flag" ${wp.sym === 'Flag' ? 'selected' : ''}>🏁 Bandera</option>
+              <option value="Water" ${wp.sym === 'Water' ? 'selected' : ''}>💧 Avituallamiento / Agua</option>
+              <option value="Food" ${wp.sym === 'Food' ? 'selected' : ''}>🍏 Comida / Avituallamiento</option>
+              <option value="Medical" ${wp.sym === 'Medical' ? 'selected' : ''}>✚ Puesto Médico / Cruz Roja</option>
+              <option value="Summit" ${wp.sym === 'Summit' ? 'selected' : ''}>⛰️ Cima / Cumbre</option>
+              <option value="Danger" ${wp.sym === 'Danger' ? 'selected' : ''}>⚠️ Peligro / Precaución</option>
+            </select>
+          </div>
+          <div class="flex space-x-1 mt-2">
+            <button id="saveEditWpt" class="w-full bg-indigo-600 text-white font-semibold py-1.5 px-3 rounded hover:bg-indigo-700">Guardar</button>
+            <button id="deleteEditWpt" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 px-3 rounded" title="Eliminar waypoint">🗑️</button>
+          </div>
+        </div>
+      `;
+
+      L.popup()
+        .setLatLng([wp.lat, wp.lon])
+        .setContent(popupContent)
+        .openOn(map);
+
+      setTimeout(() => {
+        const saveBtn = document.getElementById('saveEditWpt');
+        const deleteBtn = document.getElementById('deleteEditWpt');
+
+        if (saveBtn) {
+          saveBtn.onclick = function() {
+            const newName = document.getElementById('popupWptName').value;
+            const newSym = document.getElementById('popupWptSym').value;
+            if (!newName) return;
+
+            wp.name = newName.trim();
+            wp.sym = newSym;
+
+            map.closePopup();
+            renderMapAndTable();
+          };
+        }
+
+        if (deleteBtn) {
+          deleteBtn.onclick = function() {
+            if (confirm("¿Estás seguro de que deseas eliminar este waypoint?")) {
+              generatedWaypointsData.splice(index, 1);
+              map.closePopup();
+              renderMapAndTable();
+            }
+          };
+        }
+      }, 100);
+    };
+
     function renderMapAndTable() {
       if (!currentGpxDoc) return;
       featureGroup.clearLayers();
@@ -586,12 +647,22 @@
       setTimeout(() => { map.invalidateSize(); }, 200);
 
       const filterVal = document.getElementById('filterSymbol').value;
-      const filteredData = generatedWaypointsData.filter(wp => filterVal === 'ALL' || wp.sym === filterVal);
 
-      filteredData.forEach(wp => {
-        const iconEmoji = getSymbolIcon(wp.sym);
-        const popupContent = `<b>${iconEmoji} ${wp.name}</b><br>Dist: ${wp.distKm}<br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`;
-        createEmojiMarker(wp.lat, wp.lon, wp.sym, popupContent).addTo(featureGroup);
+      generatedWaypointsData.forEach((wp, index) => {
+        if (filterVal === 'ALL' || wp.sym === filterVal) {
+          const iconEmoji = getSymbolIcon(wp.sym);
+          const popupContent = `
+            <div class="p-2 space-y-1 text-xs" style="min-width: 180px;">
+              <p class="font-bold text-sm text-gray-800">${iconEmoji} ${wp.name}</p>
+              <p class="text-gray-600"><b>Distancia:</b> ${wp.distKm}</p>
+              <p class="text-gray-600"><b>1º Participante:</b> ${wp.hourFirstStr} (${wp.timeFirstStr})</p>
+              <p class="text-gray-600"><b>Últ. Participante:</b> ${wp.hourLastStr} (${wp.timeLastStr})</p>
+              <p class="text-gray-500 pt-1 border-t border-gray-200"><b>Coordenadas:</b> ${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}</p>
+              <button onclick="openEditPopup(${index})" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-1 px-2 rounded mt-2 text-center">✏️ Editar / Borrar</button>
+            </div>
+          `;
+          createEmojiMarker(wp.lat, wp.lon, wp.sym, popupContent).addTo(featureGroup);
+        }
       });
 
       const tableBody = document.querySelector('#waypointsTable tbody');
@@ -609,10 +680,18 @@
         return;
       }
 
-      if (filteredData.length === 0) {
+      const filteredIndices = [];
+      generatedWaypointsData.forEach((wp, idx) => {
+        if (filterVal === 'ALL' || wp.sym === filterVal) {
+          filteredIndices.push(idx);
+        }
+      });
+
+      if (filteredIndices.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500">No hay waypoints que coincidan con el filtro seleccionado.</td></tr>`;
       } else {
-        filteredData.forEach(wp => {
+        filteredIndices.forEach(idx => {
+          const wp = generatedWaypointsData[idx];
           const row = document.createElement('tr');
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
           const iconEmoji = getSymbolIcon(wp.sym);
@@ -626,7 +705,7 @@
             <td><span class="text-gray-600">${wp.timeLastStr}</span></td>
             <td><span class="font-semibold text-indigo-600">${wp.hourLastStr}</span></td>
             <td class="text-xs text-gray-500">${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}</td>
-            <td><a href="${mapsUrl}" target="_blank" class="btn-primary">🗺️ Maps</a></td>
+            <td><a href="${mapsUrl}" target="_blank" class="map-btn">🗺️ Maps</a></td>
           `;
           tableBody.appendChild(row);
         });
@@ -665,6 +744,7 @@
       downloadCsvBtn.classList.remove('hidden');
     }
 
+    // Botones de descarga
     document.getElementById('downloadBtn').addEventListener('click', function() {
       if (!generatedGpxString) return;
       const blob = new Blob([generatedGpxString], { type: 'application/gpx+xml' });
