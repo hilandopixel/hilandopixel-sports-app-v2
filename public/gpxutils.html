@@ -41,6 +41,11 @@
     .map-btn:hover {
       background-color: #3367D6;
     }
+    /* Estilo para resetear los iconos div de Leaflet y mostrar los emojis correctamente */
+    .custom-emoji-marker {
+      background: transparent !important;
+      border: none !important;
+    }
   </style>
   <script src="./navbar.js" defer></script>
 </head>
@@ -132,8 +137,24 @@
       <button id="downloadCsvBtn" class="btn-primary hidden" style="background-color: #F59E0B;">📊 Descargar CSV / Excel</button>
     </div>
 
-    <!-- Tabla de Waypoints -->
-    <h3 class="text-xl font-bold mt-8 mb-4">Tabla de Waypoints y Tiempos de Paso</h3>
+    <!-- Cabecera de Tabla y Filtro -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mt-8 mb-4 gap-4">
+      <h3 class="text-xl font-bold">Tabla de Waypoints y Tiempos de Paso</h3>
+      <div class="flex items-center space-x-2 w-full md:w-auto">
+        <label for="filterSymbol" class="text-sm font-semibold text-gray-600">Filtrar por tipo:</label>
+        <select id="filterSymbol" class="border border-gray-300 p-1.5 text-sm rounded-md bg-white focus:ring-2 focus:ring-indigo-500">
+          <option value="ALL">Mostrar todos</option>
+          <option value="Waypoint">📍 Pin / Waypoint</option>
+          <option value="Flag">🏁 Bandera</option>
+          <option value="Water">💧 Agua</option>
+          <option value="Food">🍏 Comida</option>
+          <option value="Medical">✚ Médico</option>
+          <option value="Summit">⛰️ Cima</option>
+          <option value="Danger">⚠️ Peligro</option>
+        </select>
+      </div>
+    </div>
+
     <div class="overflow-x-auto">
       <table id="waypointsTable" class="gpx-table">
         <thead>
@@ -171,7 +192,6 @@
     let outputFilenameBase = 'ruta';
     let currentGpxDoc = null; 
 
-    // Mapa de correspondencia de símbolos a iconos visuales (Emoji)
     const symbolIcons = {
       'Waypoint': '📍',
       'Flag': '🏁',
@@ -186,6 +206,19 @@
       return symbolIcons[sym] || '📍';
     }
 
+    function createEmojiMarker(lat, lon, sym, popupHtml) {
+      const iconEmoji = getSymbolIcon(sym);
+      const customIcon = L.divIcon({
+        className: 'custom-emoji-marker',
+        html: `<div style="font-size: 18px; background: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.35); border: 2px solid #fff;" title="${sym}">${iconEmoji}</div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
+        popupAnchor: [0, -17]
+      });
+
+      return L.marker([lat, lon], { icon: customIcon }).bindPopup(popupHtml);
+    }
+
     document.getElementById('genKmWaypoints').addEventListener('change', function(e) {
       const container = document.getElementById('kmIntervalContainer');
       if (e.target.checked) {
@@ -193,6 +226,10 @@
       } else {
         container.classList.add('hidden');
       }
+    });
+
+    document.getElementById('filterSymbol').addEventListener('change', function() {
+      renderMapAndTable();
     });
 
     document.getElementById('gpxFile').addEventListener('change', function(e) {
@@ -249,15 +286,12 @@
           popupContent += `<br>${descEl.textContent.replace(/ \| /g, '<br>')}`;
         }
 
-        L.marker([lat, lon])
-          .bindPopup(popupContent)
-          .addTo(featureGroup);
+        createEmojiMarker(lat, lon, wptSym, popupContent).addTo(featureGroup);
       }
 
       setTimeout(() => { map.invalidateSize(); }, 200);
     }
 
-    // Clic en el mapa para abrir un popup interactivo y añadir waypoint manual
     map.on('click', function(e) {
       if (!currentGpxDoc) {
         alert("Por favor, carga primero un fichero GPX.");
@@ -290,12 +324,11 @@
         </div>
       `;
 
-      const popup = L.popup()
+      L.popup()
         .setLatLng([lat, lon])
         .setContent(popupContent)
         .openOn(map);
 
-      // Manejar el evento de guardado dentro del popup una vez insertado en el DOM
       setTimeout(() => {
         const saveBtn = document.getElementById('savePopupWpt');
         if (saveBtn) {
@@ -331,7 +364,6 @@
             generatedWaypointsData.push(newWp);
             generatedWaypointsData.sort((a, b) => a.distKmNum - b.distKmNum);
 
-            // Añadir al XML interno
             const gpxRoot = currentGpxDoc.documentElement;
             const wptEl = currentGpxDoc.createElement('wpt');
             wptEl.setAttribute('lat', lat);
@@ -441,7 +473,6 @@
 
       generatedWaypointsData = [];
 
-      // 1. Procesar waypoints existentes
       const wpts = gpxDoc.getElementsByTagName('wpt');
       for (let i = 0; i < wpts.length; i++) {
         const lat = parseFloat(wpts[i].getAttribute('lat'));
@@ -472,7 +503,6 @@
         });
       }
 
-      // 2. Generar waypoints automáticos por kilómetros
       if (includeKmWaypoints && intervalKm && intervalKm > 0) {
         const intervalMeters = intervalKm * 1000;
         let accumulatedDistance = 0;
@@ -555,11 +585,13 @@
       
       setTimeout(() => { map.invalidateSize(); }, 200);
 
-      generatedWaypointsData.forEach(wp => {
+      const filterVal = document.getElementById('filterSymbol').value;
+      const filteredData = generatedWaypointsData.filter(wp => filterVal === 'ALL' || wp.sym === filterVal);
+
+      filteredData.forEach(wp => {
         const iconEmoji = getSymbolIcon(wp.sym);
-        L.marker([wp.lat, wp.lon])
-          .bindPopup(`<b>${iconEmoji} ${wp.name}</b><br>Dist: ${wp.distKm}<br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`)
-          .addTo(featureGroup);
+        const popupContent = `<b>${iconEmoji} ${wp.name}</b><br>Dist: ${wp.distKm}<br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`;
+        createEmojiMarker(wp.lat, wp.lon, wp.sym, popupContent).addTo(featureGroup);
       });
 
       const tableBody = document.querySelector('#waypointsTable tbody');
@@ -577,26 +609,29 @@
         return;
       }
 
-      generatedWaypointsData.forEach(wp => {
-        const row = document.createElement('tr');
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
-        const iconEmoji = getSymbolIcon(wp.sym);
-        
-        row.innerHTML = `
-          <td class="font-medium">${wp.name}</td>
-          <td><span class="text-xl" title="${wp.sym}">${iconEmoji}</span></td>
-          <td>${wp.distKm}</td>
-          <td><span class="text-gray-600">${wp.timeFirstStr}</span></td>
-          <td><span class="font-semibold text-indigo-600">${wp.hourFirstStr}</span></td>
-          <td><span class="text-gray-600">${wp.timeLastStr}</span></td>
-          <td><span class="font-semibold text-indigo-600">${wp.hourLastStr}</span></td>
-          <td class="text-xs text-gray-500">${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}</td>
-          <td><a href="${mapsUrl}" target="_blank" class="btn-primary">🗺️ Maps</a></td>
-        `;
-        tableBody.appendChild(row);
-      });
+      if (filteredData.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500">No hay waypoints que coincidan con el filtro seleccionado.</td></tr>`;
+      } else {
+        filteredData.forEach(wp => {
+          const row = document.createElement('tr');
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
+          const iconEmoji = getSymbolIcon(wp.sym);
+          
+          row.innerHTML = `
+            <td class="font-medium">${wp.name}</td>
+            <td><span class="text-xl" title="${wp.sym}">${iconEmoji}</span></td>
+            <td>${wp.distKm}</td>
+            <td><span class="text-gray-600">${wp.timeFirstStr}</span></td>
+            <td><span class="font-semibold text-indigo-600">${wp.hourFirstStr}</span></td>
+            <td><span class="text-gray-600">${wp.timeLastStr}</span></td>
+            <td><span class="font-semibold text-indigo-600">${wp.hourLastStr}</span></td>
+            <td class="text-xs text-gray-500">${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}</td>
+            <td><a href="${mapsUrl}" target="_blank" class="btn-primary">🗺️ Maps</a></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
 
-      // Actualizar XML para descarga
       const docClone = currentGpxDoc.cloneNode(true);
       const gpxRoot = docClone.documentElement;
       const existingWpts = Array.from(docClone.getElementsByTagName('wpt'));
@@ -630,7 +665,6 @@
       downloadCsvBtn.classList.remove('hidden');
     }
 
-    // Botones de descarga
     document.getElementById('downloadBtn').addEventListener('click', function() {
       if (!generatedGpxString) return;
       const blob = new Blob([generatedGpxString], { type: 'application/gpx+xml' });
