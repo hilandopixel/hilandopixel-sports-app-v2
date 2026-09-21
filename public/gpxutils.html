@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Procesador de GPX y Waypoints por Kilómetros</title>
+  <title>Procesador de GPX y Waypoints</title>
   <link rel="stylesheet" href="style2.css">
 
   <!-- Tailwind CSS CDN -->
@@ -47,7 +47,7 @@
 <body class="bg-gray-50 text-gray-900">
   <navbar-header></navbar-header>
   <div class="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg my-10">
-    <h2 class="text-2xl font-bold mb-6 text-primary">Procesador de Ficheros GPX (Kilómetros)</h2>
+    <h2 class="text-2xl font-bold mb-6 text-primary">Procesador de Ficheros GPX y Waypoints</h2>
     
     <!-- Formulario -->
     <form id="gpxForm" class="space-y-4">
@@ -56,11 +56,7 @@
         <input type="file" id="gpxFile" accept=".gpx" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label for="intervalDist" class="block font-semibold mb-1">Distancia waypoints (km):</label>
-          <input type="number" id="intervalDist" value="1" step="0.1" min="0" required class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500">
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label for="startTime" class="block font-semibold mb-1">Hora de salida:</label>
           <input type="time" id="startTime" value="09:00" required class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -74,14 +70,27 @@
           <input type="number" id="paceLast" value="7.0" step="0.1" min="0.1" required class="w-full border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500">
         </div>
       </div>
+
+      <!-- Checkbox y campo dinámico para waypoints por kilómetros -->
+      <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" id="genKmWaypoints" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          <span class="font-semibold text-gray-700">Generar waypoints automáticos cada "X" kilómetros</span>
+        </label>
+        
+        <div id="kmIntervalContainer" class="hidden pl-8">
+          <label for="intervalDist" class="block text-sm font-medium text-gray-600 mb-1">Distancia entre waypoints automáticos (km):</label>
+          <input type="number" id="intervalDist" value="1" step="0.1" min="0.1" class="w-full md:w-1/3 border border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-indigo-500">
+        </div>
+      </div>
       
-      <button type="submit" class="btn-primary font-semibold px-5 py-2 rounded-md hover:bg-indigo-700 transition">Procesar y Visualizar Waypoints</button>
+      <button type="submit" class="btn-primary font-semibold px-5 py-2 rounded-md hover:bg-indigo-700 transition">Procesar y Calcular Tiempos</button>
     </form>
 
     <!-- Panel de Resumen General -->
     <div id="summaryPanel" class="hidden mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
-        <p class="text-sm text-gray-600 font-medium">Distancia Total:</p>
+        <p class="text-sm text-gray-600 font-medium">Distancia Total Ruta:</p>
         <p id="resTotalDist" class="text-lg font-bold text-gray-800">-</p>
       </div>
       <div>
@@ -103,7 +112,7 @@
 
     <!-- Botones de Descarga -->
     <div class="mt-6 flex flex-wrap gap-3">
-      <button id="downloadBtn" class="btn-primary hidden" style="background-color: #10B981;">📥 Descargar GPX</button>
+      <button id="downloadBtn" class="btn-primary hidden" style="background-color: #10B981;">📥 Descargar GPX Actualizado</button>
       <button id="downloadJsonBtn" class="btn-primary hidden" style="background-color: #6366F1;">📄 Descargar JSON</button>
       <button id="downloadCsvBtn" class="btn-primary hidden" style="background-color: #F59E0B;">📊 Descargar CSV / Excel</button>
     </div>
@@ -115,7 +124,7 @@
         <thead>
           <tr>
             <th>Waypoint</th>
-            <th>Distancia</th>
+            <th>Distancia Acumulada</th>
             <th>Tiempo 1º</th>
             <th>Hora 1º</th>
             <th>Tiempo Últ.</th>
@@ -146,7 +155,17 @@
     let outputFilenameBase = 'ruta';
     let currentGpxDoc = null; 
 
-    // Evento para visualizar el GPX y sus waypoints (incluyendo los desc si ya venían guardados) al seleccionar archivo
+    // Mostrar/ocultar el input de kilómetros según el estado del checkbox
+    document.getElementById('genKmWaypoints').addEventListener('change', function(e) {
+      const container = document.getElementById('kmIntervalContainer');
+      if (e.target.checked) {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    });
+
+    // Carga inicial y previsualización del archivo GPX seleccionado
     document.getElementById('gpxFile').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -163,7 +182,6 @@
       reader.onload = function(event) {
         const parser = new DOMParser();
         currentGpxDoc = parser.parseFromString(event.target.result, "application/xml");
-        
         previewGpxOnMap(currentGpxDoc);
       };
       reader.readAsText(file);
@@ -172,7 +190,6 @@
     function previewGpxOnMap(gpxDoc) {
       featureGroup.clearLayers();
 
-      // 1. Pintar pista (track)
       const trkpts = gpxDoc.getElementsByTagName('trkpt');
       if (trkpts.length > 0) {
         let trackCoords = [];
@@ -186,7 +203,6 @@
         map.fitBounds(polyline.getBounds());
       }
 
-      // 2. Pintar waypoints y mostrar descripción/coordenadas si existen
       const wpts = gpxDoc.getElementsByTagName('wpt');
       for (let i = 0; i < wpts.length; i++) {
         const lat = parseFloat(wpts[i].getAttribute('lat'));
@@ -205,12 +221,9 @@
           .addTo(featureGroup);
       }
 
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 200);
+      setTimeout(() => { map.invalidateSize(); }, 200);
     }
 
-    // Botón de procesar para calcular nuevos waypoints por km, tabla y tiempos
     document.getElementById('gpxForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
@@ -219,13 +232,13 @@
         return;
       }
 
-      const intervalKm = parseFloat(document.getElementById('intervalDist').value);
-      const distanceIntervalMeters = intervalKm * 1000;
       const startTime = document.getElementById('startTime').value;
       const paceFirst = parseFloat(document.getElementById('paceFirst').value);
       const paceLast = parseFloat(document.getElementById('paceLast').value);
+      const includeKmWaypoints = document.getElementById('genKmWaypoints').checked;
+      const intervalKm = includeKmWaypoints ? parseFloat(document.getElementById('intervalDist').value) : null;
       
-      processGpxAndRender(currentGpxDoc, distanceIntervalMeters, startTime, paceFirst, paceLast);
+      processGpxDataAndRender(currentGpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm);
     });
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -257,98 +270,174 @@
       return date.toTimeString().substring(0, 5);
     }
 
-    function processGpxAndRender(gpxDoc, intervalMeters, startTime, paceFirst, paceLast) {
-      const trkpts = gpxDoc.getElementsByTagName('trkpt');
-      if (!trkpts.length) return;
-      
-      featureGroup.clearLayers();
-      
-      // Volver a pintar la ruta base
-      let trackCoords = [];
-      for (let i = 0; i < trkpts.length; i++) {
-        trackCoords.push([
-          parseFloat(trkpts[i].getAttribute('lat')),
-          parseFloat(trkpts[i].getAttribute('lon'))
-        ]);
-      }
-      const polyline = L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
-      map.fitBounds(polyline.getBounds());
+    function findWaypointDistanceAlongTrack(wptLat, wptLon, trkpts) {
+      let minDist = Infinity;
+      let accumulatedAtWpt = 0;
+      let currentAcc = 0;
 
-      let accumulatedDistance = 0;
-      let nextTargetDistance = intervalMeters;
-      generatedWaypointsData = [];
-      
       let prevLat = parseFloat(trkpts[0].getAttribute('lat'));
       let prevLon = parseFloat(trkpts[0].getAttribute('lon'));
-      
+
+      for (let i = 0; i < trkpts.length; i++) {
+        const currLat = parseFloat(trkpts[i].getAttribute('lat'));
+        const currLon = parseFloat(trkpts[i].getAttribute('lon'));
+
+        if (i > 0) {
+          currentAcc += calculateDistance(prevLat, prevLon, currLat, currLon);
+        }
+
+        const distToWpt = Math.pow(currLat - wptLat, 2) + Math.pow(currLon - wptLon, 2);
+        if (distToWpt < minDist) {
+          minDist = distToWpt;
+          accumulatedAtWpt = currentAcc;
+        }
+
+        prevLat = currLat;
+        prevLon = currLon;
+      }
+      return accumulatedAtWpt;
+    }
+
+    function processGpxDataAndRender(gpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm) {
+      const trkpts = gpxDoc.getElementsByTagName('trkpt');
+      if (!trkpts.length) {
+        alert("El archivo GPX no contiene puntos de track.");
+        return;
+      }
+
+      featureGroup.clearLayers();
+
+      let trackCoords = [];
+      let totalTrackDist = 0;
+      let prevLat = parseFloat(trkpts[0].getAttribute('lat'));
+      let prevLon = parseFloat(trkpts[0].getAttribute('lon'));
+      trackCoords.push([prevLat, prevLon]);
+
       for (let i = 1; i < trkpts.length; i++) {
         const currLat = parseFloat(trkpts[i].getAttribute('lat'));
         const currLon = parseFloat(trkpts[i].getAttribute('lon'));
-        
-        const dist = calculateDistance(prevLat, prevLon, currLat, currLon);
-        accumulatedDistance += dist;
-        
-        while (accumulatedDistance >= nextTargetDistance) {
-          const kmVal = nextTargetDistance / 1000;
-          const kmLabel = kmVal.toFixed(1);
-          
-          const timeFirstMin = kmVal * paceFirst;
-          const timeLastMin = kmVal * paceLast;
-          
-          generatedWaypointsData.push({ 
-            lat: currLat, 
-            lon: currLon, 
-            name: `Km ${kmLabel}`, 
-            distKm: `${kmLabel} km`,
-            timeFirstStr: formatTime(timeFirstMin),
-            hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
-            timeLastStr: formatTime(timeLastMin),
-            hourLastStr: addMinutesToTime(startTime, timeLastMin)
-          });
-          nextTargetDistance += intervalMeters;
-        }
-        
+        trackCoords.push([currLat, currLon]);
+        totalTrackDist += calculateDistance(prevLat, prevLon, currLat, currLon);
         prevLat = currLat;
         prevLon = currLon;
       }
 
-      const totalDistanceKm = accumulatedDistance / 1000;
+      const polyline = L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
+      map.fitBounds(polyline.getBounds());
+
+      generatedWaypointsData = [];
+
+      // 1. Procesar waypoints existentes en el archivo
+      const wpts = gpxDoc.getElementsByTagName('wpt');
+      for (let i = 0; i < wpts.length; i++) {
+        const lat = parseFloat(wpts[i].getAttribute('lat'));
+        const lon = parseFloat(wpts[i].getAttribute('lon'));
+        const nameEl = wpts[i].getElementsByTagName('name')[0];
+        const wptName = nameEl ? nameEl.textContent : `Waypoint ${i+1}`;
+
+        const distMeters = findWaypointDistanceAlongTrack(lat, lon, trkpts);
+        const distKmVal = distMeters / 1000;
+
+        const timeFirstMin = distKmVal * paceFirst;
+        const timeLastMin = distKmVal * paceLast;
+
+        generatedWaypointsData.push({
+          lat: lat,
+          lon: lon,
+          name: wptName,
+          distKmNum: distKmVal,
+          distKm: `${distKmVal.toFixed(2)} km`,
+          timeFirstStr: formatTime(timeFirstMin),
+          hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+          timeLastStr: formatTime(timeLastMin),
+          hourLastStr: addMinutesToTime(startTime, timeLastMin)
+        });
+      }
+
+      // 2. Generar waypoints adicionales por kilómetros si el checkbox está activo
+      const docClone = gpxDoc.cloneNode(true);
+      const gpxRoot = docClone.documentElement;
+
+      // Si se activaron los km automáticos, recorremos el track generando puntos adicionales
+      let newKmWaypoints = [];
+      if (includeKmWaypoints && intervalKm && intervalKm > 0) {
+        const intervalMeters = intervalKm * 1000;
+        let accumulatedDistance = 0;
+        let nextTargetDistance = intervalMeters;
+        
+        let pLat = parseFloat(trkpts[0].getAttribute('lat'));
+        let pLon = parseFloat(trkpts[0].getAttribute('lon'));
+
+        for (let i = 1; i < trkpts.length; i++) {
+          const cLat = parseFloat(trkpts[i].getAttribute('lat'));
+          const cLon = parseFloat(trkpts[i].getAttribute('lon'));
+          
+          accumulatedDistance += calculateDistance(pLat, pLon, cLat, cLon);
+          
+          while (accumulatedDistance >= nextTargetDistance) {
+            const kmVal = nextTargetDistance / 1000;
+            const kmLabel = `Km ${kmVal.toFixed(1)}`;
+            
+            const timeFirstMin = kmVal * paceFirst;
+            const timeLastMin = kmVal * paceLast;
+            
+            newKmWaypoints.push({ 
+              lat: cLat, 
+              lon: cLon, 
+              name: kmLabel, 
+              distKmNum: kmVal,
+              distKm: `${kmVal.toFixed(1)} km`,
+              timeFirstStr: formatTime(timeFirstMin),
+              hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+              timeLastStr: formatTime(timeLastMin),
+              hourLastStr: addMinutesToTime(startTime, timeLastMin)
+            });
+            nextTargetDistance += intervalMeters;
+          }
+          pLat = cLat;
+          pLon = cLon;
+        }
+      }
+
+      // Combinar ambos conjuntos de waypoints
+      generatedWaypointsData = generatedWaypointsData.concat(newKmWaypoints);
+      generatedWaypointsData.sort((a, b) => a.distKmNum - b.distKmNum);
+
+      const totalDistanceKm = totalTrackDist / 1000;
       const durationFirstMin = totalDistanceKm * paceFirst;
       const durationLastMin = totalDistanceKm * paceLast;
-      
+
       document.getElementById('resTotalDist').textContent = `${totalDistanceKm.toFixed(2)} km`;
       document.getElementById('resFirstTime').textContent = `Duración: ${formatTime(durationFirstMin)}`;
       document.getElementById('resFirstHour').textContent = `Llegada: ${addMinutesToTime(startTime, durationFirstMin)}`;
       document.getElementById('resLastTime').textContent = `Duración: ${formatTime(durationLastMin)}`;
       document.getElementById('resLastHour').textContent = `Llegada: ${addMinutesToTime(startTime, durationLastMin)}`;
       document.getElementById('summaryPanel').classList.remove('hidden');
-      
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 200);
-      
-      // Pintar waypoints calculados con coordenadas y tiempos detallados en el popup
+
+      setTimeout(() => { map.invalidateSize(); }, 200);
+
+      // Pintar en el mapa
       generatedWaypointsData.forEach(wp => {
         L.marker([wp.lat, wp.lon])
-          .bindPopup(`<b>${wp.name}</b><br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`)
+          .bindPopup(`<b>${wp.name}</b><br>Dist: ${wp.distKm}<br>Lat: ${wp.lat.toFixed(5)}, Lon: ${wp.lon.toFixed(5)}<br>1º: ${wp.hourFirstStr} (${wp.timeFirstStr})<br>Últ: ${wp.hourLastStr} (${wp.timeLastStr})`)
           .addTo(featureGroup);
       });
-      
+
       const tableBody = document.querySelector('#waypointsTable tbody');
       tableBody.innerHTML = '';
-      
+
       const downloadBtn = document.getElementById('downloadBtn');
       const downloadJsonBtn = document.getElementById('downloadJsonBtn');
       const downloadCsvBtn = document.getElementById('downloadCsvBtn');
 
       if (generatedWaypointsData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-500 font-semibold">No se generaron waypoints (el intervalo es mayor que la longitud del track).</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-red-500 font-semibold">No hay waypoints disponibles ni se han generado por kilómetros.</td></tr>`;
         downloadBtn.classList.add('hidden');
         downloadJsonBtn.classList.add('hidden');
         downloadCsvBtn.classList.add('hidden');
         return;
       }
-      
+
       generatedWaypointsData.forEach(wp => {
         const row = document.createElement('tr');
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
@@ -366,10 +455,11 @@
         tableBody.appendChild(row);
       });
 
-      // Clonar el documento para insertar los waypoints con sus coordenadas y tiempos en la etiqueta <desc>
-      const docClone = gpxDoc.cloneNode(true);
-      const gpxRoot = docClone.documentElement;
-      
+      // Actualizar / Añadir los waypoints en el XML clonado para la descarga
+      // Primero limpiamos los <wpt> antiguos del clon para reescribirlos limpios y ordenados
+      const existingWpts = Array.from(docClone.getElementsByTagName('wpt'));
+      existingWpts.forEach(el => el.parentNode.removeChild(el));
+
       generatedWaypointsData.forEach(wp => {
         const wptEl = docClone.createElement('wpt');
         wptEl.setAttribute('lat', wp.lat);
@@ -380,7 +470,7 @@
         wptEl.appendChild(nameEl);
 
         const descEl = docClone.createElement('desc');
-        descEl.textContent = `Lat: ${wp.lat.toFixed(6)}, Lon: ${wp.lon.toFixed(6)} | 1º: ${wp.hourFirstStr} (${wp.timeFirstStr}) | Últ: ${wp.hourLastStr} (${wp.timeLastStr})`;
+        descEl.textContent = `Dist: ${wp.distKm} | Lat: ${wp.lat.toFixed(6)}, Lon: ${wp.lon.toFixed(6)} | 1º: ${wp.hourFirstStr} (${wp.timeFirstStr}) | Últ: ${wp.hourLastStr} (${wp.timeLastStr})`;
         wptEl.appendChild(descEl);
         
         gpxRoot.insertBefore(wptEl, gpxRoot.firstChild);
@@ -388,20 +478,20 @@
 
       const serializer = new XMLSerializer();
       generatedGpxString = serializer.serializeToString(docClone);
-      
+
       downloadBtn.classList.remove('hidden');
       downloadJsonBtn.classList.remove('hidden');
       downloadCsvBtn.classList.remove('hidden');
     }
 
-    // Botones de descarga...
+    // Botones de descarga
     document.getElementById('downloadBtn').addEventListener('click', function() {
       if (!generatedGpxString) return;
       const blob = new Blob([generatedGpxString], { type: 'application/gpx+xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${outputFilenameBase}_kms.gpx`;
+      a.download = `${outputFilenameBase}_tiempos.gpx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -426,7 +516,7 @@
       if (!generatedWaypointsData.length) return;
       
       let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-      csvContent += "Waypoint,Distancia,Tiempo_1º,Hora_1º,Tiempo_Último,Hora_Último,Latitud,Longitud\r\n";
+      csvContent += "Waypoint,Distancia_Acumulada,Tiempo_1º,Hora_1º,Tiempo_Último,Hora_Último,Latitud,Longitud\r\n";
       
       generatedWaypointsData.forEach(wp => {
         const row = [
