@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Visor, Procesador y Descarga GPX</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #map { height: 450px; width: 100%; margin-top: 20px; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .btn-container { margin-top: 20px; }
+    #downloadBtn { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; display: none; }
+    #downloadBtn:hover { background-color: #45a049; }
+    .map-btn { background-color: #4285F4; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 13px; display: inline-block; }
+    .map-btn:hover { background-color: #3367D6; }
+  </style>
+</head>
+<body>
+
+  <h2>Procesador, Mapa y Tabla de GPX (Kilómetros)</h2>
+  
+  <form id="gpxForm">
+    <label for="gpxFile">Archivo GPX:</label>
+    <input type="file" id="gpxFile" accept=".gpx" required><br><br>
+    
+    <label for="intervalDist">Distancia entre waypoints (kilómetros):</label>
+    <input type="number" id="intervalDist" value="1" step="0.1" min="0" required><br><br>
+    
+    <button type="submit">Procesar y Visualizar</button>
+  </form>
+
+  <!-- Contenedor del Mapa -->
+  <div id="map"></div>
+
+  <!-- Botón de Descarga -->
+  <div class="btn-container">
+    <button id="downloadBtn">📥 Descargar GPX Modificado</button>
+  </div>
+
+  <!-- Tabla de Waypoints -->
+  <h3>Tabla de Waypoints Generados</h3>
+  <table id="waypointsTable">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Distancia Acumulada</th>
+        <th>Latitud</th>
+        <th>Longitud</th>
+        <th>Google Maps</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5" style="text-align: center;">Sube un archivo GPX para ver los datos</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Inicializar el mapa
+    const map = L.map('map').setView([40.4168, -3.7038], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let featureGroup = L.layerGroup().addTo(map);
+    let generatedGpxString = null; 
+    let outputFilename = 'ruta_con_waypoints_kms.gpx';
+
+    document.getElementById('gpxForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const fileInput = document.getElementById('gpxFile');
+      const intervalKm = parseFloat(document.getElementById('intervalDist').value);
+      const distanceIntervalMeters = intervalKm * 1000;
+      
+      if (!fileInput.files.length) return;
+      
+      const file = fileInput.files[0];
+      
+      // Obtener el nombre original y concatenar _kms
+      const originalName = file.name;
+      const lastDotIndex = originalName.lastIndexOf('.');
+      if (lastDotIndex !== -1) {
+        const baseName = originalName.substring(0, lastDotIndex);
+        outputFilename = `${baseName}_kms.gpx`;
+      } else {
+        outputFilename = `${originalName}_kms.gpx`;
+      }
+
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        const parser = new DOMParser();
+        const gpxDoc = parser.parseFromString(event.target.result, "application/xml");
+        
+        processGpxAndRender(gpxDoc, distanceIntervalMeters);
+      };
+      
+      reader.readAsText(file);
+    });
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3; // Radio de la Tierra en metros
+      const rad = Math.PI / 180;
+      const dLat = (lat2 - lat1) * rad;
+      const dLon = (lon2 - lon1) * rad;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function processGpxAndRender(gpxDoc, intervalMeters) {
+      const trkpts = gpxDoc.getElementsByTagName('trkpt');
+      if (!trkpts.length) {
+        alert("El archivo GPX no contiene puntos de track (trkpt).");
+        return;
+      }
+      
+      featureGroup.clearLayers();
+      
+      let trackCoords = [];
+      let accumulatedDistance = 0;
+      let nextTargetDistance = intervalMeters;
+      const newWaypoints = [];
+      
+      let prevLat = parseFloat(trkpts[0].getAttribute('lat'));
+      let prevLon = parseFloat(trkpts[0].getAttribute('lon'));
+      trackCoords.push([prevLat, prevLon]);
+      
+      for (let i = 1; i < trkpts.length; i++) {
+        const currLat = parseFloat(trkpts[i].getAttribute('lat'));
+        const currLon = parseFloat(trkpts[i].getAttribute('lon'));
+        trackCoords.push([currLat, currLon]);
+        
+        const dist = calculateDistance(prevLat, prevLon, currLat, currLon);
+        accumulatedDistance += dist;
+        
+        while (accumulatedDistance >= nextTargetDistance) {
+          const kmLabel = (nextTargetDistance / 1000).toFixed(1);
+          newWaypoints.push({ 
+            lat: currLat, 
+            lon: currLon, 
+            name: `Km ${kmLabel}`, 
+            distKm: kmLabel 
+          });
+          nextTargetDistance += intervalMeters;
+        }
+        
+        prevLat = currLat;
+        prevLon = currLon;
+      }
+      
+      // Pintar ruta en el mapa
+      const polyline = L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
+      map.fitBounds(polyline.getBounds());
+      
+      // Pintar waypoints en el mapa
+      newWaypoints.forEach(wp => {
+        L.marker([wp.lat, wp.lon])
+          .bindPopup(`<b>${wp.name}</b><br>Lat: ${wp.lat.toFixed(5)}<br>Lon: ${wp.lon.toFixed(5)}`)
+          .addTo(featureGroup);
+      });
+      
+      // Rellenar tabla HTML
+      const tableBody = document.querySelector('#waypointsTable tbody');
+      tableBody.innerHTML = '';
+      
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      if (newWaypoints.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No se generaron waypoints (el intervalo es mayor que la longitud del track).</td></tr>`;
+        downloadBtn.style.display = 'none';
+        return;
+      }
+      
+      newWaypoints.forEach(wp => {
+        const row = document.createElement('tr');
+        // URL oficial de Google Maps basada en las coordenadas
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
+        
+        row.innerHTML = `
+          <td>${wp.name}</td>
+          <td>${wp.distKm} km</td>
+          <td>${wp.lat.toFixed(6)}</td>
+          <td>${wp.lon.toFixed(6)}</td>
+          <td><a href="${mapsUrl}" target="_blank" class="map-btn">🗺️ Abrir en Maps</a></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      // Insertar los nuevos waypoints físicamente en la estructura XML del documento
+      const gpxRoot = gpxDoc.documentElement;
+      newWaypoints.forEach(wp => {
+        const wptEl = gpxDoc.createElement('wpt');
+        wptEl.setAttribute('lat', wp.lat);
+        wptEl.setAttribute('lon', wp.lon);
+        
+        const nameEl = gpxDoc.createElement('name');
+        nameEl.textContent = wp.name;
+        wptEl.appendChild(nameEl);
+        
+        gpxRoot.insertBefore(wptEl, gpxRoot.firstChild);
+      });
+
+      // Serializar a texto XML y habilitar el botón de descarga
+      const serializer = new XMLSerializer();
+      generatedGpxString = serializer.serializeToString(gpxDoc);
+      downloadBtn.style.display = 'inline-block';
+    }
+
+    // Evento del botón de descarga utilizando el nombre con _kms
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+      if (!generatedGpxString) return;
+      
+      const blob = new Blob([generatedGpxString], { type: 'application/gpx+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = outputFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+
+</body>
+</html>
