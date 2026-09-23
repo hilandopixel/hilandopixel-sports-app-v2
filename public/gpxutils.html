@@ -79,6 +79,15 @@
         </div>
       </div>
 
+      <!-- Checkbox para recalcular altitud desde internet -->
+      <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-lg space-y-2">
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" id="fetchInternetElevation" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          <span class="font-semibold text-indigo-900">🌍 Recargar altitudes desde internet (Open-Meteo DEM API) para corregir el desnivel</span>
+        </label>
+        <p class="text-xs text-indigo-700 pl-8">💡 Si está desmarcado, se utilizarán estrictamente las altitudes originales que contiene el fichero GPX de entrada.</p>
+      </div>
+
       <!-- Checkbox y configuración para waypoints automáticos por kilómetros -->
       <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
         <label class="flex items-center space-x-3 cursor-pointer">
@@ -114,7 +123,7 @@
         </div>
       </div>
       
-      <button type="submit" class="btn-primary font-semibold px-5 py-2 rounded-md hover:bg-indigo-700 transition">Procesar y Calcular Tiempos</button>
+      <button type="submit" id="submitBtn" class="btn-primary font-semibold px-5 py-2 rounded-md hover:bg-indigo-700 transition">Procesar y Calcular Tiempos</button>
     </form>
 
     <!-- Panel de Resumen General -->
@@ -186,7 +195,7 @@
       </div>
     </div>
 
-    <!-- Botones de Descarga -->
+    <!-- Botones de Descarga (Siempre habilitados y visibles tras cargar archivo) -->
     <div class="mt-6 flex flex-wrap gap-3">
       <button id="downloadBtn" class="btn-primary hidden" style="background-color: #10B981;">📥 Descargar GPX Actualizado</button>
       <button id="downloadJsonBtn" class="btn-primary hidden" style="background-color: #6366F1;">📄 Descargar JSON</button>
@@ -270,6 +279,7 @@
     let generatedWaypointsData = [];
     let outputFilenameBase = 'ruta';
     let currentGpxDoc = null; 
+    let originalGpxText = null; // Almacena el texto original del GPX intacto
     let trackProfileData = []; 
     let lastTotalGain = 0;
     let lastTotalLoss = 0;
@@ -292,7 +302,6 @@
       'Fin': '🏁'
     };
 
-    // Marcados por defecto (todos los tipos activos)
     let activeWptTypes = new Set(Object.keys(symbolIcons));
     let activeTableTypes = new Set(Object.keys(symbolIcons));
 
@@ -308,7 +317,6 @@
       if (trackProfileData.length > 0) drawElevationChart();
     });
 
-    // Controles globales para Perfil
     document.getElementById('selectAllWpts').addEventListener('click', function() {
       document.querySelectorAll('#wptFilterCheckboxes input[type="checkbox"]').forEach(cb => {
         cb.checked = true;
@@ -325,7 +333,6 @@
       if (trackProfileData.length > 0) drawElevationChart();
     });
 
-    // Controles globales para Tabla
     document.getElementById('selectAllTable').addEventListener('click', function() {
       document.querySelectorAll('#tableFilterCheckboxes input[type="checkbox"]').forEach(cb => {
         cb.checked = true;
@@ -343,7 +350,6 @@
     });
 
     function initFilterCheckboxes() {
-      // Checkboxes para Perfil (marcados por defecto)
       const profileContainer = document.getElementById('wptFilterCheckboxes');
       profileContainer.innerHTML = '';
       Object.keys(symbolIcons).forEach(sym => {
@@ -362,7 +368,6 @@
         profileContainer.appendChild(label);
       });
 
-      // Checkboxes para Tabla (marcados por defecto)
       const tableContainer = document.getElementById('tableFilterCheckboxes');
       tableContainer.innerHTML = '';
       Object.keys(symbolIcons).forEach(sym => {
@@ -481,36 +486,125 @@
 
       const reader = new FileReader();
       reader.onload = function(event) {
+        originalGpxText = event.target.result; // Guardar texto original
         const parser = new DOMParser();
-        currentGpxDoc = parser.parseFromString(event.target.result, "application/xml");
-        extractTrackProfile(currentGpxDoc);
+        currentGpxDoc = parser.parseFromString(originalGpxText, "application/xml");
+        
         previewGpxOnMap(currentGpxDoc);
+
+        // Habilitar los botones de descarga inmediatamente al cargar el fichero
+        document.getElementById('downloadBtn').classList.remove('hidden');
+        document.getElementById('downloadJsonBtn').classList.remove('hidden');
+        document.getElementById('downloadCsvBtn').classList.remove('hidden');
+        updateGpxStringAndRefresh();
       };
       reader.readAsText(file);
     });
 
-    function extractTrackProfile(gpxDoc) {
-      trackProfileData = [];
+    async function extractTrackProfile(gpxDoc) {
       const trkpts = gpxDoc.getElementsByTagName('trkpt');
       if (trkpts.length === 0) return;
 
+      const fetchInternet = document.getElementById('fetchInternetElevation').checked;
+      const submitBtn = document.getElementById('submitBtn');
+
+      let elevations = [];
+
+      if (fetchInternet) {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = '🌍 Consultando altitudes en internet...';
+        }
+
+        const lats = [];
+        const lons = [];
+        for (let i = 0; i < trkpts.length; i++) {
+          lats.push(parseFloat(trkpts[i].getAttribute('lat')));
+          lons.push(parseFloat(trkpts[i].getAttribute('lon')));
+        }
+
+        try {
+          const chunkSize = 100;
+          for (let i = 0; i < lats.length; i += chunkSize) {
+            const chunkLats = lats.slice(i, i + chunkSize);
+            const chunkLons = lons.slice(i, i + chunkSize);
+
+            const url = `https://api.open-meteo.com/v1/elevation?latitude=${chunkLats.join(',')}&longitude=${chunkLons.join(',')}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.elevation) {
+              elevations.push(...data.elevation);
+            } else {
+              chunkLats.forEach((_, idx) => {
+                const globalIdx = i + idx;
+                const eleEl = trkpts[globalIdx].getElementsByTagName('ele')[0];
+                elevations.push(eleEl ? parseFloat(eleEl.textContent) : 0);
+              });
+            }
+          }
+
+          for (let i = 0; i < trkpts.length; i++) {
+            let eleEl = trkpts[i].getElementsByTagName('ele')[0];
+            if (!eleEl) {
+              eleEl = currentGpxDoc.createElement('ele');
+              trkpts[i].appendChild(eleEl);
+            }
+            eleEl.textContent = elevations[i] !== null ? elevations[i] : 0;
+          }
+
+        } catch (error) {
+          console.error("Error al obtener altitudes de internet:", error);
+          alert("Hubo un error al consultar el servicio de altitud online. Se usarán las altitudes originales del GPX.");
+          for (let i = 0; i < trkpts.length; i++) {
+            const eleEl = trkpts[i].getElementsByTagName('ele')[0];
+            elevations.push(eleEl ? parseFloat(eleEl.textContent) : 0);
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Procesar y Calcular Tiempos';
+          }
+        }
+      } else {
+        // Restaurar altitudes originales desde el GPX base si el usuario desmarca la opción
+        if (originalGpxText) {
+          const parser = new DOMParser();
+          const freshDoc = parser.parseFromString(originalGpxText, "application/xml");
+          const freshTrkpts = freshDoc.getElementsByTagName('trkpt');
+          for (let i = 0; i < trkpts.length; i++) {
+            const origEleEl = freshTrkpts[i].getElementsByTagName('ele')[0];
+            const origEle = origEleEl ? parseFloat(origEleEl.textContent) : 0;
+            elevations.push(origEle);
+
+            let eleEl = trkpts[i].getElementsByTagName('ele')[0];
+            if (eleEl && origEleEl) {
+              eleEl.textContent = origEleEl.textContent;
+            }
+          }
+        } else {
+          for (let i = 0; i < trkpts.length; i++) {
+            const eleEl = trkpts[i].getElementsByTagName('ele')[0];
+            elevations.push(eleEl ? parseFloat(eleEl.textContent) : 0);
+          }
+        }
+      }
+
+      trackProfileData = [];
       let accumulatedDist = 0;
       lastTotalGain = 0;
       lastTotalLoss = 0;
 
       let prevLat = parseFloat(trkpts[0].getAttribute('lat'));
       let prevLon = parseFloat(trkpts[0].getAttribute('lon'));
-      
-      const eleEl0 = trkpts[0].getElementsByTagName('ele')[0];
-      let prevEle = eleEl0 ? parseFloat(eleEl0.textContent) : 0;
+      let prevEle = elevations[0] || 0;
 
       trackProfileData.push({ dist: 0, ele: prevEle, slope: 0 });
 
       for (let i = 1; i < trkpts.length; i++) {
         const currLat = parseFloat(trkpts[i].getAttribute('lat'));
         const currLon = parseFloat(trkpts[i].getAttribute('lon'));
-        const eleEl = trkpts[i].getElementsByTagName('ele')[0];
-        const currEle = eleEl ? parseFloat(eleEl.textContent) : prevEle;
+        const currEle = elevations[i] !== undefined ? elevations[i] : prevEle;
 
         const diffEle = currEle - prevEle;
         if (diffEle > 0) lastTotalGain += diffEle;
@@ -822,7 +916,7 @@
       }, 100);
     });
 
-    document.getElementById('gpxForm').addEventListener('submit', function(e) {
+    document.getElementById('gpxForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       if (!currentGpxDoc) {
@@ -837,7 +931,7 @@
       const intervalKm = includeKmWaypoints ? parseFloat(document.getElementById('intervalDist').value) : null;
       const kmSym = document.getElementById('kmWptSymbol').value;
       
-      processGpxDataAndRender(currentGpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm, kmSym);
+      await processGpxDataAndRender(currentGpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm, kmSym);
     });
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -895,12 +989,14 @@
       return accumulatedAtWpt;
     }
 
-    function processGpxDataAndRender(gpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm, kmSym) {
+    async function processGpxDataAndRender(gpxDoc, startTime, paceFirst, paceLast, includeKmWaypoints, intervalKm, kmSym) {
       const trkpts = gpxDoc.getElementsByTagName('trkpt');
       if (!trkpts.length) {
         alert("El archivo GPX no contiene puntos de track.");
         return;
       }
+
+      await extractTrackProfile(gpxDoc);
 
       generatedWaypointsData = [];
 
@@ -997,7 +1093,7 @@
       document.getElementById('summaryPanel').classList.remove('hidden');
 
       renderMapAndTable();
-      if (trackProfileData.length > 0) drawElevationChart();
+      drawElevationChart();
     }
 
     window.openEditPopup = function(index) {
@@ -1086,7 +1182,6 @@
       
       setTimeout(() => { map.invalidateSize(); }, 200);
 
-      // Renderizar marcadores en el mapa respetando los filtros del perfil
       generatedWaypointsData.forEach((wp, index) => {
         const sym = wp.sym || 'Waypoint';
         if (activeWptTypes.has(sym)) {
@@ -1108,19 +1203,11 @@
       const tableBody = document.querySelector('#waypointsTable tbody');
       tableBody.innerHTML = '';
 
-      const downloadBtn = document.getElementById('downloadBtn');
-      const downloadJsonBtn = document.getElementById('downloadJsonBtn');
-      const downloadCsvBtn = document.getElementById('downloadCsvBtn');
-
       if (generatedWaypointsData.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500">No hay waypoints. Haz clic en el mapa para añadir uno.</td></tr>`;
-        downloadBtn.classList.add('hidden');
-        downloadJsonBtn.classList.add('hidden');
-        downloadCsvBtn.classList.add('hidden');
         return;
       }
 
-      // Filtrar los waypoints que se mostrarán en la tabla según los checkboxes de la tabla
       const filteredIndices = [];
       generatedWaypointsData.forEach((wp, idx) => {
         const sym = wp.sym || 'Waypoint';
@@ -1137,7 +1224,6 @@
           const row = document.createElement('tr');
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}`;
           
-          // Generar select inline para el símbolo
           let selectOptions = '';
           Object.keys(symbolIcons).forEach(sKey => {
             const sel = (wp.sym === sKey) ? 'selected' : '';
@@ -1164,7 +1250,6 @@
           tableBody.appendChild(row);
         });
 
-        // Eventos de edición inline para nombre y símbolo
         document.querySelectorAll('.inline-name-input').forEach(input => {
           input.addEventListener('input', function() {
             const index = parseInt(this.getAttribute('data-index'));
@@ -1215,21 +1300,17 @@
 
       const serializer = new XMLSerializer();
       generatedGpxString = serializer.serializeToString(docClone);
-
-      const downloadBtn = document.getElementById('downloadBtn');
-      const downloadJsonBtn = document.getElementById('downloadJsonBtn');
-      const downloadCsvBtn = document.getElementById('downloadCsvBtn');
-
-      if (generatedWaypointsData.length > 0) {
-        downloadBtn.classList.remove('hidden');
-        downloadJsonBtn.classList.remove('hidden');
-        downloadCsvBtn.classList.remove('hidden');
-      }
     }
 
     // Botones de descarga
     document.getElementById('downloadBtn').addEventListener('click', function() {
-      if (!generatedGpxString) return;
+      if (!generatedGpxString) {
+        if (!currentGpxDoc) {
+          alert("Sube primero un fichero GPX.");
+          return;
+        }
+        updateGpxStringAndRefresh();
+      }
       const blob = new Blob([generatedGpxString], { type: 'application/gpx+xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1242,7 +1323,6 @@
     });
 
     document.getElementById('downloadJsonBtn').addEventListener('click', function() {
-      if (!generatedWaypointsData.length) return;
       const jsonStr = JSON.stringify(generatedWaypointsData, null, 2);
       const blob = new Blob([jsonStr], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -1256,8 +1336,6 @@
     });
 
     document.getElementById('downloadCsvBtn').addEventListener('click', function(e) {
-      if (!generatedWaypointsData.length) return;
-      
       let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
       csvContent += "Waypoint,Simbolo,Distancia_Acumulada,Tiempo_1º,Hora_1º,Tiempo_Último,Hora_Último,Latitud,Longitud\r\n";
       
@@ -1285,7 +1363,6 @@
       document.body.removeChild(a);
     });
 
-    // Inicializar los checkboxes al cargar la página (vienen marcados por defecto)
     initFilterCheckboxes();
   </script>
 
