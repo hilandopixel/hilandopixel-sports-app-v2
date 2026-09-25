@@ -12,6 +12,9 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
+  <!-- JSZip para descomprimir ficheros KMZ en el navegador -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  
   <style>
     .gpx-table {
       width: 100%;
@@ -57,13 +60,20 @@
   <div class="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-lg my-10">
     <h2 class="text-2xl font-bold mb-6 text-primary">Procesador de Ficheros GPX y Waypoints</h2>
     
-    <!-- Formulario -->
+    <!-- Formulario Principal -->
     <form id="gpxForm" class="space-y-4">
       <div>
-        <label for="gpxFile" class="block font-semibold mb-1">Archivo GPX:</label>
+        <label for="gpxFile" class="block font-semibold mb-1">Archivo GPX Principal:</label>
         <input type="file" id="gpxFile" accept=".gpx" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
       </div>
       
+      <!-- Sección de Importación Adicional (CSV / KML / KMZ) -->
+      <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg space-y-2">
+        <label for="importFile" class="block font-semibold text-emerald-900">📁 Importar Waypoints Adicionales (CSV, KML o KMZ):</label>
+        <input type="file" id="importFile" accept=".csv, .kml, .kmz" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200">
+        <p class="text-xs text-emerald-700">💡 Puedes añadir más puntos geográficos a tu ruta combinando formatos de forma sencilla.</p>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label for="startTime" class="block font-semibold mb-1">Hora de salida:</label>
@@ -195,7 +205,7 @@
       </div>
     </div>
 
-    <!-- Botones de Descarga (Siempre habilitados y visibles tras cargar archivo) -->
+    <!-- Botones de Descarga -->
     <div class="mt-6 flex flex-wrap gap-3">
       <button id="downloadBtn" class="btn-primary hidden" style="background-color: #10B981;">📥 Descargar GPX Actualizado</button>
       <button id="downloadJsonBtn" class="btn-primary hidden" style="background-color: #6366F1;">📄 Descargar JSON</button>
@@ -279,7 +289,7 @@
     let generatedWaypointsData = [];
     let outputFilenameBase = 'ruta';
     let currentGpxDoc = null; 
-    let originalGpxText = null; // Almacena el texto original del GPX intacto
+    let originalGpxText = null; 
     let trackProfileData = []; 
     let lastTotalGain = 0;
     let lastTotalLoss = 0;
@@ -486,19 +496,201 @@
 
       const reader = new FileReader();
       reader.onload = function(event) {
-        originalGpxText = event.target.result; // Guardar texto original
+        originalGpxText = event.target.result;
         const parser = new DOMParser();
         currentGpxDoc = parser.parseFromString(originalGpxText, "application/xml");
         
         previewGpxOnMap(currentGpxDoc);
 
-        // Habilitar los botones de descarga inmediatamente al cargar el fichero
         document.getElementById('downloadBtn').classList.remove('hidden');
         document.getElementById('downloadJsonBtn').classList.remove('hidden');
         document.getElementById('downloadCsvBtn').classList.remove('hidden');
         updateGpxStringAndRefresh();
       };
       reader.readAsText(file);
+    });
+
+    // Lógica para importar CSV, KML o KMZ de forma adicional
+    document.getElementById('importFile').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!currentGpxDoc) {
+        alert("Por favor, carga primero un fichero GPX principal para calcular las distancias de los waypoints importados.");
+        e.target.value = '';
+        return;
+      }
+
+      const fileName = file.name.toLowerCase();
+      const trkpts = currentGpxDoc.getElementsByTagName('trkpt');
+      const startTime = document.getElementById('startTime').value;
+      const paceFirst = parseFloat(document.getElementById('paceFirst').value);
+      const paceLast = parseFloat(document.getElementById('paceLast').value);
+
+      let importedCount = 0;
+
+      try {
+        if (fileName.endsWith('.csv')) {
+          const text = await file.text();
+          const lines = text.split(/\r\n|\n/);
+          if (lines.length < 2) return;
+
+          // Detectar separador (coma o punto y coma)
+          const header = lines[0];
+          const delimiter = header.includes(';') ? ';' : ',';
+          const headers = header.split(delimiter).map(h => h.trim().toLowerCase());
+
+          const idxName = headers.findIndex(h => h.includes('name') || h.includes('nombre') || h.includes('wpt'));
+          const idxLat = headers.findIndex(h => h.includes('lat'));
+          const idxLon = headers.findIndex(h => h.includes('lon') || h.includes('lng') || h.includes('long'));
+          const idxSym = headers.findIndex(h => h.includes('sym') || h.includes('symbol') || h.includes('tipo') || h.includes('icon'));
+
+          if (idxLat === -1 || idxLon === -1) {
+            alert("El archivo CSV no contiene columnas reconocibles de latitud y longitud ('lat', 'lon').");
+            return;
+          }
+
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            const cols = line.split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
+            const lat = parseFloat(cols[idxLat]);
+            const lon = parseFloat(cols[idxLon]);
+            if (isNaN(lat) || isNaN(lon)) continue;
+
+            const name = idxName !== -1 && cols[idxName] ? cols[idxName] : `Importado ${generatedWaypointsData.length + 1}`;
+            let sym = idxSym !== -1 && cols[idxSym] ? cols[idxSym] : 'Waypoint';
+            if (!symbolIcons[sym]) sym = 'Waypoint';
+
+            const distMeters = findWaypointDistanceAlongTrack(lat, lon, trkpts);
+            const distKmVal = distMeters / 1000;
+            const timeFirstMin = distKmVal * paceFirst;
+            const timeLastMin = distKmVal * paceLast;
+
+            generatedWaypointsData.push({
+              lat: lat,
+              lon: lon,
+              name: name,
+              sym: sym,
+              distKmNum: distKmVal,
+              distKm: `${distKmVal.toFixed(2)} km`,
+              timeFirstStr: formatTime(timeFirstMin),
+              hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+              timeLastStr: formatTime(timeLastMin),
+              hourLastStr: addMinutesToTime(startTime, timeLastMin)
+            });
+            importedCount++;
+          }
+
+        } else if (fileName.endsWith('.kml')) {
+          const text = await file.text();
+          const parser = new DOMParser();
+          const kmlDoc = parser.parseFromString(text, "application/xml");
+          const placemarks = kmlDoc.getElementsByTagName('Placemark');
+
+          for (let i = 0; i < placemarks.length; i++) {
+            const nameEl = placemarks[i].getElementsByTagName('name')[0];
+            const name = nameEl ? nameEl.textContent.trim() : `KML ${generatedWaypointsData.length + 1}`;
+            
+            const coordEl = placemarks[i].getElementsByTagName('coordinates')[0];
+            if (!coordEl) continue;
+            const coordsText = coordEl.textContent.trim();
+            // Formato KML: lon,lat,alt (separados por espacios o comas)
+            const parts = coordsText.split(/[\s,]+/);
+            if (parts.length < 2) continue;
+            const lon = parseFloat(parts[0]);
+            const lat = parseFloat(parts[1]);
+            if (isNaN(lat) || isNaN(lon)) continue;
+
+            const distMeters = findWaypointDistanceAlongTrack(lat, lon, trkpts);
+            const distKmVal = distMeters / 1000;
+            const timeFirstMin = distKmVal * paceFirst;
+            const timeLastMin = distKmVal * paceLast;
+
+            generatedWaypointsData.push({
+              lat: lat,
+              lon: lon,
+              name: name,
+              sym: 'Waypoint',
+              distKmNum: distKmVal,
+              distKm: `${distKmVal.toFixed(2)} km`,
+              timeFirstStr: formatTime(timeFirstMin),
+              hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+              timeLastStr: formatTime(timeLastMin),
+              hourLastStr: addMinutesToTime(startTime, timeLastMin)
+            });
+            importedCount++;
+          }
+
+        } else if (fileName.endsWith('.kmz')) {
+          const zip = new JSZip();
+          const zipContent = await zip.loadAsync(file);
+          let kmlText = null;
+
+          for (let filename in zipContent.files) {
+            if (filename.toLowerCase().endsWith('.kml')) {
+              kmlText = await zipContent.files[filename].async('string');
+              break;
+            }
+          }
+
+          if (!kmlText) {
+            alert("No se encontró ningún fichero .kml dentro del archivo KMZ.");
+            return;
+          }
+
+          const parser = new DOMParser();
+          const kmlDoc = parser.parseFromString(kmlText, "application/xml");
+          const placemarks = kmlDoc.getElementsByTagName('Placemark');
+
+          for (let i = 0; i < placemarks.length; i++) {
+            const nameEl = placemarks[i].getElementsByTagName('name')[0];
+            const name = nameEl ? nameEl.textContent.trim() : `KMZ ${generatedWaypointsData.length + 1}`;
+            
+            const coordEl = placemarks[i].getElementsByTagName('coordinates')[0];
+            if (!coordEl) continue;
+            const coordsText = coordEl.textContent.trim();
+            const parts = coordsText.split(/[\s,]+/);
+            if (parts.length < 2) continue;
+            const lon = parseFloat(parts[0]);
+            const lat = parseFloat(parts[1]);
+            if (isNaN(lat) || isNaN(lon)) continue;
+
+            const distMeters = findWaypointDistanceAlongTrack(lat, lon, trkpts);
+            const distKmVal = distMeters / 1000;
+            const timeFirstMin = distKmVal * paceFirst;
+            const timeLastMin = distKmVal * paceLast;
+
+            generatedWaypointsData.push({
+              lat: lat,
+              lon: lon,
+              name: name,
+              sym: 'Waypoint',
+              distKmNum: distKmVal,
+              distKm: `${distKmVal.toFixed(2)} km`,
+              timeFirstStr: formatTime(timeFirstMin),
+              hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+              timeLastStr: formatTime(timeLastMin),
+              hourLastStr: addMinutesToTime(startTime, timeLastMin)
+            });
+            importedCount++;
+          }
+        }
+
+        if (importedCount > 0) {
+          generatedWaypointsData.sort((a, b) => a.distKmNum - b.distKmNum);
+          renderMapAndTable();
+          if (trackProfileData.length > 0) drawElevationChart();
+          alert(`¡Se han importado con éxito ${importedCount} waypoints adicionales!`);
+        } else {
+          alert("No se pudieron extraer waypoints válidos del fichero seleccionado.");
+        }
+
+      } catch (err) {
+        console.error("Error al importar el fichero:", err);
+        alert("Hubo un error al procesar el archivo importado.");
+      }
+
+      e.target.value = '';
     });
 
     async function extractTrackProfile(gpxDoc) {
@@ -567,7 +759,6 @@
           }
         }
       } else {
-        // Restaurar altitudes originales desde el GPX base si el usuario desmarca la opción
         if (originalGpxText) {
           const parser = new DOMParser();
           const freshDoc = parser.parseFromString(originalGpxText, "application/xml");
@@ -998,6 +1189,8 @@
 
       await extractTrackProfile(gpxDoc);
 
+      // Conservar los waypoints que ya estuvieran cargados (incluyendo los importados previamente)
+      const existingManualOrImported = [...generatedWaypointsData];
       generatedWaypointsData = [];
 
       const wpts = gpxDoc.getElementsByTagName('wpt');
@@ -1029,6 +1222,30 @@
           hourLastStr: addMinutesToTime(startTime, timeLastMin)
         });
       }
+
+      // Añadir de nuevo los importados/manuales si no estaban duplicados
+      existingManualOrImported.forEach(item => {
+        const alreadyExists = generatedWaypointsData.some(w => Math.abs(w.lat - item.lat) < 0.00001 && Math.abs(w.lon - item.lon) < 0.00001);
+        if (!alreadyExists) {
+          const distMeters = findWaypointDistanceAlongTrack(item.lat, item.lon, trkpts);
+          const distKmVal = distMeters / 1000;
+          const timeFirstMin = distKmVal * paceFirst;
+          const timeLastMin = distKmVal * paceLast;
+
+          generatedWaypointsData.push({
+            lat: item.lat,
+            lon: item.lon,
+            name: item.name,
+            sym: item.sym,
+            distKmNum: distKmVal,
+            distKm: `${distKmVal.toFixed(2)} km`,
+            timeFirstStr: formatTime(timeFirstMin),
+            hourFirstStr: addMinutesToTime(startTime, timeFirstMin),
+            timeLastStr: formatTime(timeLastMin),
+            hourLastStr: addMinutesToTime(startTime, timeLastMin)
+          });
+        }
+      });
 
       if (includeKmWaypoints && intervalKm && intervalKm > 0) {
         const intervalMeters = intervalKm * 1000;

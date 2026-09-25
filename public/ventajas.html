@@ -32,7 +32,7 @@
 
   <script type="module">
     import { db } from './firebase.config.js';
-    import { collection, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, doc, getDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const urlParams = new URLSearchParams(window.location.search);
     const slugParam = urlParams.get('evento') || urlParams.get('id');
@@ -70,7 +70,8 @@
         }
 
         // Leer la subcolección ventajas
-        const ventajasSnap = await getDocs(collection(db, "eventos", eventoId, "ventajas"));
+        const qVentajas = query(collection(db, "eventos", eventoId, "ventajas"), orderBy("order", "asc"));
+        const ventajasSnap = await getDocs(qVentajas);
 
         if (ventajasSnap.empty) {
           container.innerHTML = `<div class="col-span-full text-center p-8 bg-white rounded-xl shadow-sm text-gray-500">No hay ventajas disponibles para este evento en este momento.</div>`;
