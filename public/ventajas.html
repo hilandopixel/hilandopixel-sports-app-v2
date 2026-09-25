@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ventajas</title>
+  <title>Ventajas del Evento</title>
   <link rel="stylesheet" href="style.css">
   <script src="./navbar.js" defer></script>
 </head>
@@ -17,17 +17,14 @@
       <h1 class="text-3xl font-extrabold text-gray-900 mt-2">Ventajas</h1>
       <p id="subtituloEvento" class="text-gray-600 text-sm mt-1">Cargando ventajas exclusivas...</p>
       <p id="mensaje" class="text-slate-600 text-base leading-relaxed mt-4">
-                Cargando información del evento...
-            </p>
+        Cargando información del evento...
+      </p>
     </div>
 
     <!-- Contenedor donde se inyectarán las cards -->
     <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="col-span-full text-center py-12 text-gray-400">Cargando ventajas...</div>
     </div>
-
-
-
   </main>
 
   <script type="module">
@@ -42,34 +39,77 @@
     async function cargarVentajasPublicas() {
       const container = document.getElementById("cards-container");
       const subtitulo = document.getElementById("subtituloEvento");
+      const mensajeElemento = document.getElementById('mensaje');
 
       if (!slugParam) {
-        container.innerHTML = `<div class="col-span-full text-center p-6 bg-white rounded-xl shadow-sm text-red-500">⚠️ No se ha especificado ningún evento en la URL (ej: <code>?evento=nombre-evento</code>).</div>`;
+        container.innerHTML = `<div class="col-span-full text-center p-6 bg-white rounded-xl shadow-sm text-red-500">⚠️ No se ha especificado ningún evento en la URL.</div>`;
         subtitulo.textContent = "Evento no especificado";
         return;
       }
 
       try {
         let eventoId = slugParam;
+        let eventoData = null;
 
-        // Intentar resolver por ID directo o campo slug por si acaso
+        // 1. Resolver el ID del evento y obtener sus datos (por ID directo o por campo slug)
         const refDirecta = doc(db, "eventos", slugParam);
         const snapDirecto = await getDoc(refDirecta);
 
         if (snapDirecto.exists()) {
-          subtitulo.textContent = `Evento: ${snapDirecto.data().nombre}`;
+          eventoId = snapDirecto.id;
+          eventoData = snapDirecto.data();
+          subtitulo.textContent = `Evento: ${eventoData.nombre}`;
         } else {
-          const q = query(collection(db, "eventos"), where("slug", "==", slugParam));
-          const snapshotEv = await getDocs(q);
+          const qEv = query(collection(db, "eventos"), where("slug", "==", slugParam));
+          const snapshotEv = await getDocs(qEv);
           if (!snapshotEv.empty) {
             eventoId = snapshotEv.docs[0].id;
-            subtitulo.textContent = `Evento: ${snapshotEv.docs[0].data().nombre}`;
+            eventoData = snapshotEv.docs[0].data();
+            subtitulo.textContent = `Evento: ${eventoData.nombre}`;
           } else {
-            subtitulo.textContent = "Evento";
+            container.innerHTML = `<div class="col-span-full text-center p-6 bg-white rounded-xl shadow-sm text-red-500">Evento no encontrado.</div>`;
+            return;
           }
         }
 
-        // Leer la subcolección ventajas
+        // 2. Verificar que se haya proporcionado un código en la URL
+        if (!code) {
+          document.querySelector("main").innerHTML = `
+            <div class="max-w-md mx-auto my-12 bg-amber-50 border-2 border-amber-400 p-8 rounded-2xl shadow-lg text-center">
+              <h1 class="text-2xl font-black text-amber-700 tracking-wider">FALTA CÓDIGO</h1>
+              <p class="text-gray-600 text-sm mt-2">Por favor, asegúrate de incluir el parámetro <code>?code=...</code> en la URL.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // 3. Validar si el 'code' de la URL está contenido en el campo de texto 'codes' del evento
+        let codigoValido = false;
+        if (eventoData && eventoData.codes && typeof eventoData.codes === 'string') {
+          const codigosPermitidos = eventoData.codes.split(',').map(c => c.trim().toLowerCase());
+          if (codigosPermitidos.includes(code.trim().toLowerCase())) {
+            codigoValido = true;
+          }
+        }
+
+        // Si el código no es válido o no está en el campo del evento, mostramos el mensaje exacto solicitado
+        if (!codigoValido) {
+          document.querySelector("main").innerHTML = `
+            <div class="max-w-md mx-auto my-12 bg-red-50 border-2 border-red-500 p-8 rounded-2xl shadow-lg text-center">
+              <h1 class="text-3xl font-black text-red-600 tracking-wider">NO EXISTEN VENTAJAS</h1>
+              <p class="text-gray-600 text-sm mt-2">No existen ventajas para el código y evento proporcionado.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Si el código SÍ es válido, mostramos el mensaje de bienvenida
+        mensajeElemento.innerHTML = `
+            Para usar tus ventajas del evento <span class="font-bold text-indigo-600">${eventoData.nombre || evento}</span>, 
+            tu código validado es <span class="font-mono bg-slate-100 text-slate-800 px-2 py-1 rounded border border-slate-300 font-bold">${code}</span>.
+        `;
+
+        // 4. Leer las ventajas del evento ordenadas por 'order' de forma ascendente
         const qVentajas = query(collection(db, "eventos", eventoId, "ventajas"), orderBy("order", "asc"));
         const ventajasSnap = await getDocs(qVentajas);
 
@@ -83,27 +123,27 @@
         ventajasSnap.forEach((docSnap) => {
           const v = docSnap.data();
 
-          // Renderizado condicional de elementos opcionales
           const imagenHTML = v.foto ? `<img src="${v.foto}" alt="${v.nombre}" class="object-cover rounded-t-xl">` : '';
           const fechaHTML = v.fechaCaducidad ? `<span class="text-xs font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">⏳ Caduca: ${v.fechaCaducidad}</span>` : '';
           const descHTML = v.descripcion ? `<p class="text-gray-600 text-sm mt-2">${v.descripcion}</p>` : '';
           const htmlEmbedHTML = v.htmlEmbedded ? `<div class="mt-3 overflow-hidden rounded-lg">${v.htmlEmbedded}</div>` : '';
+          
           let botonHTML = '';
           if (v.actionButton && v.textButton) {
             botonHTML = `<div class="mt-4"><a href="${v.actionButton}" target="_blank" class="btn-primary inline-block text-center w-full py-2 text-xs font-bold rounded-lg">${v.textButton}</a></div>`;
           }
 
           let codigosHTML = '';
-          if (v.codigos && v.codigos.length <= 0) {v.codigos.push(code)}
+          if (v.codigos && v.codigos.length > 0) {
             codigosHTML = `
               <div class="mt-4 bg-green-100 p-3 rounded-lg border border-gray-100">
-                <span class="text-xs font-bold text-gray-700 block mb-1">Códigos disponibles:</span>
+                <span class="text-xs font-bold text-gray-700 block mb-1">Códigos asociados:</span>
                 <div class="flex flex-wrap gap-1.5">
                   ${v.codigos.map(c => `<code class="bg-white border border-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs font-mono font-bold">${c}</code>`).join('')}
                 </div>
               </div>
             `;
-          
+          }
 
           const card = document.createElement("div");
           card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col justify-between";
@@ -135,24 +175,6 @@
     }
 
     cargarVentajasPublicas();
-
-        // 3. Seleccionar el elemento del DOM donde mostraremos el mensaje
-        const mensajeElemento = document.getElementById('mensaje');
-
-        // 4. Validar si existen ambos parámetros y pintar con Tailwind
-        if (evento && code) {
-            mensajeElemento.innerHTML = `
-                Para usar tus ventajas del evento <span class="font-bold text-indigo-600">${evento}</span>, 
-                tu código será <span class="font-mono bg-slate-100 text-slate-800 px-2 py-1 rounded border border-slate-300 font-bold">${code}</span>.
-            `;
-        } else {
-            // Mensaje por si faltan parámetros en la URL
-            mensajeElemento.innerHTML = `
-                <span class="text-amber-600 font-medium">Por favor, asegúrate de incluir los parámetros <code class="bg-slate-100 px-1 rounded">?evento=...&code=...</code> en la URL.</span>
-            `;
-        }
-
-
   </script>
   <script async src="//www.instagram.com/embed.js"></script>
 </body>
