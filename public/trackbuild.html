@@ -262,7 +262,6 @@
   </div>
 
   <!-- Modal / Diálogo para Seleccionar ID de Firebase -->
-<!-- Modal / Diálogo para Seleccionar ID de Firebase -->
   <div id="firebaseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
       <h3 class="text-lg font-bold text-gray-800">🔥 Guardar Ruta en Firebase (tracks)</h3>
@@ -283,8 +282,8 @@
       </div>
 
       <div class="flex justify-end space-x-2 pt-2">
-        <button type="button" id="firebaseCancelBtn" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-semibold rounded-md">Cancelar</button>
-        <button type="button" id="firebaseConfirmBtn" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-md">Guardar en Firebase</button>
+        <button id="firebaseCancelBtn" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-semibold rounded-md">Cancelar</button>
+        <button id="firebaseConfirmBtn" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-md">Guardar en Firebase</button>
       </div>
     </div>
   </div>
@@ -294,10 +293,13 @@
   
   <!-- Lógica Principal y Firebase Modular conectado a firebase.config.js -->
   <script type="module">
-    import { db } from './firebase.config.js';
-    import { collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+   import { db } from './firebase.config.js';
+    import { collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    
+    // Capturar si venimos desde un evento específico del panel de admin
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventoIdParam = urlParams.get('evento');
+
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
@@ -503,8 +505,6 @@
     });
 
     function initFilterCheckboxes() {
-      const urlParams = new URLSearchParams(window.location.search);
-let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');      console.log("++" + eventoIdParam)
       const profileContainer = document.getElementById('wptFilterCheckboxes');
       profileContainer.innerHTML = '';
       Object.keys(symbolIcons).forEach(sym => {
@@ -1647,8 +1647,8 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       generatedGpxString = serializer.serializeToString(docClone);
     }
 
-    // ==========================================
-    // LÓGICA DE FIREBASE (Colección "tracks") CONECTADA A firebase.config.js
+   // ==========================================
+    // LÓGICA DE FIREBASE ADAPTADA AL EVENTO O GLOBAL
     // ==========================================
     const firebaseModal = document.getElementById('firebaseModal');
     const firebaseExistingIdsSelect = document.getElementById('firebaseExistingIds');
@@ -1661,16 +1661,17 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       }
       
       firebaseModal.classList.remove('hidden');
-      firebaseExistingIdsSelect.innerHTML = '<option value="">-- Introduce el ID abajo --</option>';
+      firebaseExistingIdsSelect.innerHTML = '<option value="">Cargando IDs existentes...</option>';
       firebaseInputId.value = outputFilenameBase || 'mi-ruta';
 
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');      console.log("++" + eventoIdParam)
-
-        const refColeccion = collection(db, 'eventos', eventoIdParam, 'tracks');
+        // Seleccionar la ruta de Firestore dependiendo de si estamos en un evento o en modo global
+        const refColeccion = eventoIdParam 
+          ? collection(db, 'eventos', eventoIdParam, 'tracks') 
+          : collection(db, 'tracks');
 
         const querySnapshot = await getDocs(refColeccion);
+        firebaseExistingIdsSelect.innerHTML = '<option value="">-- Nuevo ID o selecciona para actualizar --</option>';
         
         querySnapshot.forEach(docSnap => {
           const opt = document.createElement('option');
@@ -1679,7 +1680,8 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
           firebaseExistingIdsSelect.appendChild(opt);
         });
       } catch (error) {
-        console.warn("No se pudieron listar los IDs existentes por permisos, pero puedes guardar escribiendo un ID nuevo:", error);
+        console.error("Error al obtener los IDs de Firebase:", error);
+        firebaseExistingIdsSelect.innerHTML = '<option value="">Error al cargar IDs (revisa consola)</option>';
       }
     });
 
@@ -1689,6 +1691,10 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       }
     });
 
+    document.getElementById('firebaseCancelBtn').addEventListener('click', function() {
+      firebaseModal.classList.add('hidden');
+    });
+
     document.getElementById('firebaseConfirmBtn').addEventListener('click', async function() {
       const trackId = firebaseInputId.value.trim();
       if (!trackId) {
@@ -1696,19 +1702,19 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
         return;
       }
 
-      // Validar que existan waypoints procesados
-      if (!generatedWaypointsData || generatedWaypointsData.length === 0) {
-        alert("No hay waypoints procesados para guardar.");
-        return;
+      if (!generatedGpxString) {
+        updateGpxStringAndRefresh();
       }
 
-      // Estructura limpia que contiene únicamente los datos de la tabla y resumen
+      // Estructura completa con toda la información de ritmos, waypoints y perfil
       const trackData = {
-        title: outputFilenameBase || 'ruta',
+        title: outputFilenameBase,
         updatedAt: new Date().toISOString(),
-        totalDistance: document.getElementById('resTotalDist').textContent || '-',
-        elevation: document.getElementById('resElevation').textContent || '-',
-        waypoints: generatedWaypointsData // Contiene la tabla exacta con nombres, símbolos, distancias y horas
+        waypoints: generatedWaypointsData,
+        gpxContent: generatedGpxString,
+        profileData: trackProfileData,
+        totalGain: lastTotalGain,
+        totalLoss: lastTotalLoss
       };
 
       try {
@@ -1716,16 +1722,14 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
         btn.textContent = 'Guardando...';
         btn.disabled = true;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');      console.log("++" + eventoIdParam)
-
-
-        // Guardar en la subcolección del evento o de forma global según corresponda
-        const docRef = doc(db, 'eventos', eventoIdParam, 'tracks', trackId);
+        // Guardar en la subcolección del evento si existe el parámetro, o en 'tracks' global si no
+        const docRef = eventoIdParam
+          ? doc(db, 'eventos', eventoIdParam, 'tracks', trackId)
+          : doc(db, 'tracks', trackId);
 
         await setDoc(docRef, trackData, { merge: true });
 
-        alert(`¡Waypoints de la ruta guardados con éxito en Firebase con el ID: "${trackId}"!`);
+        alert(`¡Ruta guardada/actualizada con éxito en Firebase (${eventoIdParam ? 'Evento: ' + eventoIdParam : 'Global'}) con el ID: "${trackId}"!`);
         firebaseModal.classList.add('hidden');
       } catch (error) {
         console.error("Error al guardar en Firebase:", error);

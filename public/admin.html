@@ -72,9 +72,9 @@
           <div class="flex flex-wrap gap-2">
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-primary text-white shadow-sm" data-target="tabDetalles">📝 Detalles</button>
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabStock">📦 Stock y Solicitudes</button>
-            <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabVoluntarios">👥 Personal Voluntario</button>
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabResultados">🏆 Resultados</button>
             <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabVentajas">🎁 Ventajas</button>
+          <button type="button" class="tab-btn px-4 py-2 text-xs font-bold rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200" data-target="tabTracks">🗺️ Tracks</button>
           </div>
         </div>
 
@@ -221,6 +221,8 @@
           </div>
         </div>
 
+        
+
         <!-- TAB RESULTADOS (INTEGRANDO EL COMPONENTE WEB) -->
         <div id="tabResultados" class="tab-content hidden space-y-6">
           <div class="flex justify-between items-center">
@@ -315,6 +317,44 @@
             </table>
           </div>
         </div>
+        <!-- TAB TRACKS -->
+        <div id="tabTracks" class="tab-content hidden space-y-6">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900">Gestión de Tracks y Rutas del Evento</h3>
+            <button type="button" id="btnAbrirEditorTrack" class="btn-primary text-xs">➕ Procesador y Crear Nuevo Track</button>
+          </div>
+
+          <!-- Tabla de Tracks Guardados -->
+          <div class="overflow-x-auto bg-white p-4 rounded-lg border border-gray-200">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase font-semibold text-gray-700">
+                <tr>
+                  <th class="p-3">Título</th>
+                  <th class="p-3">ID (Slug)</th>
+                  <th class="p-3">Waypoints</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaTracksAdmin" class="divide-y divide-gray-100">
+                <tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">Selecciona un evento para ver sus tracks.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Contenedor Integrado del Procesador GPX (Se muestra al hacer clic en el botón) -->
+          <div id="contenedorProcesadorTrack" class="hidden bg-white p-6 rounded-xl shadow-md border-2 border-primary space-y-6 mt-6 relative">
+            <div class="flex justify-between items-center border-b pb-3">
+              <h3 class="text-xl font-bold text-primary">🗺️ Procesador Avanzado de Tracks y Tiempos</h3>
+              <button type="button" id="btnCerrarProcesadorTrack" class="text-gray-400 hover:text-gray-700 font-bold text-lg">✕ Cerrar Procesador</button>
+            </div>
+
+            <!-- Incrustamos o cargamos la interfaz de gpxutils aquí dentro mediante un iframe optimizado o vista interna -->
+            <div class="w-full h-[750px] overflow-hidden rounded-lg border border-gray-200">
+              <iframe id="iframeGpxUtils" src="" class="w-full h-full border-0"></iframe>
+            </div>
+          </div>
+        </div>
+
 
       </div>
     </div>

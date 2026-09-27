@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vista de Track y Tiempos</title>
+  <link rel="stylesheet" href="style2.css">
+
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <style>
+    .gpx-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .gpx-table th, .gpx-table td {
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    .gpx-table th {
+      background-color: #f9fafb;
+      font-weight: 600;
+    }
+    .map-btn {
+      background-color: #4285F4;
+      color: white;
+      padding: 6px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 13px;
+      display: inline-block;
+      font-weight: 500;
+    }
+    .map-btn:hover {
+      background-color: #3367D6;
+    }
+
+    /* Control responsivo garantizado por CSS clásico */
+    .vista-movil-cards {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .vista-escritorio-tabla {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .vista-movil-cards {
+        display: none !important;
+      }
+      .vista-escritorio-tabla {
+        display: block !important;
+        overflow-x: auto;
+      }
+    }
+  </style>
+  <script src="./navbar.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <navbar-header></navbar-header>
+  
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 bg-white shadow-md rounded-lg my-6 sm:my-10 space-y-6">
+    <div class="flex justify-between items-center border-b pb-4">
+      <div>
+        <h1 id="trackTitulo" class="text-2xl font-bold text-primary">Cargando track...</h1>
+        <p id="trackSubtitulo" class="text-xs text-gray-500 mt-1">Evento y detalles de la ruta</p>
+      </div>
+      <a href="javascript:history.back()" class="btn-secondary text-xs py-2 px-4">← Volver</a>
+    </div>
+
+    <!-- Panel de Resumen -->
+    <div id="summaryPanel" class="p-4 bg-blue-50 border border-blue-200 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Distancia Total:</p>
+        <p id="resTotalDist" class="text-base font-bold text-gray-800">-</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Desnivel:</p>
+        <p id="resElevation" class="text-base font-bold text-gray-800">-</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Total Waypoints:</p>
+        <p id="resWptCount" class="text-base font-bold text-indigo-600">-</p>
+      </div>
+    </div>
+
+    <!-- Sección de Waypoints -->
+    <div class="mt-8 space-y-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h3 class="text-xl font-bold">Waypoints y Tiempos de Paso</h3>
+        
+        <!-- Input de Búsqueda por Nombre -->
+        <div class="w-full md:w-72">
+          <input type="text" id="tableSearchInput" placeholder="🔍 Buscar waypoint..." class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-indigo-500 bg-white">
+        </div>
+      </div>
+
+      <!-- VISTA MÓVIL: Tarjetas -->
+      <div id="waypointsCardsContainer" class="vista-movil-cards">
+        <div class="text-center text-gray-500 py-4">Cargando datos de la ruta...</div>
+      </div>
+
+      <!-- VISTA ESCRITORIO / TABLET: Tabla clásica -->
+      <div class="vista-escritorio-tabla">
+        <table id="waypointsTable" class="gpx-table">
+          <thead>
+            <tr>
+              <th>Punto</th>
+              <th>Distancia</th>
+              <th>Coordenadas</th>
+              <th>Google Maps</th>
+              <th>Tiempo 1º</th>
+              <th>Hora 1º</th>
+              <th>Tiempo Últ.</th>
+              <th>Hora Últ.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8" class="text-center text-gray-500 py-4">Cargando datos de la ruta...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Contenedor del Mapa -->
+    <div style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #d1d5db; position: relative; overflow: hidden;">
+      <div id="map" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+    </div>
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Lógica de Carga con Firebase Modular Directo por URL -->
+  <script type="module">
+    import { db } from './firebase.config.js';
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventoId = urlParams.get('evento');
+    const trackId = urlParams.get('track');
+
+    const symbolIcons = {
+      'Waypoint': '📍', 'Ambulancia': '🚑', 'Peligro': '⚠️', 'Avituallamiento': '🍏',
+      'Agua': '💧', 'Coche evacuacion': '🚙', 'Helipuerto': '🚁', 'Aparcamiento': '🅿️',
+      'Persona': '👤', 'Cruce': '🔀', 'Desvio': '↗️', 'Precaucion': '⚡',
+      'Alojamiento': '🏨', 'Inicio': '🚀', 'Fin': '🏁'
+    };
+
+    function getSymbolIcon(sym) {
+      return symbolIcons[sym] || '📍';
+    }
+
+    const map = L.map('map', { center: [40.4168, -3.7038], zoom: 6 });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let featureGroup = L.layerGroup().addTo(map);
+    let allWaypointsCache = [];
+
+    async function cargarTrackData() {
+      if (!eventoId || !trackId) {
+        document.getElementById('trackTitulo').textContent = "Error de Parámetros";
+        document.getElementById('trackSubtitulo').textContent = "No se ha especificado un evento o un track válido en la URL.";
+        return;
+      }
+
+      try {
+        const trackRef = doc(db, 'eventos', eventoId, 'tracks', trackId);
+        const trackSnap = await getDoc(trackRef);
+
+        if (!trackSnap.exists()) {
+          document.getElementById('trackTitulo').textContent = "Track no encontrado";
+          document.getElementById('trackSubtitulo').textContent = `No existe el track "${trackId}" para el evento "${eventoId}".`;
+          return;
+        }
+
+        const data = trackSnap.data();
+        allWaypointsCache = data.waypoints || [];
+        
+        document.getElementById('trackTitulo').textContent = data.title || trackId;
+        document.getElementById('trackSubtitulo').textContent = `Evento: ${eventoId} | ID Ruta: ${trackId}`;
+        document.getElementById('resTotalDist').textContent = data.totalDistance || '-';
+        document.getElementById('resElevation').textContent = data.elevation || 'D+: - | D-: -';
+        document.getElementById('resWptCount').textContent = allWaypointsCache.length;
+
+        renderizarVista(allWaypointsCache);
+
+        document.getElementById('tableSearchInput').addEventListener('input', function(e) {
+          const query = e.target.value.toLowerCase().trim();
+          const filtered = allWaypointsCache.filter(wp => 
+            (wp.name || '').toLowerCase().includes(query)
+          );
+          renderizarVista(filtered);
+        });
+
+      } catch (err) {
+        console.error("Error al cargar el track:", err);
+        alert("Error al cargar los datos desde Firebase.");
+      }
+    }
+
+    function renderizarVista(waypoints) {
+      const tableBody = document.querySelector('#waypointsTable tbody');
+      const cardsContainer = document.getElementById('waypointsCardsContainer');
+      
+      tableBody.innerHTML = '';
+      cardsContainer.innerHTML = '';
+      featureGroup.clearLayers();
+
+      if (waypoints.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-4">No hay waypoints registrados.</td></tr>`;
+        cardsContainer.innerHTML = `<div class="text-center text-gray-500 py-4 bg-white p-4 rounded-lg border">No hay waypoints registrados.</div>`;
+        return;
+      }
+
+      let latLngs = [];
+
+      waypoints.forEach((wp) => {
+        if (wp.lat && wp.lon) {
+          latLngs.push([wp.lat, wp.lon]);
+
+          const iconEmoji = getSymbolIcon(wp.sym);
+          const customIcon = L.divIcon({
+            className: 'custom-emoji-marker',
+            html: `<div style="font-size: 18px; background: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.35); border: 2px solid #fff;">${iconEmoji}</div>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17],
+            popupAnchor: [0, -17]
+          });
+
+          const popupHtml = `
+            <div class="p-2 space-y-1 text-xs" style="min-width: 160px;">
+              <p class="font-bold text-sm text-gray-800">${iconEmoji} ${wp.name}</p>
+              <p class="font-bold text-sm text-gray-800">${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}</p>
+              <p class="text-gray-600"><b>Distancia:</b> ${wp.distKm || '-'}</p>
+              <p class="text-gray-600"><b>1º Hora:</b> ${wp.hourFirstStr || '-'}</p>
+              <p class="text-gray-600"><b>Últ. Hora:</b> ${wp.hourLastStr || '-'}</p>
+            </div>
+          `;
+          L.marker([wp.lat, wp.lon], { icon: customIcon }).bindPopup(popupHtml).addTo(featureGroup);
+        }
+
+        const mapsUrl = wp.lat && wp.lon ? `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}` : '#';
+        const iconoSimbolo = getSymbolIcon(wp.sym);
+
+        // 1. Fila para la tabla de escritorio (forzada por CSS)
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="font-bold text-gray-800">${iconoSimbolo} ${wp.name || '-'}</td>
+          <td>${wp.distKm || '-'}</td>
+          <td class="text-xs text-gray-500">${wp.lat ? wp.lat.toFixed(5) : '-'}, ${wp.lon ? wp.lon.toFixed(5) : '-'}</td>
+          <td><a href="${mapsUrl}" target="_blank" class="map-btn">🗺️ Maps</a></td>
+          <td><span class="text-gray-600">${wp.timeFirstStr || '-'}</span></td>
+          <td><span class="font-semibold text-indigo-600">${wp.hourFirstStr || '-'}</span></td>
+          <td><span class="text-gray-600">${wp.timeLastStr || '-'}</span></td>
+          <td><span class="font-semibold text-indigo-600">${wp.hourLastStr || '-'}</span></td>
+        `;
+        tableBody.appendChild(row);
+
+        // 2. Tarjeta para la vista móvil (forzada por CSS)
+        const card = document.createElement('div');
+        card.className = "bg-white border border-gray-200 rounded-lg p-4 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-lg mr-1">${iconoSimbolo}</span>
+              <span class="font-bold text-gray-900 text-base">${wp.name || '-'}</span>
+            </div>
+            <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-indigo-100">${wp.distKm || '-'}</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 text-xs">
+            <div class="bg-indigo-50/50 p-2 rounded">
+              <span class="text-gray-500 block">🚀 1º Participante</span>
+              <span class="font-bold text-indigo-700 text-sm">${wp.hourFirstStr || '-'}</span>
+              <span class="text-[10px] text-gray-500 block">(${wp.timeFirstStr || '-'})</span>
+            </div>
+            <div class="bg-gray-50 p-2 rounded">
+              <span class="text-gray-500 block">🏁 Últ. Participante</span>
+              <span class="font-bold text-gray-700 text-sm">${wp.hourLastStr || '-'}</span>
+              <span class="text-[10px] text-gray-500 block">(${wp.timeLastStr || '-'})</span>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-1 text-xs text-gray-500">
+            <span>📍 ${wp.lat ? wp.lat.toFixed(4) : '-'}, ${wp.lon ? wp.lon.toFixed(4) : '-'}</span>
+            <a href="${mapsUrl}" target="_blank" class="map-btn py-1 px-3 text-xs">🗺️ Maps</a>
+          </div>
+        `;
+        cardsContainer.appendChild(card);
+      });
+
+      if (latLngs.length > 0) {
+        map.fitBounds(L.latLngBounds(latLngs));
+      }
+      setTimeout(() => { map.invalidateSize(); }, 200);
+    }
+
+    cargarTrackData();
+  </script>
+</body>
+</html>

@@ -84,7 +84,6 @@ export function initAdminVentajas() {
 }
 
 export function cargarVentajasEvento(eventoId) {
-    console.log('evento', eventoId)
   if (unsubVentajas) unsubVentajas();
   const tabla = document.getElementById("tablaVentajasAdmin");
   if (!tabla) return;
@@ -95,12 +94,10 @@ export function cargarVentajasEvento(eventoId) {
       tabla.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400 text-xs">No hay ventajas registradas.</td></tr>`;
       return;
     }
-    console.log('hola')
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const id = docSnap.id;
-console.log('ccc ')
-console.log(data)
+
       const tr = document.createElement("tr");
       tr.className = "hover:bg-gray-50 border-b border-gray-100 text-xs";
       tr.innerHTML = `
