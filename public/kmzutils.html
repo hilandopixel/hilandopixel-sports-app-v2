@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visor de Waypoints y Rutas</title>
+  <link rel="stylesheet" href="style2.css">
+
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- JSZip para descomprimir KMZ en el navegador -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    .gpx-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .gpx-table th, .gpx-table td {
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    .gpx-table th {
+      background-color: #f9fafb;
+      font-weight: 600;
+    }
+    .map-btn {
+      background-color: #4285F4;
+      color: white;
+      padding: 6px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 13px;
+      display: inline-block;
+      font-weight: 500;
+    }
+    .map-btn:hover {
+      background-color: #3367D6;
+    }
+    .vista-movil-cards {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .vista-escritorio-tabla {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .vista-movil-cards {
+        display: none !important;
+      }
+      .vista-escritorio-tabla {
+        display: block !important;
+        overflow-x: auto;
+      }
+    }
+  </style>
+  <script src="./navbar.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <navbar-header></navbar-header>
+  
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 bg-white shadow-md rounded-lg my-6 sm:my-10 space-y-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+      <div>
+        <h1 id="trackTitulo" class="text-2xl font-bold text-primary">Cargando track...</h1>
+        <p id="trackSubtitulo" class="text-xs text-gray-500 mt-1">Evento y detalles de la ruta</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Botón para guardar en Firebase -->
+        <button id="openFirebaseModalBtn" class="hidden bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold py-2 px-4 rounded-md shadow-sm transition">
+          🔥 Guardar en Firebase
+        </button>
+        <a href="javascript:history.back()" class="btn-secondary text-xs py-2 px-4">← Volver</a>
+      </div>
+    </div>
+
+    <!-- Panel de Resumen -->
+    <div id="summaryPanel" class="p-4 bg-blue-50 border border-blue-200 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Origen de Datos:</p>
+        <p id="resOrigen" class="text-base font-bold text-gray-800">Cargando desde Firebase...</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Total Waypoints:</p>
+        <p id="resWptCount" class="text-base font-bold text-indigo-600">-</p>
+      </div>
+    </div>
+
+    <!-- Sección de Carga Local Opcional -->
+    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-2">
+      <label class="block font-semibold text-xs text-gray-700">📁 Cargar fichero local (GPX, KMZ, KML) para visualizar y guardar:</label>
+      <input type="file" id="localFile" accept=".gpx, .kmz, .kml" class="block w-full text-xs text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+    </div>
+
+    <!-- Sección de Waypoints -->
+    <div class="mt-8 space-y-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h3 class="text-xl font-bold">Waypoints y Puntos de Interés</h3>
+        
+        <!-- Input de Búsqueda por Nombre -->
+        <div class="w-full md:w-72">
+          <input type="text" id="tableSearchInput" placeholder="🔍 Buscar waypoint..." class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-indigo-500 bg-white">
+        </div>
+      </div>
+
+      <!-- VISTA MÓVIL: Tarjetas -->
+      <div id="waypointsCardsContainer" class="vista-movil-cards">
+        <div class="text-center text-gray-500 py-4">Cargando datos de la ruta...</div>
+      </div>
+
+      <!-- VISTA ESCRITORIO / TABLET: Tabla clásica -->
+      <div class="vista-escritorio-tabla">
+        <table id="waypointsTable" class="gpx-table">
+          <thead>
+            <tr>
+              <th>Punto / Waypoint</th>
+              <th>Coordenadas</th>
+              <th>Acción Google Maps</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3" class="text-center text-gray-500 py-4">Cargando datos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Contenedor del Mapa -->
+    <div style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #d1d5db; position: relative; overflow: hidden;">
+      <div id="map" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+    </div>
+  </main>
+
+  <!-- Modal / Diálogo para Guardar en Firebase -->
+  <div id="firebaseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
+      <h3 class="text-lg font-bold text-gray-800">🔥 Guardar Ruta en Firebase</h3>
+      <p class="text-sm text-gray-600">Introduce un ID de track para guardarlo en la subcolección de este evento.</p>
+      
+      <div>
+        <label class="block text-xs font-semibold text-gray-700 mb-1">ID del Track:</label>
+        <input type="text" id="firebaseInputId" placeholder="Ej: etapa-1" class="w-full border border-gray-300 p-2 rounded-md text-sm">
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2">
+        <button type="button" id="firebaseCancelBtn" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-semibold rounded-md">Cancelar</button>
+        <button type="button" id="firebaseConfirmBtn" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-md">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Lógica de Carga, Procesamiento y Firebase -->
+  <script type="module">
+    import { db } from './firebase.config.js';
+    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventoId = urlParams.get('evento');
+    const trackId = urlParams.get('track');
+
+    const map = L.map('map', { center: [40.4168, -3.7038], zoom: 6 });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let featureGroup = L.layerGroup().addTo(map);
+    let allWaypointsCache = [];
+    let currentFilenameBase = 'ruta';
+
+    async function cargarTrackData() {
+      if (!eventoId || !trackId) {
+        document.getElementById('trackTitulo').textContent = "Modo Visor Local";
+        document.getElementById('trackSubtitulo').textContent = "Sube un archivo arriba para visualizar y guardar sus waypoints.";
+        document.getElementById('resOrigen').textContent = "Archivo local seleccionado";
+        document.getElementById('resWptCount').textContent = "0";
+        return;
+      }
+
+      try {
+        const trackRef = doc(db, 'eventos', eventoId, 'tracks', trackId);
+        const trackSnap = await getDoc(trackRef);
+
+        if (!trackSnap.exists()) {
+          document.getElementById('trackTitulo').textContent = "Track no encontrado";
+          document.getElementById('trackSubtitulo').textContent = `No existe el track "${trackId}" para el evento "${eventoId}".`;
+          return;
+        }
+
+        const data = trackSnap.data();
+        allWaypointsCache = data.waypoints || [];
+        currentFilenameBase = trackId;
+        
+        document.getElementById('trackTitulo').textContent = data.title || trackId;
+        document.getElementById('trackSubtitulo').textContent = `Evento: ${eventoId} | ID Ruta: ${trackId}`;
+        document.getElementById('resOrigen').textContent = "Firebase (Base de datos)";
+        document.getElementById('resWptCount').textContent = allWaypointsCache.length;
+        document.getElementById('openFirebaseModalBtn').classList.remove('hidden');
+
+        renderizarVista(allWaypointsCache);
+
+      } catch (err) {
+        console.error("Error al cargar el track:", err);
+        alert("Error al cargar los datos desde Firebase.");
+      }
+    }
+
+    // Buscador en tiempo real
+    document.getElementById('tableSearchInput').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const filtered = allWaypointsCache.filter(wp => 
+        (wp.name || '').toLowerCase().includes(query)
+      );
+      renderizarVista(filtered);
+    });
+
+    // Cargar archivo local GPX, KML o KMZ al vuelo
+    document.getElementById('localFile').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const originalName = file.name;
+      const lastDot = originalName.lastIndexOf('.');
+      currentFilenameBase = lastDot !== -1 ? originalName.substring(0, lastDot) : originalName;
+
+      const fileName = originalName.toLowerCase();
+      let xmlDoc = null;
+
+      try {
+        if (fileName.endsWith('.kmz')) {
+          const zip = new JSZip();
+          const zipContent = await zip.loadAsync(file);
+          let kmlText = null;
+          for (let filename in zipContent.files) {
+            if (filename.toLowerCase().endsWith('.kml')) {
+              kmlText = await zipContent.files[filename].async('string');
+              break;
+            }
+          }
+          if (!kmlText) {
+            alert("No se encontró ningún archivo .kml dentro del KMZ.");
+            return;
+          }
+          xmlDoc = new DOMParser().parseFromString(kmlText, "application/xml");
+        } else {
+          const text = await file.text();
+          xmlDoc = new DOMParser().parseFromString(text, "application/xml");
+        }
+
+        allWaypointsCache = [];
+
+        // Extraer de GPX (<wpt>)
+        const wpts = xmlDoc.getElementsByTagName('wpt');
+        for (let i = 0; i < wpts.length; i++) {
+          const lat = parseFloat(wpts[i].getAttribute('lat'));
+          const lon = parseFloat(wpts[i].getAttribute('lon'));
+          const name = wpts[i].getElementsByTagName('name')[0]?.textContent || `Waypoint ${i + 1}`;
+          allWaypointsCache.push({ name, lat, lon });
+        }
+
+        // Extraer de KML/KMZ (<Placemark>)
+        const placemarks = xmlDoc.getElementsByTagName('Placemark');
+        for (let p = 0; p < placemarks.length; p++) {
+          const pointEl = placemarks[p].getElementsByTagName('Point')[0];
+          if (pointEl) {
+            const coordEl = pointEl.getElementsByTagName('coordinates')[0];
+            if (coordEl) {
+              const parts = coordEl.textContent.trim().split(/[\s,]+/);
+              if (parts.length >= 2) {
+                const lon = parseFloat(parts[0]);
+                const lat = parseFloat(parts[1]);
+                const nameEl = placemarks[p].getElementsByTagName('name')[0];
+                const name = nameEl ? nameEl.textContent.trim() : `Punto ${allWaypointsCache.length + 1}`;
+                allWaypointsCache.push({ name, lat, lon });
+              }
+            }
+          }
+        }
+
+        document.getElementById('trackTitulo').textContent = currentFilenameBase;
+        document.getElementById('trackSubtitulo').textContent = "Fichero cargado localmente listo para guardar";
+        document.getElementById('resOrigen').textContent = "Fichero Local";
+        document.getElementById('resWptCount').textContent = allWaypointsCache.length;
+        document.getElementById('openFirebaseModalBtn').classList.remove('hidden');
+
+        renderizarVista(allWaypointsCache);
+
+      } catch (err) {
+        console.error("Error al leer el archivo local:", err);
+        alert("Hubo un error al procesar el archivo.");
+      }
+    });
+
+    // Control del Modal de Firebase
+    const firebaseModal = document.getElementById('firebaseModal');
+    const firebaseInputId = document.getElementById('firebaseInputId');
+
+    document.getElementById('openFirebaseModalBtn').addEventListener('click', () => {
+      if (!eventoId) {
+        alert("No se ha especificado un ID de evento en la URL para guardar.");
+        return;
+      }
+      firebaseInputId.value = currentFilenameBase.toLowerCase().replace(/\s+/g, '-');
+      firebaseModal.classList.remove('hidden');
+    });
+
+    document.getElementById('firebaseCancelBtn').addEventListener('click', () => {
+      firebaseModal.classList.add('hidden');
+    });
+
+    document.getElementById('firebaseConfirmBtn').addEventListener('click', async () => {
+      const idInput = firebaseInputId.value.trim();
+      if (!idInput) {
+        alert("Introduce un ID válido para el track.");
+        return;
+      }
+
+      if (allWaypointsCache.length === 0) {
+        alert("No hay waypoints para guardar.");
+        return;
+      }
+
+      const trackData = {
+        title: currentFilenameBase,
+        updatedAt: new Date().toISOString(),
+        totalDistance: `${allWaypointsCache.length} Puntos`,
+        waypoints: allWaypointsCache
+      };
+
+      try {
+        const btn = document.getElementById('firebaseConfirmBtn');
+        btn.textContent = "Guardando...";
+        btn.disabled = true;
+
+        const docRef = doc(db, 'eventos', eventoId, 'tracks', idInput);
+        await setDoc(docRef, trackData, { merge: true });
+
+        alert("¡Ruta y waypoints guardados con éxito en Firebase!");
+        firebaseModal.classList.add('hidden');
+      } catch (err) {
+        console.error("Error al guardar en Firebase:", err);
+        alert("Hubo un error al guardar en la base de datos.");
+      } finally {
+        const btn = document.getElementById('firebaseConfirmBtn');
+        btn.textContent = "Guardar";
+        btn.disabled = false;
+      }
+    });
+
+    function renderizarVista(waypoints) {
+      const tableBody = document.querySelector('#waypointsTable tbody');
+      const cardsContainer = document.getElementById('waypointsCardsContainer');
+      
+      tableBody.innerHTML = '';
+      cardsContainer.innerHTML = '';
+      featureGroup.clearLayers();
+
+      if (waypoints.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="3" class="text-center text-gray-500 py-4">No hay waypoints registrados.</td></tr>`;
+        cardsContainer.innerHTML = `<div class="text-center text-gray-500 py-4 bg-white p-4 rounded-lg border">No hay waypoints registrados.</div>`;
+        return;
+      }
+
+      let latLngs = [];
+
+      waypoints.forEach((wp) => {
+        if (wp.lat && wp.lon) {
+          latLngs.push([wp.lat, wp.lon]);
+          const marker = L.marker([wp.lat, wp.lon]).bindPopup(`<b>${wp.name}</b><br>${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}`);
+          marker.addTo(featureGroup);
+        }
+
+        const mapsUrl = wp.lat && wp.lon ? `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}` : '#';
+
+        // 1. Fila de la tabla (Escritorio / Tablet)
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="font-bold text-gray-800">📍 ${wp.name || '-'}</td>
+          <td class="text-xs text-gray-500">${wp.lat ? wp.lat.toFixed(5) : '-'}, ${wp.lon ? wp.lon.toFixed(5) : '-'}</td>
+          <td><a href="${mapsUrl}" target="_blank" class="map-btn">🗺️ Maps</a></td>
+        `;
+        tableBody.appendChild(row);
+
+        // 2. Tarjeta (Móvil)
+        const card = document.createElement('div');
+        card.className = "bg-white border border-gray-200 rounded-lg p-4 shadow-sm space-y-2";
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-gray-900 text-base">📍 ${wp.name || '-'}</span>
+            <a href="${mapsUrl}" target="_blank" class="map-btn py-1 px-3 text-xs">🗺️ Maps</a>
+          </div>
+          <p class="text-xs text-gray-500">Coordenadas: ${wp.lat ? wp.lat.toFixed(5) : '-'}, ${wp.lon ? wp.lon.toFixed(5) : '-'}</p>
+        `;
+        cardsContainer.appendChild(card);
+      });
+
+      if (latLngs.length > 0) {
+        map.fitBounds(L.latLngBounds(latLngs));
+      }
+      setTimeout(() => { map.invalidateSize(); }, 200);
+    }
+
+    cargarTrackData();
+  </script>
+</body>
+</html>
