@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sorteo Épico Pro - Mobile Responsive & Pop-up Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#030307',
+                            card: '#0c0d1b',
+                            border: '#1a1d3b',
+                            neon: '#00f2fe',
+                            red: '#7f00ff',
+                            gold: '#ffd700',
+                            pink: '#ff007f'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'bounce-short': 'bounceShort 0.6s ease-in-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 15px rgba(0, 242, 254, 0.4)' },
+                            '100%': { boxShadow: '0 0 35px rgba(127, 0, 255, 0.8)' },
+                        },
+                        bounceShort: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter & Orbitron -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030307;
+            color: #f3f4f6;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(12, 13, 27, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .neon-glow-red {
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
+        }
+        .neon-glow-gold {
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.45);
+        }
+        /* Custom scrollbar optimized for touch devices */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030307;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1d3b;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-red-600 relative selection:bg-red-500 selection:text-black flex flex-col justify-between">
+
+    <div class="absolute top-0 left-1/4 w-72 h-72 md:w-96 md:h-96 bg-red-900/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/3 right-1/4 w-72 h-72 md:w-96 md:h-96 bg-red-900/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Main Container Container -->
+    <div class="container mx-auto px-4 py-6 md:py-10 max-w-4xl z-10 flex-grow flex flex-col justify-between">
+
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                        <img src="https://califamountainfestival.com/2026/sorteo-vale-saltamontes.png">
+
+            <!-- Textarea for Participants (2 cols on md+) -->
+            <div class="md:col-span-2 glass-panel rounded-2xl p-4 md:p-6 flex flex-col shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <label for="participantsInput" class="font-orbitron text-xs sm:text-sm font-semibold text-red-300 flex items-center gap-2">
+                        <i class="fa-solid fa-users-line"></i> Participantes (1 por línea)
+                    </label>
+                    <span id="counterBadge" class="text-[11px] font-semibold px-2.5 py-1 bg-cyber-border text-red-400 rounded-full border border-red-500/20">
+                        0 registros
+                    </span>
+                </div>
+                <textarea id="participantsInput" rows="8" 
+                    class="w-full bg-[#070814] text-gray-200 p-3 sm:p-4 rounded-xl border border-cyber-border focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none resize-none font-mono text-xs sm:text-sm transition-all"
+                    placeholder="Pega aquí tu lista... (Ej: Cerca de 700 líneas)"></textarea>
+                <div class="flex justify-between items-center mt-3 text-xs text-gray-400">
+                    <button onclick="loadDemoData()" class="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1.5 py-1">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Cargar 700+ demo
+                    </button>
+                    <button onclick="clearInput()" class="hover:text-red-400 transition-colors flex items-center gap-1 py-1">
+                        <i class="fa-solid fa-trash-can"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Configuration & Action Panel -->
+            <div class="glass-panel rounded-2xl p-4 md:p-6 flex flex-col justify-between shadow-xl">
+                <div>
+                    <h2 class="font-orbitron text-xs sm:text-sm font-semibold text-red-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> Configuración
+                    </h2>
+
+                    <!-- Number of Winners Input -->
+                    <div class="mb-5">
+                        <label for="winnersCount" class="block text-xs font-medium text-gray-300 mb-2">
+                            Ganadores a sortear ("X"):
+                        </label>
+                        <div class="relative">
+                            <input type="number" id="winnersCount" min="1" value="2"
+                                class="w-full bg-[#070814] text-white font-orbitron text-base sm:text-lg font-bold px-4 py-3 rounded-xl border border-cyber-border focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none text-center">
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-orbitron pointer-events-none">
+                                PREMIOS
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="space-y-3 mb-5">
+                        <label class="flex items-center gap-3 cursor-pointer text-xs sm:text-sm text-gray-300 select-none">
+                            <input type="checkbox" id="allowDuplicates" class="w-4 h-4 rounded bg-[#070814] border-cyber-border text-red-600 focus:ring-red-500">
+                            <span>Permitir repetir ganadores</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer text-xs sm:text-sm text-gray-300 select-none">
+                            <input type="checkbox" id="soundEffects" checked class="w-4 h-4 rounded bg-[#070814] border-cyber-border text-red-600 focus:ring-red-500">
+                            <span>Efectos de sonido web</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Epic Sort Button (Touch-optimized) -->
+                <button id="sortBtn" onclick="startRaffleProcess()"
+                    class="w-full relative group overflow-hidden rounded-xl py-4 px-3 font-orbitron font-bold text-black bg-gradient-to-r from-red-400 via-red-400 to-yellow-400 hover:opacity-95 active:scale-95 transition-all shadow-lg neon-glow-red touch-manipulation">
+                    <div class="absolute inset-0 w-full h-full bg-white/25 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <span class="relative z-10 flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <i class="fa-solid fa-trophy text-yellow-950"></i> ¡SORTEAR AHORA!
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div id="countdownModal" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-50 flex flex-col items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="text-red-400 font-orbitron text-sm sm:text-lg md:text-2xl tracking-widest mb-6 uppercase text-center animate-pulse">
+                Sorteo en Proceso...
+            </div>
+            <!-- Slot Roller Simulation -->
+            <div id="slotRoller" class="h-20 sm:h-28 overflow-hidden relative mb-8 w-full max-w-md text-center flex items-center justify-center border border-red-500/20 bg-red-950/20 rounded-2xl p-4">
+                <div id="slotTrack" class="font-mono font-bold text-xl sm:text-3xl text-red-300 truncate w-full">
+                    Analizando registros...
+                </div>
+            </div>
+            <!-- Giant Countdown Number -->
+            <div id="countdownNumber" class="font-orbitron font-black text-7xl sm:text-8xl md:text-9xl bg-gradient-to-br from-red-400 to-red-600 bg-clip-text text-transparent scale-0 transition-transform duration-300">
+                3
+            </div>
+        </div>
+
+        <div id="winnersPopupModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden opacity-0 transition-all duration-300">
+            <div class="glass-panel w-full max-w-2xl max-h-[90vh] rounded-3xl border border-yellow-500/40 p-5 sm:p-8 flex flex-col shadow-2xl relative transform scale-95 transition-transform duration-300 overflow-hidden">
+                
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-cyber-border mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-yellow-500/20 border border-yellow-500/50 flex items-center justify-center text-yellow-400 text-lg shadow-lg">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-orbitron text-lg sm:text-xl font-bold text-yellow-400">¡GANADORES OFICIALES!</h3>
+                            <p class="text-[11px] text-gray-400" id="popupTimestamp">Sorteo cuántico completado</p>
+                        </div>
+                    </div>
+                    <button onclick="closeWinnersPopup()" class="w-9 h-9 rounded-full bg-cyber-border text-gray-300 hover:text-white flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Scrollable Winners Container -->
+                <div id="winnersPopupGrid" class="overflow-y-auto max-h-[50vh] space-y-3 pr-1 py-1 mb-5">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-cyber-border">
+                    <button onclick="copyWinnersFromPopup()" class="py-3 px-4 bg-cyber-border hover:bg-red-900/40 text-red-400 border border-red-500/30 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 active:scale-95 touch-manipulation">
+                        <i class="fa-regular fa-copy"></i> Copiar Lista
+                    </button>
+                    <button onclick="rerollRaffle()" class="py-3 px-4 bg-gradient-to-r from-red-600 to-indigo-600 hover:opacity-90 text-white rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-2 active:scale-95 touch-manipulation shadow-md">
+                        <i class="fa-solid fa-rotate-right"></i> Sortear de Nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-[11px] text-gray-500 border-t border-cyber-border/40 mt-6">
+        <p>Sorteo Épico Pro &bull; Mobile Ready & Pop-up Edition</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-sm bg-cyber-card border border-red-500/50 text-red-300 px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3 font-medium text-xs sm:text-sm">
+        <i class="fa-solid fa-circle-check text-green-400 text-base shrink-0"></i>
+        <span id="toastMessage" class="truncate">¡Acción completada!</span>
+    </div>
+
+    <script>
+        const participantsInput = document.getElementById('participantsInput');
+        const counterBadge = document.getElementById('counterBadge');
+        const winnersCountInput = document.getElementById('winnersCount');
+        const countdownModal = document.getElementById('countdownModal');
+        const countdownNumber = document.getElementById('countdownNumber');
+        const slotTrack = document.getElementById('slotTrack');
+        const winnersPopupModal = document.getElementById('winnersPopupModal');
+        const winnersPopupGrid = document.getElementById('winnersPopupGrid');
+        const popupTimestamp = document.getElementById('popupTimestamp');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // Parse valid participants
+        function getValidParticipants() {
+            return participantsInput.value.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+        }
+
+        // Live counter update
+        participantsInput.addEventListener('input', () => {
+            const count = getValidParticipants().length;
+            counterBadge.textContent = `${count} registro${count === 1 ? '' : 's'}`;
+        });
+
+        // Load Demo Data with 700+ lines instantly
+        function loadDemoData() {
+            const demoArray = ['IVAN MIRANDA ESCUDERO','MARÍA MIRANDA GONZALEZ','MANUEL MIRANDA GONZALEZ','jose luis canton avila','RAFA SÁNCHEZ','Juan Enrique Navarro Fernández','Rafa Pino Martínez','JUAN DE LA CRUZ GARCIA TRIVIÑO','Carlos MALDONADO','Antonio Sánchez Corpas','Lee Walker','David González Parrilla','Vera González Parrilla','Raquel Serrano Saavedra','Toni moll mayol','Víctor González','Ana Morillo','Miguel Angel Espada Romero','Elizabeth Rodríguez Real','Manuel Jesús Jiménez Jiménez','Manuel Garcia Hurtado','Arthur Dardaine','Valentine Gobin','Mari Ángeles Rodríguez García','Rafael González Castillejo','Alonso Muñoz Jiménez','IRENE CANTADOR LÓPEZ','César Bernal Cortés','Antonio Garcia Vives','Ana María Jiménez Gálvez','Antonio Aranda Perogil','Meritxell Alcaina Marcos','Miguel Ángel Díez Sánchez','Antonio Jesús Espejo Martínez','Ronan Dumser','Juan Manuel González Rivas','Daniela González Sánchez','Pedro Angel Berral Berral','Antonio Javier González Serrano','VICENTE CAMPOS RIBAS','Miguel Angel','Victoria Valdivia Giménez','Manuel Elvira Machuca','Mateo Elvira Machuca','LUCIA GARCÍA VILLEGAS','DAVID MARTOS MACIAS','CARLOS MARTOS MACIAS','DANIELA ARROYO FERNÁNDEZ','Álvaro Amaro Mejías','NOELIA GONZÁLEZ FERNÁNDEZ','RUBEN GONZALEZ FERNANDEZ','VALENTINA TRIGUERO SOSA','MARTIN TRIGUERO SOSA','Francisco Javier García Moreno','CARLOS GARCIA VILLEGAS','DANIEL GONZÁLEZ CANALES','JOSÉ FERRER DELGADO','BEATRIZ VILLEGAS MÁRQUEZ','TORCUATO GARCIA SEGOVIA','FRANCISCO GUTIERREZ AGUILERA','CARLOS JAVIER CORUJO SIMAL','MARIA JOSÉ MACHUCA ROMERO','Alfonso Elías Reyes Ortega','FRANCISCO JOSE SANCHEZ FERNANDEZ','Javier Gomez Rubio','Mariano Garcia Redondo','fran torrico','JOSE ANTONIO GALVEZ SEGOVIA','ESTEBAN Garcia PEREZ','Alberto Delgado Moreo','Alejandro Vázquez Sánchez','Sergio Romero Criado','María Luz Alors Jiménez','Francisco Álvarez Montes','Francisco Pulido Mata','Alejandro Reyes Delgado','alberto Martin Romero','Manuel Ostos fuentes','Víctor Tejero Fernández','Joaquin Tejero Fernández','Maria Montanana Pastor','José Antonio Aguilera García','Ruben Romero García','Francisco José González Aranda','Luis Romero Álvarez','Alberto Romero Álvarez','Jesús Cobalea Ramírez','Juan Manuel Rubio Galisteo','PACO PONCE MUÑOZ','MIGUEL ANGEL CORTES CARMONA','Pablo Navarro Gallego','Pablo Navarro Gallego','Francisco Arroyo Alguacil','Alejandro Naranjo Calzada','Miguel Ramos Sánchez','María Jesús Sánchez Rueda','Juan Ruiz muñiz','Juan Manuel Guerrero Diaz','Antonio Navarro gonzalez','Sofia González  Prieto','Jessica Choya Bernal','Maite Bargalló Pérez','MARIA JOSE DIAZ RUIZ','Soledad Del Rocío Polvillo Parra','Marina González Pereira','Olga Sánchez Rueda','María José Sosa Lora','juan javier Mohedano Gutiérrez','José Antonio Castro Garrido','Monserrat Fernández Bustos','PABLO MORENO SILLERO','Montserrtat Martínez Janeiro','Alfonso Serrano Tejederas','Santiago Velarde Mendez','Antonio Corredor Wic','Encarni Montoro Moya','INGRID ARIZA CUADRO','MARIA JOSE GARCIA ENCINAS','JOSE ORTEGA CALAHORRO','FRANCISCO JAVIER TORRES DAMAS','Antonio Reyes González','Alfonso Jaén Tejederas','Pedro Ángel Varona Ariza','David Cardador Castillo','MAITE Montilla Guadix','Andy Ureña Camas','Laura Álvarez López','Tomás Jesús Aguado Sedano','Daniel Marmolejo González','Manuel Luque-Romero Lucena Luque-Romero Lucena','Rodrigo Saavedra Romero','Angela Saavedra Romero','José Manuel Morante Ramos','Manuel Rafael Salazar Poyato','GONZALO OJEDA LARIOS','MARIA PEREZ DURAN','Luis Carmona Molina','José Luis Malagón Benítez','Juan Manuel Montiel Jobacho','Francisco Montes Medina','Simón Pérez Escalona','Tomás Pérez Escalona','Tomás Pérez Lisbona','JOSE ALBERTO DE ALBA AMAYA','ELENA DE ALBA MORENO','JORGE PINTO HERNÁNDEZ','RAFAEL GOMEZ LOPEZ','Juan Pablo Perez León','David Romero Soldevilla','Jesús Morales Martínez','Juan Bellido Agüera','Pablo Cobos Romero','RAFAEL GOMEZ ESTEBAN','JUAN ANTONIO JARA SORIA','Victoria Rodríguez Cruz','Emilio José Velasco Varo','José Emilio Camacho Donézar','Francis Ruz Molina','JUAN MANUEL PEDROSA DE LA CRUZ','PAQUI SERRANO AGUILAR','jesus vargas','Juan Moreno Vera','MARILUZ RODRIGUEZ BUENO','Antonio Parejo Garrido','Alejandro Parejo Gutiérrez','Vanesa Gutiérrez Antequera','Esther Molero Lopez','Ismael Navarro Navarro','Miguel Ángel Ledesma Muñoz','Gabriel Tineo Fernández','María Jesús Torres Porras','Francisco Javier Contiñez Dorado','Soco Romero Silva','Ana Belén Valdez Ayovi','Jorge Raya LLamas','Marcos Munzon Noguera','DAVID DORADO MOLINERO','CONCHI DIAZ VILLEGAS','Guadalupe Alonso Ponce','Pablo Orihuela Payan','Victor Orihuela Escalera','David Puerma Martinez','Miguel Ángel Alijo Fernández','Francisco José Álvarez Alors','Lucas Granados Caballero','Antonio Jesús Granados Caballero','Thiago Granados Caballero','Antonio Jesús Granados Rabasco','Raquel Rosales','ANGELA JURADO','FERNANDO JURADO CANTAIS','José Miguel Carmona Rodríguez','Joanna Johnson','Manuel Leon Gonzalez','MANUEL AYLLÓN RIZOS AYLLÓN RIZOS','Miguel Muñoz Vera','Francisco Pacheco','Diego Robles Morales','Alfonso Garcia Romero','ANTONIO MENDOZA SÁNCHEZ','Jose Antonio Agredano Parra','Rafael Guerrero Domingo','Víctor Enrique Muro Granados','JOSE MARIA BERRAL BERRAL','JUAN MANUEL CANO MALAGÓN','Luis Ortiz Muñoz','Juan Jose Ruiz Fernandez','Iván Ramírez Sánchez','Fernando Manchon Duran','NATALIA MAYÉN PRIEGO','Juan Luis Alcántara Laguna','Julián Manuel Delgado Crespo','David Bujalance Agundo','MANUEL SIERRA ROMERO','Jorge Cámara Martínez','Javier Porras Garcia','Juan Antonio Centella Marcillo','Ana Bellido Bolaños','Pedro Suárez-Varela Giménez','Joaquín Montes Benítez','Raúl Antequera Garcia','María del Carmen Martín Ruedas','Juan Carlos Castro García','Felipe Javier Jiménez García','José Luis Poyato Sánchez','Juan Diego Jurado Peñas','JOSE ANTONIO CUEVAS VALENZUELA','Valentín Fernandez Pedraza','Alicia Bonilla Orellana','Gregorio Galvez Valdivieso','Gregorio Galvez Valdivieso','Wenceslao Fortuna Gracia','José Javier Navas Pedregosa','José Carlos Román Gavilan','LUCAS MARTINEZ RANCHAL','Juan Francisco Luna Simón','MANUEL RANCHAL  GONZÁLEZ','Rafael Gómez Reina','Mercedes Guerra Marmolejo','Bonifacio Salas Moreno','MIGUEL ÁNGEL ROBLES DÍAZ','Francisco Javier Castro Muñoz','Ignacio Magarín Corvillo','Emilio Jesús Jiménez del Moral','Zoilo Suarez Pizarro','Paula Gámiz Sevillano','Claudia Gámiz Sevillano','Blanca MENGIBAR NAVEA','Francisco Javier Ordóñez Márquez','Francisco Martínez Lucena','Juan Miguel González Jiménez','Martina Cruz Luque','Mario Cruz Luque','Noelia Castillo valle','Josee Antonio Guadix Núñez','Jose Antonio Guadix Núñez','Javi Antequera Ramos','Francisco Jesús Pacheco Carmona','Miguel Diaz Beltrán','Miguel Ángel Repiso Ruiz','Blanca Gómez Dominguez','Jesus Martínez Serrano','Antonio José Castillejo Carmona','Manuel Carrillo Perez','Uxía Alice Cañada Sengelow','Lourdes Morales Muñoz','Alejandro Carmona Panadero','Marcos Lopez jaime','Marcos Lopez Jaime','Rafael Márquez agundo','Carlos Jiménez Espejo','Rafael Márquez agundo','Carlos Jiménez Espejo','FERNANDO ROBLES SÁNCHEZ','MANUEL ROBLES GARCÉS','FRAN RUIZ VAZQUEZ','María del Mar MANEIRO GAGO','Fernando Fernandez Moreno','Mari carmen Ruiz mesa','Manuel Castillo García','Manuel Corpas Puerto','Francisco Javier Rivera Lucena','Manuel J. Cuevas Ramírez','MARTINA ROBLES GARCÉS','ANDRÉS FRÍAS ZAMORANO','MANUEL ROBLES GARCÉS','MARTINA ROBLES GARCÉS','ILENIA GARCÉS OUBIÑA','Ismael Moreno Alcaide','Rosa Ortega Sánchez','Giancarlo Isidori García-Galán','Pablo Soler Calleja','José Manuel Hernández Candelario','Julián Romero Moreno','Santiago Collantes Ramirez','María del Carmen Matas Gutierrez','Joaquín Blanco Baena','David Luque Rubio','Sorsiree de los Reyes Salazar Marista','Antonio Galán Galán','Rafael Urbano Tallero','Alexis Montilla','José Alberto Luque de Haro','Dirk Meyer','Antonio Castro Lopez','Antonio Jesús Calvo Morales','Antonio Jesús Calvo Morales','Jose M Torres Raigon','Antonio Muñoz Muñoz','FIDELA RAMIREZ SANCHEZ','CHARI MOLINILLO RUIZ','Jorge Fausto Quesada Ortega','ÁLVARO ARANDA DÍAZ','Pedro Cerro Giráldez','Sara Najar Torres','María Trinidad Martínez Camero','Daniel Luque González','Carlos González Fernández','FERNANDO MOLINA JIMENEZ','Angel Piqueras','Fernando Ortiz Cantillo','Manuel Portero Rodríguez','Alejandro Rodríguez Jiménez','Carlos PÉREZ DÍEZ','Francisco Javier Contiñez Dorado','María Jesús Torres Porras','Inés Sánchez Rosales','Antonio Garriguet Lara','Catalina Pérez Robles','Rosario Esther Robles Díaz','José María Pérez Díaz','Catalina Pérez Robles','Eduardo Blanco Font','Javier López Ramos','Juan Antonio Moreno Ortiz','Lorena Romero Dominguez','Victor Girona García','Juan Miguel González Zarza','Rafael Alvarez','David Hidalgo caballero','Enrique Jesús Martín Arias','Ana Davinia Martin Lorente','SEBASTIAN PINO GARCÍA','Jose Ariza Moreno','IRENE GIJON TIRADO','Sergio Jiménez Lozano','Antonio Jesus Gonzalez Torrico','MARIANO NÚÑEZ LÓPEZ','Daniel Cátedra Martínez','Eddy paul Lopez Roca','Jose Pino García','Manuel Enrique Martín Sedano','Juan José Ruiz García','JOSE ANTONIO RODRIGUEZ DÍAZ','NADIA MOHAMED MOHAMED','Marcial Jimenez Muñoz','María Isabel Gómez Gómez','Antonio Javier Tirado Bejarano','Mercedes Navas Castillo','LUCÍA PÉREZ RETAMOSA','JAVIER PÉREZ TEJERO','Mark Anthony Cook','Antonio Jesus Ríos García','José Maria Candelario Romero','Maria Garcia Aldana','Antonio enrique Álvarez García','Luis Rafael Amores Cubero','FERNANDO UCLÉS ARÉVALO','Mariola Padilla Garcia','Estrella Cruz','Carlos Bernabéu Gallego','Carlos Bernabéu Gallego','Alfonso Guillén Criado','Francisco Javier Barbero Muñoz','Javier Posadas Lozano','Alfonso Guillén Criado','juan.jose. Carvajal perez','Jesus Rubio García','Tony Barbero Muñoz','Jorge Camacho Fernandez','Guillermo Gutiérrez Ballesteros','Chari Pavón Sánchez','Jose manuel Falcón Sánchez','Francisco Javier Fernandez calero','Unai Carrillo París','Juan Tornero Valle','Francisco José Tornero Jiménez','Diego Rubí medina','MERCEDES GRANADOS PÉREZ','María jose Garcia leon','Ainhoa Arjona López','Maria García Pérez','Tania Sánchez Zambrana','JUAN CORTÉS MACÍAS','Gonzalo Alcolea Crespo','Jose Manuel Fernández Vera','Pablo Romero Herrera','Lucas Milla Bendezu','Raquel Milla Bendezu','Mateo Milla Bendezu','EMILIO GALLEGOS BENITEZ','Emilio Reche Rodenas','Óscar Fernández Gonzalez','Rafa Alcántara','INMACULADA LOPEZ TENDERO','Ester Moyano Olmo','Wiktor Kowalski','José Juan Luque Aranda','Maribel Isabel Recio Ruiz','Leo Lopez Martos','Raúl Ramos Portillo','Victor Pimentel Carretero','Rafael Antonio Copado Garcia','Rosa María Cabezas Márquez','Óscar Alonso Brenes','Manuel Martín  Jiménez','Francisco Jesús Gómez Leiva','Antonia Castellón Moreno','Francisco Velasco Hurtado','Cristina del Rio Garcia','JOSÉ MÁRQUEZ SERRANO','Josefa Ollero Ortiz','ANA GARCIA','María Eugenia González Álvarez','Fátima Álvarez Bautista','JOSE MANUEL REBOLLIDO VIDAL','José Rafael García León','Blanca Morente Ruiz','Sofía Bujalance Agundo','Cristina Jurado Zamorano','ANTONIO JESÚS CANO BORREGO','PATRICIA MARIN TARRAMERA','RICARDO MARIN MORALES','Anastasio García-Retamero Robas','Oscar Ruiz Rubio','Angel Belmonte Roldán','Lara Abad Camacho','Francisco Ravé García','JUAN FRANCISCO AGUILA ROJAS','Andrea Do Cugno','Adolfo Angulo de la Rosa','Pablo Carbonero Peralbo','Diego José Jiménez Martín-Borja','Ricardo Martin Montesinos','Juan Antonio Pinto Jiménez','Rafael De la Bastida López','Irene Ortega Canto','Antonio Rosa Teujillo','Ricardo Garcia Martin','Jesús Gisbert Lucena','Gerardo Rodríguez Fuentes','Alberto Pradas Cejudo','Fernando Jesus Cortes Carmona','Antonio Ortiz Teba','CANDIDO GONZALEZ MACIAS','MANUEL ORGANVIDEZ ROSADO','PABLO PINEDA MORENO','FEDERICO PEREZ ROBLES','FRANCISCO JAVIER TEJONERO VALDEZ','MIGUEL ANGEL LARA DEL MORAL','JUAN JOSE JACINTO CASTRO','JAVIER GUTIERREZ MENA','CRISTIAN LOPEZ MUÑOZ','FRANCISCO JESUS PULIDO BECERRA','MANUEL ORGANVIDEZ RODRIGUEZ','DIEGO ROMERO MONTERO','JUAN LUIS ALIAÑO CASTRO','JUAN DE DIOS MATEOS GARCES','INDIA PERSSON FERNANDEZ','BELÉN CHACÓN ROMÁN','LETICIA ROSADO FERNANDEZ','TAMARA LOBATO ASENCIO','SILVIA NUÑEZ CARMONA','RAQUEL MORENO RESPETO','YOLANDA FERNANDEZ DEL CAMPO','Andrés Rodríguez Sánchez','Alfonso Castillejo jurado','Jose Manuel Chacón Gálvez','Juan De La Cruz García Triviño','Miguel Ángel Jurado Martínez','Rafael Pesquero de Torres','José Manuel Muñoz Jiménez','Lorenzo Galán Rodríguez','Marina Cote Luque','Teresa Rodríguez buenrostro Madueño','Irene Cantador López','María Angela Cañete Molina','Beatriz Montes Benítez','Pilar Montes Benítez','Susana Montes Benítez','Ana marina Serrano Flores','JAVIER CARVALLIDO CORDERO','EMILIO BLANCO MELERO','ALVARO MOLES FUENTES','CARLOS VOLWINKER GÁLVEZ','ALEJANDRO MARTINEZ VEGA','RAUL RIOJA JIMÉNEZ','MIGUEL SANCHEZ CARO','FELIX DAVID ALMERIA BLANCO','MIGUEL ANGEL ARCOS MARIN','VICENTE MONTESINO GARCÍA','FRANCISCO GONZÁLEZ ZOIDO','JOSE ANTONIO GARCÍA NAVARRO','LORENZO CARMONA  REPISO','CAROLINA MARMOL GORDILLO','TRIANA GONZÁLEZ SÁNCHEZ','HASSANIA BARRHOUSS','BARBARA SANCHEZ RAMOS','ANA ISABEL VAZQUEZ GALLARDO','BEATRIZ JIMENEZ GARCÍA','GEMA RAVIRA MARQUEZ','PILAR RODRÍGUEZ REYES','CARMEN POYATO NIETO','ANTONIO GARRIDO MORENO','JULIO RODRÍGUEZ GONZÁLEZ','TOMÁS BLANCO SALAZAR','ANTONIO CAPITAN RUIZ','MIGUEL PÉREZ GARCIA','RAÚL PORRAS DEL RIO','PABLO DOÑA  GIRÓN','JOSE ANTONIO FERNÁNEZ LUQUE','ANTONIO HERRERA ARAGÓN','DIEGO BENÍTEZ CORDERO','ANDRÉS JOAQUÍN GARCÍA GONZÁLEZ','FRANCISCO JAVIER RODRÍGUEZ GARCIA','ANTONIO OCÓN RUÍZ','ACACIO OLMEDO PINEDO','ERIKA RAMÍREZ HERRERO','MARIA ALISA SUSHCH KIKGEBEN','NOEMI SÁNCHEZ BOLAÑOS','OLGA MORINIGO GAONA','BEATRIZ SÁNCHEZ ZAMBRANA','MAYCA SEVILLANO CORRAL','ELISABETH PELÁEZ LEYVA','INMACULADA GARCIA ORTIGOSA','CARMEN LARA LARA','DORTE DAHL','RAUL LORENZO MARQUEZ','SEBASTIAN MORA BERMEJO','SEBASTIAN GOMEZ CERREJON','DANIEL GONZALEZ LORENZO','Mario Bustamante López','OMAYRA PARRADO GARCIA','PAULA RODRIGUEZ RODRIGUEZ','MONICA HENAO CARDONA','VICTORIA MARQUEZ AGUDO','VICTORIA RODRIGUEZ CRUZ','SALVADOR PAEZ RAMOS','ROSENDO GARCIA PINAZO','JUAN CAZORLA MARTÍNEZ','ANDRES QUEROL MALDONADO','JAVIER CANO LÓPEZ','ANDRES SEGURA MARTÍNEZ','Juan Francisco Oliver Oliver','JOSE MANUEL BUSTAMANTE CASTAÑO','JUAN ANTONIO MARTÍN VARGAS','MIGUEL MORALES FRANCO','JOSE MANUEL BRAVO RODRIGUEZ','PEDRO SANCHEZ MONTESINOS','JUAN ANTONIO BARAMBONES','JUAN MATIAS PÉREZ','AROA FERNANDEZ CAMPOY','IRENE BRAVO JIMENEZ','RAHMA CHAOUKI MAMOUFATNA','LIDIA ACIEN PÉREZ','VALERIA CRUZ MONTES','RAFIKA ASIFROU MASSA','MIREYA MOYA FERNANDEZ','SHEILA MOYA FERNANDEZ','BEATRIZ RUBIO MARTÍNEZ','GADOR CABRERA AGUILA','PATRO CRUZ JUSTO','MARÍA CRUZ BERRUEZO GARCÍA','REGLA MARIA SANCHEZ COELLO','ANGELES LUPIAÑEZ LUPIAÑEZ','Miguel Henares Duran','Reyes Gil López-Sepúlveda','ISABEL MORALES','Manuel López Cabello','Antonio Manuel Bolance Ruiz','Jaime Ríos Cabello','Adrián Ruiz Sánchez','Jonatan Jurado Contreras','Francisco Boudry Leon','Cristina Lara Roldán','Rafael Rodríguez Zamorano','Juan Manuel Gómez Ruiz','Angel Salas Olaya','Francisco Jose Plaza Aranda','Maria Jurado Cubillo','Ana Jurado Cubillo','José Manuel Jurado Contreras','Jeronimo López jimenez','Mari Carmen Llamas Morales','Rosario M Trenado Rodríguez','sergio luna marin','JUAN JOSE ELISO PECULO','MARIO BUSTAMANTE LÓPEZ','Yolanda Jiménez Morales','Antonio García Rios','Marta Pérez barranco','Alberto Tienda Seguí','Gala Mena Zarco','Chloe Mena zarco','José Miguel Guerrero Nieto','CONCEPCIÓN CASADO JURADO','Pilar Ramiro Béjar','Silvia Prieto montero','Alejandra Alonso Ponce','Joaquin Cantero Perez','Manuel Lorenzo Cantero Morales','Maria Jose Perez Cordobes','Javier Jiménez Páez','ANTONIO MOLINA PUNTAS','cristian torralbo','Alba Bernabéu Pulgarín','Carla Bernabéu Pulgarín','Martín Gómez Pavón','Jose Gómez Pavón','Ariadna Montejo Marcos','Ines Bernal Alonso','Alejandra Piña Aguilar','antonio Narganez cruz','Miguel Nieto Rodríguez','Francisco Manuel López Malagón','Jairo Sarmiento Salamanca','José Ángel López Fernández','Jesus Maria Pérez Tapia','MARIA João De Mendonça ALMEIDA','Blas Hernández Díaz','Marco Schwamberg','Blas Hernández Díaz','Mercedes Cabanillas Roig','Alfonso Castillejo Carmona','Blas Hernández toscano','Gonzalo Hernández toscano','Eva María Arévalo Muñoz','Sara María Galisteo Perez','Juan Jose Rodriguez Gomez','Juan Jose Rodriguez Gomez','Jose Carlos Mellado Navarro','Martín Serantes Varela','Antonio García moreno','Raquel González Muñoz','Antonio López Medina','Bruno Lara Chofles','Rafael Lara Santiago','Salvador Yuste Redondo','Herbert Haiderer','Herbert Haiderer','José Miguel Cruz Arrabal','David Cubero Leon','Miguel Rodriguez Ortega','Cristobal Moreno Morales','ANTONIO GARRIDO DIAZ','Angel GARCIA ROMERO','Carolina Vázquez Ríos','Tomas Jiménez muñoz','Santiago Alcázar Rodríguez','Francisco Javier Alcázar Rodríguez','Maria Lumbreras Martinez','Joaquín Arroyo Ogalla','Andrezza Gomes Caponi','Manuel Triviño García','Emiliano Jiménez Millán','Antonio Moyano gomez','Javier Tirado santofimia','Luna Terán Carmona','Jorge Fernández Marín','Pedro Suarez-Varela Giménez','Ana Bellido Bolaños','JAVIER RODRÍGUEZ BAENA','Luis Miguel Porras Muñoz','Luis Miguel Porras Muñoz','Carmen Baeza Cremades','daniel Carrion Bravo','Jose Alberto Castellano Zamora','Ivan López Lunar','Natalia Espinosa de los monteros aliaga cano','Antonio Vélez Gálvez','Ramón Freire Pérez','Francisco Elías Ordóñez','maria dolores revuelto hidalgo','MARIA DE LA CINTA GONZALEZ MATAS','JULIAN DE LA PAZ LLERGO','JUAN CARLOS GIRON JORDAN','AMPARO RUIZ TORRALBO','CESAR BELLIDO GALAN'];
+            participantsInput.value = demoArray.join('\n');
+            participantsInput.dispatchEvent(new Event('input'));
+            showToast('¡720 participantes de prueba cargados!');
+        }
+
+        // Initialize with default demo on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDemoData();
+        });
+
+        function clearInput() {
+            participantsInput.value = '';
+            participantsInput.dispatchEvent(new Event('input'));
+            showToast('Lista limpiada correctamente');
+        }
+
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Web Audio API Sound Synthesizer
+        function playSound(type) {
+            if (!document.getElementById('soundEffects').checked) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'tick') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                } else if (type === 'fanfare') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(330, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.8);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.8);
+                }
+            } catch (e) {}
+        }
+
+        // Main Raffle Flow
+        async function startRaffleProcess() {
+            const participants = getValidParticipants();
+            const winnersNeeded = parseInt(winnersCountInput.value);
+
+            if (participants.length === 0) {
+                showToast('¡Error! La lista de participantes está vacía.');
+                participantsInput.focus();
+                return;
+            }
+
+            if (isNaN(winnersNeeded) || winnersNeeded < 1) {
+                showToast('¡Error! Introduce un número válido de ganadores.');
+                winnersCountInput.focus();
+                return;
+            }
+
+            const allowDuplicates = document.getElementById('allowDuplicates').checked;
+
+            if (!allowDuplicates && winnersNeeded > participants.length) {
+                showToast(`¡Aviso! No puedes sortear ${winnersNeeded} ganadores únicos con solo ${participants.length} participantes.`);
+                return;
+            }
+
+            // Show Countdown Modal
+            countdownModal.classList.remove('hidden');
+            setTimeout(() => countdownModal.classList.remove('opacity-0'), 10);
+
+            let slotInterval = setInterval(() => {
+                const randomName = participants[Math.floor(Math.random() * participants.length)];
+                slotTrack.textContent = randomName;
+            }, 45);
+
+            // Run countdown sequence 3 -> 2 -> 1
+            await runCountdownNumber('3');
+            await runCountdownNumber('2');
+            await runCountdownNumber('1');
+
+            clearInterval(slotInterval);
+            slotTrack.textContent = "¡GANADORES SELECCIONADOS!";
+            playSound('fanfare');
+
+            // Hide countdown modal
+            countdownModal.classList.add('opacity-0');
+            setTimeout(() => {
+                countdownModal.classList.add('hidden');
+                const winners = selectWinners(participants, winnersNeeded, allowDuplicates);
+                openWinnersPopup(winners);
+            }, 300);
+        }
+
+        function runCountdownNumber(num) {
+            return new Promise(resolve => {
+                playSound('tick');
+                countdownNumber.textContent = num;
+                countdownNumber.classList.remove('scale-0');
+                countdownNumber.classList.add('scale-125');
+
+                setTimeout(() => {
+                    countdownNumber.classList.remove('scale-125');
+                    countdownNumber.classList.add('scale-0');
+                    setTimeout(resolve, 200);
+                }, 750);
+            });
+        }
+
+        function selectWinners(participants, count, allowDuplicates) {
+            let pool = [...participants];
+            let results = [];
+
+            if (allowDuplicates) {
+                for (let i = 0; i < count; i++) {
+                    const idx = Math.floor(Math.random() * pool.length);
+                    results.push(pool[idx]);
+                }
+            } else {
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+                results = pool.slice(0, count);
+            }
+            return results;
+        }
+
+        // Open Winners Pop-up with Confetti & Cards
+        function openWinnersPopup(winners) {
+            winnersPopupGrid.innerHTML = '';
+            const now = new Date();
+            popupTimestamp.textContent = `Sorteo realizado el ${now.toLocaleDateString()} a las ${now.toLocaleTimeString()}`;
+
+            winners.forEach((winner, index) => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel p-3.5 sm:p-4 rounded-2xl border border-yellow-500/30 flex items-center gap-3.5 shadow-lg';
+
+                let badgeBg = 'bg-cyber-border text-red-400 border-red-500/30';
+                let icon = 'fa-medal';
+                if (index === 0) {
+                    badgeBg = 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
+                    icon = 'fa-crown text-yellow-400';
+                } else if (index === 1) {
+                    badgeBg = 'bg-gray-300/20 text-gray-300 border-gray-400/50';
+                    icon = 'fa-award text-gray-300';
+                } else if (index === 2) {
+                    badgeBg = 'bg-amber-700/20 text-amber-500 border-amber-600/50';
+                    icon = 'fa-award text-amber-500';
+                }
+
+                card.innerHTML = `
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-orbitron font-bold text-sm sm:text-base border ${badgeBg} shrink-0">
+                        <i class="fa-solid ${icon}"></i>
+                    </div>
+                    <div class="overflow-hidden flex-grow">
+                        <div class="text-[10px] sm:text-xs font-orbitron text-gray-400 uppercase tracking-wider">Premio #${index + 1}</div>
+                        <div class="font-bold text-white text-sm sm:text-base truncate" title="${escapeHtml(winner)}">${escapeHtml(winner)}</div>
+                    </div>
+                `;
+                winnersPopupGrid.appendChild(card);
+            });
+
+            winnersPopupModal.classList.remove('hidden');
+            setTimeout(() => {
+                winnersPopupModal.classList.remove('opacity-0');
+                winnersPopupModal.querySelector('.glass-panel').classList.remove('scale-95');
+            }, 10);
+
+            triggerConfetti();
+        }
+
+        function closeWinnersPopup() {
+            winnersPopupModal.classList.add('opacity-0');
+            winnersPopupModal.querySelector('.glass-panel').classList.add('scale-95');
+            setTimeout(() => {
+                winnersPopupModal.classList.add('hidden');
+            }, 300);
+        }
+
+        function rerollRaffle() {
+            closeWinnersPopup();
+            setTimeout(() => {
+                startRaffleProcess();
+            }, 350);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function triggerConfetti() {
+            var duration = 3.5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 35, spread: 360, ticks: 70, zIndex: 10000 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function copyWinnersFromPopup() {
+            const winnerNames = winnersPopupGrid.querySelectorAll('.truncate');
+            let textToCopy = "🎉 LISTA DE GANADORES - SORTEO ÉPICO 🎉\n\n";
+            winnerNames.forEach((el, index) => {
+                textToCopy += `${index + 1}. ${el.textContent}\n`;
+            });
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showToast('¡Ganadores copiados al portapapeles!');
+                }).catch(() => {
+                    fallbackCopyText(textToCopy);
+                });
+            } else {
+                fallbackCopyText(textToCopy);
+            }
+        }
+
+        function fallbackCopyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('¡Ganadores copiados al portapapeles!');
+            } catch (err) {
+                showToast('No se pudo copiar el texto.');
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
