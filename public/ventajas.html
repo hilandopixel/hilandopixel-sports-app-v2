@@ -137,6 +137,11 @@
         ventajasSnap.forEach((docSnap) => {
           const v = docSnap.data();
 
+          let codeIn = code;
+          if (v.codigos && v.codigos.length > 0) {
+            codeIn = v.codigos[0];
+          }
+
           const imagenHTML = v.foto ? `<img src="${v.foto}" alt="${v.nombre}" class="object-cover rounded-t-xl">` : '';
           const fechaHTML = v.fechaCaducidad ? `<span class="text-xs font-semibold bg-red-900 text-white px-2.5 py-1 rounded-full">⏳ Caduca: ${v.fechaCaducidad}</span>` : '';
           const descHTML = v.descripcion ? `<p class="text-gray-600 text-sm mt-2">${v.descripcion}</p>` : '';
@@ -146,7 +151,7 @@
           const bannerCodigoHTML = `
             <div class="my-4 p-3.5 rounded-xl text-center shadow-md banner-codigo-parpadeante">
               <span class="block text-[11px] font-bold uppercase tracking-widest opacity-90">USA EL CÓDIGO</span>
-              <span class="text-xl font-black font-mono tracking-widest">${code}</span>
+              <span class="text-xl font-black font-mono tracking-widest">${codeIn}</span>
             </div>
           `;
 
@@ -155,17 +160,6 @@
             botonHTML = `<div><a href="${v.actionButton}" target="_blank" class="btn-primary inline-block text-center w-full py-2.5 text-xs font-bold rounded-lg shadow-sm">${v.textButton}</a></div>`;
           }
 
-          let codigosHTML = '';
-          if (v.codigos && v.codigos.length > 0) {
-            codigosHTML = `
-              <div class="mt-4 bg-green-100 p-3 rounded-lg border border-gray-100">
-                <span class="text-xs font-bold text-gray-700 block mb-1">Códigos asociados:</span>
-                <div class="flex flex-wrap gap-1.5">
-                  ${v.codigos.map(c => `<code class="bg-white border border-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs font-mono font-bold">${c}</code>`).join('')}
-                </div>
-              </div>
-            `;
-          }
 
           const card = document.createElement("div");
           card.className = "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col justify-between";
@@ -178,7 +172,6 @@
                   ${fechaHTML}
                 </div>
                 ${descHTML}
-                ${codigosHTML}
                 ${htmlEmbedHTML}
               </div>
             </div>
