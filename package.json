@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "papaparse": "^5.4.1"
+    "papaparse": "^5.4.1",
+    "pdf-lib": "^1.17.1"
   }
 }
