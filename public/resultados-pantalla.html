@@ -477,9 +477,9 @@
                 </div>
 
                 <div class="campo-grupo">
-                        <label for="input-mostrar-x-resultados">Mostrar solo X resultados (opcional):</label>
-                        <input type="number" id="input-mostrar-x-resultados" class="input-numero" min="1" placeholder="Ej: 10">
-                    </div>
+                    <label for="input-mostrar-x-resultados">Mostrar solo X resultados (opcional):</label>
+                    <input type="number" id="input-mostrar-x-resultados" class="input-numero" min="1" placeholder="Ej: 10">
+                </div>
 
                 <div class="checkbox-container">
                     <input type="checkbox" id="checkbox-mostrar-filtros" checked>
@@ -655,7 +655,6 @@
                     renderizarQrResultado(); // Actualiza el QR en pantalla dinámicamente al editar
                 });
 
-
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
                 var titulo = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
@@ -668,7 +667,6 @@
                 document.getElementById('select-res-tipo').value = configuracionResultado.tipo || 'CSV';
                 document.getElementById('input-res-enlace').value = configuracionResultado.enlace || '';
                 document.getElementById('input-mostrar-x-resultados').value = configuracionResultado.mostrarXResultados || '';
-
 
                 const imgsSnap = await getDocs(collection(refResultadoDocActual, 'imagenes_cabecera'));
                 listaImagenes = [];
@@ -760,7 +758,6 @@
                     tiempoImagenCarrusel: tiempoSecs,
                     url_qr_resultados: urlQrResultados,
                     mostrarXResultados: document.getElementById('input-mostrar-x-resultados').value
-
                 };
 
                 await setDoc(refResultadoDocActual, datosAActualizar, { merge: true });
@@ -892,16 +889,35 @@
         }
 
         async function cargarDatos() {
-            if (cargando || !urlCSVoJSON) return;
-            cargando = true;
+            if (cargando) return;
 
             try {
+                // Reobtener la URL desde Firebase por si ha sido actualizada
+                if (refResultadoDocActual) {
+                    const docSnap = await getDoc(refResultadoDocActual);
+                    if (docSnap.exists()) {
+                        const datosDoc = docSnap.data();
+                        if (datosDoc.enlace) {
+                            urlCSVoJSON = datosDoc.enlace;
+                        }
+                    }
+                }
+
+                if (!urlCSVoJSON) return;
+
+                cargando = true;
+
                 const apiEndpoint = `/api/csv-to-json?url=${encodeURIComponent(urlCSVoJSON)}`;
                 const response = await fetch(apiEndpoint);
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                }
+
                 const resJSON = await response.json();
 
-                if (!response.ok || !resJSON.ok) {
-                    throw new Error(resJSON.error || `Error HTTP`);
+                if (!resJSON.ok) {
+                    throw new Error(resJSON.error || `Error en la respuesta del servidor`);
                 }
 
                 if (resJSON.datos && resJSON.datos.length > 0) {
@@ -929,12 +945,12 @@
 
                 ultimaHoraActualizacion = new Date().toLocaleTimeString();
                 segundosRestantes = intervaloSegundosConfig;
-                cargando = false;
-                actualizarTextoEstado();
 
             } catch (error) {
+                console.error("Error al cargar datos. Se mantendrán los datos anteriores:", error);
+            } finally {
                 cargando = false;
-                document.getElementById('contenedor-tabla').innerHTML = `<p style="color:red; font-size:0.85em;">Error: ${error.message}</p>`;
+                actualizarTextoEstado();
             }
         }
 
@@ -1130,8 +1146,6 @@
 
             html += '<div class="cards-container">';
             datosProcesados.forEach(item => {
-                // Aplicación de inversión de color solicitada: 
-                // Fondo de tarjeta con el color de texto del evento, y texto de tarjeta con el color de fondo del body.
                 html += `<div class="resultado-card" style="background-color: ${colorTextoEvento}; color: ${colorFondoBody};">`;
                 columnasFinales.forEach((clave, idx) => {
                     const separador = (idx > 0) ? ' • ' : '';
@@ -1167,26 +1181,26 @@
         }
 
         function renderizarQrResultado() {
-    const contenedorQr = document.getElementById('contenedor-qr-resultado');
-    if (!contenedorQr) return;
+            const contenedorQr = document.getElementById('contenedor-qr-resultado');
+            if (!contenedorQr) return;
 
-    contenedorQr.innerHTML = '';
+            contenedorQr.innerHTML = '';
 
-    if (!urlQrResultados) {
-        contenedorQr.style.display = 'none';
-        return;
-    }
+            if (!urlQrResultados) {
+                contenedorQr.style.display = 'none';
+                return;
+            }
 
-    contenedorQr.style.display = 'flex';
-    new QRCode(contenedorQr, {
-        text: urlQrResultados,
-        width: 128,
-        height: 128,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-    });
-}
+            contenedorQr.style.display = 'flex';
+            new QRCode(contenedorQr, {
+                text: urlQrResultados,
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
 
         init();
     </script>
