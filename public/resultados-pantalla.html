@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=512, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Resultados del Evento</title>
+    <!-- Importación de la fuente Inter para máxima legibilidad en tótems/pantallas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         html, body {
@@ -16,7 +20,9 @@
             justify-content: center;
             align-items: flex-start;
             overflow: hidden;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .screen-canvas {
@@ -26,7 +32,7 @@
             height: 1536px;
             min-height: 1536px;
             max-height: 1536px;
-            padding: 14px;
+            padding: 16px;
             box-sizing: border-box;
             background-color: #f8f9fa;
             display: flex;
@@ -290,36 +296,38 @@
         #contenedor-tabla { 
             width: 100%; 
             box-sizing: border-box;
-            margin-top: 8px;
+            margin-top: 12px;
             flex-grow: 1;
         }
 
         .cards-container {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .resultado-card {
-            background: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 8px 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
             box-sizing: border-box;
             display: flex;
             flex-wrap: wrap;
-            gap: 4px 10px;
+            gap: 6px 12px;
             align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .card-value-item {
-            font-size: 0.85em;
-            color: #212529;
+            font-size: 0.95em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
+            font-variant-numeric: tabular-nums;
         }
 
         .filtros-panel-movil {
@@ -341,23 +349,24 @@
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 0.85em;
+            font-family: inherit;
         }
 
         .estado-chips-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 2px;
+            gap: 6px;
+            margin-top: 4px;
             flex-shrink: 0;
         }
 
         .estado-chip {
-            padding: 2px 6px;
-            font-size: 0.75em;
+            padding: 4px 8px;
+            font-size: 0.8em;
             border-radius: 6px;
             background-color: #e9ecef;
             color: #495057;
-            font-weight: 500;
+            font-weight: 600;
             border: 1px solid wheat;
         }
 
@@ -365,8 +374,11 @@
         .estado-chip.proxima { background-color: wheat; color: #0f5132; }
         
         #tituloResultado {
-            font-size: 1.15em;
-            margin: 4px 0 4px 0;
+            font-size: 1.3em;
+            font-weight: 800;
+            margin: 8px 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -558,7 +570,7 @@
         let urlCSVoJSON = '';
         let refResultadoDocActual = null;
 
-        let tiempoCarruselMs = 2000; // Por defecto 2 segundos
+        let tiempoCarruselMs = 2000;
         let indiceImagenActual = 0;
         let intervaloCarrusel = null;
         let listaImagenes = [];
@@ -597,16 +609,13 @@
                             const datosEvento = eventoDocSnap.data();
                             nombreEvento += datosEvento.nombre || '';
                             
-                            // Aplicar color de fondo del evento al body / screen-canvas
                             if (datosEvento.color) {
                                 colorFondoBody = datosEvento.color;
                                 document.getElementById('kibuu-canvas').style.backgroundColor = colorFondoBody;
                             }
-                            // Guardar color de texto del evento
                             if (datosEvento.colorTexto) {
                                 colorTextoEvento = datosEvento.colorTexto;
                             }
-                            // Aplicar color de texto al título
                             document.getElementById('tituloResultado').style.color = colorTextoEvento;
                         }
 
@@ -652,13 +661,13 @@
                 renderizarQrResultado();
                 document.getElementById('input-url-qr').addEventListener('input', (e) => {
                     urlQrResultados = e.target.value.trim();
-                    renderizarQrResultado(); // Actualiza el QR en pantalla dinámicamente al editar
+                    renderizarQrResultado();
                 });
 
                 urlCSVoJSON = configuracionResultado.enlace || '';
 
                 var titulo = nombreEvento + " " + (configuracionResultado.nombre || 'Resultado');
-                document.getElementById('tituloResultado').textContent = titulo + ' Mostrando (' + configuracionResultado.mostrarXResultados + ')';
+                document.getElementById('tituloResultado').textContent = ' Últimas entradas';
                 document.title = titulo;
 
                 document.getElementById('input-res-nombre').value = configuracionResultado.nombre || '';
@@ -684,7 +693,6 @@
                 document.getElementById('input-intervalo-refresco').value = intervaloSegundosConfig;
                 segundosRestantes = intervaloSegundosConfig;
 
-                // Cargar tiempo de carrusel (por defecto 2 segundos)
                 if (configuracionResultado.tiempoImagenCarrusel) {
                     tiempoCarruselMs = parseInt(configuracionResultado.tiempoImagenCarrusel, 10) * 1000;
                     document.getElementById('input-tiempo-carrusel').value = configuracionResultado.tiempoImagenCarrusel;
@@ -892,7 +900,6 @@
             if (cargando) return;
 
             try {
-                // Reobtener la URL desde Firebase por si ha sido actualizada
                 if (refResultadoDocActual) {
                     const docSnap = await getDoc(refResultadoDocActual);
                     if (docSnap.exists()) {
@@ -1055,7 +1062,7 @@
             if (!container || cargando) return;
             const esDirecto = configuracionResultado?.directo !== false;
             container.innerHTML = `
-                <span class="estado-chip ${esDirecto ? 'directo' : ''}">${esDirecto ? '⚡ En directo' : '⏸️ Pausado'}</span>
+                <span class="estado-chip ${esDirecto ? 'directo' : ''}">${esDirecto ? '⚡ EN DIRECTO' : '⏸️ PAUSADO'}</span>
                 <span class="estado-chip">🕒 ${ultimaHoraActualizacion}</span>
                 <span class="estado-chip proxima">⏱️ ${segundosRestantes}s</span>
             `;
@@ -1110,7 +1117,6 @@
                 });
             });
 
-            // Limitar a X resultados si la propiedad tiene valor
             if (configuracionResultado && configuracionResultado.mostrarXResultados) {
                 const limite = parseInt(configuracionResultado.mostrarXResultados, 10);
                 if (!isNaN(limite) && limite > 0) {
@@ -1149,7 +1155,17 @@
                 html += `<div class="resultado-card" style="background-color: ${colorTextoEvento}; color: ${colorFondoBody};">`;
                 columnasFinales.forEach((clave, idx) => {
                     const separador = (idx > 0) ? ' • ' : '';
-                    html += `<span class="card-value-item" style="color: ${colorFondoBody};">${separador}${item[clave] ?? ''}</span>`;
+                    // AHORA (Blindado contra null, undefined, números u objetos):
+                    let valorMostrar = String(item[clave] ?? '').trim();
+
+                    // Recortar texto a un máximo de 3 palabras usando Expresión Regular
+                    valorMostrar = valorMostrar.replace(/^((?:\S+\s+){1}\S+).*$/, '$1');
+
+                    // Formatear tiempos para que queden solo en formato HH:mm (recorta segundos y decimales/milésimas)
+                    if (typeof valorMostrar === 'string' && /^\d{2}:\d{2}:\d{2}/.test(valorMostrar.trim())) {
+                        valorMostrar = valorMostrar.trim().split(':').slice(0, 2).join(':'); 
+                    }
+                    html += `<span class="card-value-item" style="color: ${colorFondoBody};">${separador}${valorMostrar}</span>`;
                 });
                 html += '</div>';
             });
