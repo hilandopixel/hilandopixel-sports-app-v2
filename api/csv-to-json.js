@@ -42,6 +42,11 @@ export default async function handler(req, res) {
       dynamicTyping: true // Convierte números y booleano automáticamente
     });
 
+    // --- INVERTIR EL ORDEN DE LOS REGISTROS ---
+    if (Array.isArray(parsed.data)) {
+      parsed.data.reverse();
+    }
+
     return res.status(200).json({
       ok: true,
       total_registros: parsed.data.length,
