@@ -51,6 +51,9 @@ class NavbarHeader extends HTMLElement {
             <a href="/subidaalasermitas" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-ermitas">
               <span>📷 Subida a las Ermitas 2025</span>
             </a>
+            <a href="/rutadelamiel2025" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-miel">
+              <span>📷 Ruta de la Miel 2025</span>
+            </a>
           </div>
         </div>
       </header>
