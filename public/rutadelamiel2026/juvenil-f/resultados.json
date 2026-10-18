@@ -1,0 +1,69 @@
+{
+    "data": [
+        {
+            "posicion": "1",
+            "dorsal": "48",
+            "nombre": "Judith Carballar Gonzalez",
+            "club": "TROTASIERRA HORNACHUELOS",
+            "tiempo": "00:09:46",
+            "promedio": "04:03.08",
+            "prueba": "JUVENIL Femenino",
+            "posicionprueba": "1",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=48' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        },
+        {
+            "posicion": "2",
+            "dorsal": "418",
+            "nombre": "Alba Villaecija Caraballo",
+            "club": "TROTASIERRA HORNACHUELOS",
+            "tiempo": "00:10:04",
+            "promedio": "04:11.04",
+            "prueba": "JUVENIL Femenino",
+            "posicionprueba": "2",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=418' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        },
+        {
+            "posicion": "3",
+            "dorsal": "177",
+            "nombre": "María González Nieto",
+            "club": "TROTASIERRA",
+            "tiempo": "00:12:44",
+            "promedio": "05:18.03",
+            "prueba": "JUVENIL Femenino",
+            "posicionprueba": "3",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=177' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        },
+        {
+            "posicion": "4",
+            "dorsal": "217",
+            "nombre": "Victoria Lozano Blanco",
+            "club": "TROTASIERRA HORNACHUELOS",
+            "tiempo": "00:13:42",
+            "promedio": "05:42.03",
+            "prueba": "JUVENIL Femenino",
+            "posicionprueba": "4",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=217' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        },
+        {
+            "posicion": "5",
+            "dorsal": "263",
+            "nombre": "Estrella Morales Alarcón",
+            "club": "ECIJA",
+            "tiempo": "00:15:05",
+            "promedio": "06:17.00",
+            "prueba": "JUVENIL Femenino",
+            "posicionprueba": "5",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=263' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        }
+    ]
+}

@@ -188,3 +188,7 @@ button {
     background-color: #5da999;
     box-shadow: 0 2px 4px rgba(0,0,0,.08);
 }
+
+#timeInput{
+    color: #5da999;
+}

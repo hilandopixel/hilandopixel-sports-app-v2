@@ -1,0 +1,30 @@
+{
+    "data": [
+        {
+            "posicion": "1",
+            "dorsal": "21",
+            "nombre": "Manuel Arteaga Benjumea",
+            "club": "TROTASIERRA HORNACHUELOS",
+            "tiempo": "00:02:16",
+            "promedio": "--:--.--",
+            "prueba": "DIV FUNC Masculino",
+            "posicionprueba": "1",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=21' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        },
+        {
+            "posicion": "2",
+            "dorsal": "155",
+            "nombre": "Antonio Jose Godoy Sanchez",
+            "club": "TROTASIERRA HORNACHUELOS",
+            "tiempo": "00:03:42",
+            "promedio": "--:--.--",
+            "prueba": "DIV FUNC Masculino",
+            "posicionprueba": "2",
+            "linkdiploma": "<a href='https://diplomas.dorsalchip.es/diplomas.aspx?eid=14134&d=155' target='_blank'>Diploma</a>",
+            "penalizacion": "",
+            "motivopenalizacion": ""
+        }
+    ]
+}
