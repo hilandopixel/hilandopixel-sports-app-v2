@@ -18,7 +18,7 @@ import path from 'path';
 
 
 
-const ALBUM_URL = "https://photos.google.com/share/AF1QipNZBdWmkwipH8TcX8h69lmXDQLMjwnybo6NV-zYNXtkoI-THmyxLoOJDVia4i4-Yg?key=OHRGRTlQLWJLcEhsd2Q4SW9jdUlfbml0bEJGVy1R"
+const ALBUM_URL = "https://photos.google.com/share/AF1QipPBQgIPn1e3mjiEL3FchDXdmPa7IxYpUlyea9RdBbgbLttqEvA9tB7ThFXoFM12Kg?key=bGRKVmJEVFNqbmNvZTVBLU11ZUtuRE9Lc0VZeU9n"
 const OUTPUT_PATH = path.resolve('fotos.json');
 const TARGET_WIDTH = 5184;
 const TARGET_HEIGHT = 3456;
