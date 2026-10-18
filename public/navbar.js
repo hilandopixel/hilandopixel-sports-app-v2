@@ -42,14 +42,14 @@ class NavbarHeader extends HTMLElement {
             <a href="/" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-eventos">
               <span>📅 Eventos</span>
             </a>
+            <a href="/rutadelamiel" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-miel">
+              <span>📷 Ruta de la Miel 2026</span>
+            </a>
             <a href="/larompepiernas" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-rompepiernas">
               <span>📷 La Rompepiernas 2026</span>
             </a>
             <a href="/subidaalasermitas" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-ermitas">
-              <span>📷 Subida a las Ermitas 2026</span>
-            </a>
-            <a href="/rutadelamiel" class="nav-link-el block w-full text-left py-2 px-3 rounded-md text-base font-semibold" id="nav-miel">
-              <span>📷 Ruta de la Miel 2026</span>
+              <span>📷 Subida a las Ermitas 2025</span>
             </a>
           </div>
         </div>
