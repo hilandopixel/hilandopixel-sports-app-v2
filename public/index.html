@@ -47,7 +47,13 @@
       snapshot.forEach((docSnap) => {
         const ev = docSnap.data();
         const id = docSnap.id;
-        const urlEvento = `evento?id=${ev.slug || id}`;
+        let urlEvento = `evento?id=${ev.slug || id}`;
+        let botonText = 'Ver Detalle e Inscribirse'
+        if(id === 'ruta-de-la-miel-2026'){
+          urlEvento = 'rutadelamiel2026';
+          botonText = 'Ver fotos | resultados'
+        }
+
         const fechaFormateada = formatearFecha(ev.fecha);
         const horaTexto = ev.hora ? ` - ⏰ ${ev.hora}` : '';
         const esFinalizado = Boolean(ev.finalizado);
@@ -58,7 +64,7 @@
 
         const botonHtml = esFinalizado
           ? `<a href="${urlEvento}" class="btn-secondary w-full text-center text-sm font-bold bg-gray-200 text-gray-700 hover:bg-gray-300">🏁 Evento Finalizado</a>`
-          : `<a href="${urlEvento}" class="btn-primary w-full text-center text-sm" ${ev.color ? `style="background-color: ${ev.color};"` : ''}>Ver Detalle e Inscribirse</a>`;
+          : `<a href="${urlEvento}" class="btn-primary w-full text-center text-sm" ${ev.color ? `style="background-color: ${ev.color};"` : ''}>${botonText}</a>`;
 
         const card = document.createElement("div");
         card.className = "card-evento-el relative";
