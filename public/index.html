@@ -44,13 +44,38 @@
         return;
       }
 
+      // 1. Extraemos los documentos en un array para poder ordenarlos
+      const eventosArray = [];
       snapshot.forEach((docSnap) => {
-        const ev = docSnap.data();
-        const id = docSnap.id;
+        eventosArray.push({ id: docSnap.id, ...docSnap.data() });
+      });
+
+      // 2. Ordenamos por fecha descendiente (asumiendo formato 'YYYY-MM-DD')
+      // Si quieres orden ascendente, invierte a (a.fecha > b.fecha ? 1 : -1)
+      eventosArray.sort((a, b) => {
+        if (!a.fecha) return 1;
+        if (!b.fecha) return -1;
+        return b.fecha.localeCompare(a.fecha);
+      });
+
+      eventosArray.forEach((ev) => {
+        const id = ev.id;
         let urlEvento = `evento?id=${ev.slug || id}`;
         let botonText = 'Ver Detalle e Inscribirse'
         if(id === 'ruta-de-la-miel-2026'){
           urlEvento = 'rutadelamiel2026';
+          botonText = 'Ver fotos | resultados'
+        }
+        else if(id === 'ruta-de-la-miel-2025'){
+          urlEvento = 'rutadelamiel2025';
+          botonText = 'Ver fotos | resultados'
+        }
+        else if(id === 'la-rompepiernas-2026'){
+          urlEvento = 'larompepiernas2026';
+          botonText = 'Ver fotos | resultados'
+        }
+        else if(id === 'subida-ermitas-2025'){
+          urlEvento = 'subidaalasermitas2025';
           botonText = 'Ver fotos | resultados'
         }
 
