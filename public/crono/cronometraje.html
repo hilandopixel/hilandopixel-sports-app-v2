@@ -32,8 +32,8 @@ let S=null,cur=null,FH=null,wt;
 const idxSave=()=>{try{localStorage.setItem('crono_idx',JSON.stringify(IDX))}catch(e){}};
 const newS=n=>({nombre:n,p:[],c:[],r:[],l:[],img:{h:'',f:''},t:n});
 const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,cfgM:s.cfgM||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l}});
-const unpack=o=>{if(o&&o.tablas){const t=o.tablas,c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
- if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[]};throw 0};
+const unpack=o=>{if(o&&(o.tablas||o.formato=='cronometraje')){const t=o.tablas||{},c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
+ if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[]};throw new Error('formato de datos no válido')};
 let cfg={},TOKEN='';try{cfg=JSON.parse(localStorage.getItem('crono_fb'))||{}}catch(e){}
 if('auth' in cfg){delete cfg.auth;try{localStorage.setItem('crono_fb',JSON.stringify(cfg))}catch(e){}}
 let lastKnown=0,st,syncing=false,pend=false,syncMsg='';
@@ -95,7 +95,7 @@ async function sync(quiet){
   const ch=b0!==fp(S);
   if(ch){const dd={};S.p.forEach(x=>{if(x.dorsal!=='')dd[x.dorsal]=(dd[x.dorsal]||0)+1});if(Object.values(dd).some(n=>n>1))toast('Hay dorsales duplicados tras sincronizar: revisa las filas en rojo');refresh()}
   else if(!quiet)toast('Sincronizado')
- }catch(e){setMsg('error: '+e.message,1);if(!quiet)toast('Error de sincronización: '+e.message)}
+ }catch(e){setMsg('error: '+(e.message||e),1);if(!quiet)toast('Error de sincronización: '+(e.message||e))}
  finally{syncing=false}}
 async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar');
  try{const r=await fetch(fb('/indice'));if(!r.ok)throw new Error('HTTP '+r.status);const I=(await r.json())||{},k=Object.keys(I);
