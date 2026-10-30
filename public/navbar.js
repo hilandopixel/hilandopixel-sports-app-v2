@@ -7,7 +7,7 @@ class NavbarHeader extends HTMLElement {
             
             <!-- BRAND / LOGO -->
             <a href="/" class="navbar-brand-el flex items-center">
-              <img 
+              <img id="logo"
                 src="/logo.png" 
                 alt="Hilando Pixel Logo" 
                 class="h-8 sm:h-10 w-auto object-contain max-w-full transition-all duration-200"
