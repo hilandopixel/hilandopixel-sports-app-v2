@@ -31,14 +31,13 @@ let IDX=[];try{IDX=JSON.parse(localStorage.getItem('crono_idx'))||[]}catch(e){}
 let S=null,cur=null,FH=null,wt;
 const idxSave=()=>{try{localStorage.setItem('crono_idx',JSON.stringify(IDX))}catch(e){}};
 const newS=n=>({nombre:n,p:[],c:[],r:[],l:[],img:{h:'',f:''},t:n});
-const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,modT:s.modT||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l}});
-const unpack=o=>{if(o&&o.tablas){const t=o.tablas,c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},p:t.participantes||[],c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],del:o.eliminadas||[],modT:o.modT||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
- if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},p:o.p,c:o.c||[],r:o.r||[],l:o.l||[]};throw 0};
+const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,cfgM:s.cfgM||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l}});
+const unpack=o=>{if(o&&o.tablas){const t=o.tablas,c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
+ if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[]};throw 0};
 let cfg={},TOKEN='';try{cfg=JSON.parse(localStorage.getItem('crono_fb'))||{}}catch(e){}
 if('auth' in cfg){delete cfg.auth;try{localStorage.setItem('crono_fb',JSON.stringify(cfg))}catch(e){}}
-let lastSig='',lastKnown=0,st,syncing=false,pend=false,syncMsg='';
-const sig=()=>JSON.stringify([S.p,S.c,S.r,S.img,S.t,S.nombre]);
-const save=()=>{if(!cur)return;const g=sig();if(g!==lastSig){lastSig=g;S.modT=Date.now()}S.mod=Date.now();persist();if(cfg.auto&&cfg.url&&S.cid){clearTimeout(st);st=setTimeout(()=>sync(true),1500)}};
+let lastKnown=0,st,syncing=false,pend=false,syncMsg='';
+const save=()=>{if(!cur)return;S.mod=Date.now();stamp();persist();if(cfg.auto&&cfg.url&&S.cid){clearTimeout(st);st=setTimeout(()=>sync(true),1500)}};
 const persist=()=>{if(!cur)return;try{localStorage.setItem('crono_ev_'+cur,JSON.stringify(S));const ev=IDX.find(x=>x.id==cur);if(ev){ev.mod=Date.now();ev.nombre=S.nombre;ev.cid=S.cid;idxSave()}}catch(e){toast('No se pudo guardar en el navegador (¿imagen muy grande?)')}
  if(FH){clearTimeout(wt);wt=setTimeout(async()=>{try{const w=await FH.createWritable();await w.write(JSON.stringify(pack(S),null,1));await w.close()}catch(e){toast('No se pudo escribir en el fichero vinculado');FH=null}},500)}};
 function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;border-radius:8px;z-index:9;max-width:90%';document.body.append(e);setTimeout(()=>e.remove(),3500)}
@@ -49,7 +48,7 @@ const yr=p=>p.nac?+String(p.nac).slice(0,4):0;
 const catOf=p=>S.c.find(c=>yr(p)>=c.ini&&yr(p)<=c.fin&&(c.sexo=='X'||c.sexo==p.sexo));
 const raceOf=c=>c&&S.r.find(r=>r.cats.includes(c.id));
 const T={
- p:{n:'Participantes',cols:[['dorsal','Dorsal','number'],['nombre','Nombre'],['apellidos','Apellidos'],['club','Club'],['nac','F. nacimiento','date'],['sexo','Sexo',['M','F']],['fed','Federado','chk'],['loc','Local','chk']],nuevo:()=>({dorsal:'',nombre:'',apellidos:'',club:'',nac:'',sexo:'M',fed:false,loc:false})},
+ p:{n:'Participantes',cols:[['dorsal','Dorsal','number'],['nombre','Nombre'],['apellidos','Apellidos'],['club','Club'],['nac','F. nacimiento','date'],['sexo','Sexo',['M','F']],['fed','Federado','chk'],['loc','Local','chk']],nuevo:()=>({id:uid(),dorsal:'',nombre:'',apellidos:'',club:'',nac:'',sexo:'M',fed:false,loc:false})},
  c:{n:'Categorías',cols:[['nombre','Nombre'],['ini','Año inicio','number'],['fin','Año fin','number'],['sexo','Sexo (X = mixto)',['M','F','X']]],nuevo:()=>({id:uid(),nombre:'Nueva',ini:2000,fin:2010,sexo:'M'})},
  r:{n:'Carreras',cols:[['nombre','Nombre'],['hora','Hora inicio prevista','time']],nuevo:()=>({id:uid(),nombre:'Nueva carrera',hora:'',cats:[],t0:null})}
 };
@@ -62,26 +61,40 @@ function cfgSave(){cfg.url=$('#fu').value.trim();TOKEN=$('#fa').value.trim();cfg
 function cfgAuto(v){cfg.auto=v;cfgStore();setMsg(syncMsg||'automática '+(v?'activada':'desactivada'));if(v)sync()}
 function setMsg(m,err){syncMsg=m;const a=$('#sy');if(a)a.textContent=m;let b=$('#cl');if(!b){b=document.createElement('div');b.id='cl';b.className='np';b.style.cssText='position:fixed;bottom:6px;right:8px;font-size:12px;padding:3px 8px;border-radius:10px;color:#fff;z-index:5';document.body.append(b)}b.style.display=cfg.auto&&cur?'block':'none';b.style.background=err?'#b3261e':'#2e7d32';b.textContent=(err?'☁ ✕ ':'☁ ✓ ')+m}
 function refresh(){const a=document.activeElement,busy=a&&(a.tagName=='INPUT'||a.tagName=='SELECT')&&a.closest&&a.closest('#v')&&(a.id!='dor'||a.value);if(busy){pend=true;return}pend=false;view()}
+let snap={},cfgSnap='',noET=false;
+const rk=x=>{const{_m,...o}=x;return JSON.stringify(o)};
+function stamp(init){const now=Date.now();['p','c','r','l'].forEach(t=>(S[t]||[]).forEach(x=>{if(!x.id)return;const k=rk(x);if(snap[x.id]!==k){snap[x.id]=k;if(!init)x._m=now}}));
+ const ck=JSON.stringify([S.nombre,S.t,S.img]);if(ck!==cfgSnap){cfgSnap=ck;if(!init)S.cfgM=now}}
+const fixP=p=>p.id?p:{...p,id:p.dorsal?'d'+p.dorsal:uid()};
+function mergeT(a,b,del){const m=new Map();[...a,...b].forEach(x=>{if(!x.id||del.has(x.id))return;const o=m.get(x.id);if(!o||(x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&JSON.stringify(x)>JSON.stringify(o)))m.set(x.id,x)});return[...m.values()]}
+function dedup(p,del){const g={};p.forEach(x=>{const nm=(x.nombre+' '+x.apellidos).trim().toLowerCase();if(x.dorsal===''||x.dorsal==null||!nm)return;const k=x.dorsal+'|'+nm,o=g[k];if(!o){g[k]=x;return}const w=((x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&x.id>o.id))?x:o;g[k]=w;del.add((w===x?o:x).id)});return p.filter(x=>!del.has(x.id))}
+const fp=x=>JSON.stringify([['p','c','r','l'].map(t=>(x[t]||[]).map(a=>a.id+':'+(a._m||0)).sort()),(x.del||[]).slice().sort(),x.cfgM||0]);
+async function fx(u,o,h){if(!noET)try{return await fetch(u,{...o,headers:h})}catch(e){noET=true}return fetch(u,o)}
 async function sync(quiet){
  if(!cur||!cfg.url){if(!quiet)toast('Configura Firebase en la página de eventos');return}
  if(syncing)return;syncing=true;
  try{
   if(!S.cid){S.cid=uid()+uid();persist()}
+  const U=fb('/eventos/'+S.cid);
   if(quiet&&lastKnown){const x=await fetch(fb('/indice/'+S.cid));if(x.ok){const ix=await x.json();if(ix&&ix.mod===lastKnown&&S.mod===lastKnown){setMsg('al día '+new Date().toLocaleTimeString());return}}}
-  const r=await fetch(fb('/eventos/'+S.cid));if(!r.ok)throw new Error('HTTP '+r.status);
-  const R=await r.json();let ch=false,up=true;
-  if(R){const d=unpack(R),sg=()=>JSON.stringify([S.l,S.p,S.c,S.r,S.img,S.t,S.nombre]),b=sg();
-   const del=[...new Set([...(S.del||[]),...(d.del||[])])],m=new Map();
-   ((d.mod||0)>(S.mod||0)?[...S.l,...d.l]:[...d.l,...S.l]).forEach(x=>m.set(x.id,x));
-   if((d.modT||0)>(S.modT||0)){S.p=d.p;S.c=d.c;S.r=d.r;S.img=d.img;S.t=d.t;S.nombre=d.nombre;S.modT=d.modT}
-   S.l=[...m.values()].filter(x=>!del.includes(x.id)).sort((a,b)=>a.ts-b.ts);S.del=del;S.mod=Math.max(S.mod||0,d.mod||0);
-   ch=b!==sg();lastSig=sig();persist();
-   const fp=x=>JSON.stringify([x.l.map(a=>a.id+':'+a.ts).sort(),(x.del||[]).slice().sort(),x.modT||0,x.mod||0]);
-   up=fp(S)!==fp(d)}
-  if(up){const w=await fetch(fb('/eventos/'+S.cid),{method:'PUT',body:JSON.stringify(pack(S))});if(!w.ok)throw new Error('HTTP '+w.status);
-   await fetch(fb('/indice/'+S.cid),{method:'PUT',body:JSON.stringify({nombre:S.nombre,mod:S.mod})})}
+  const b0=fp(S);let ok=false;
+  for(let n=0;n<4&&!ok;n++){
+   const r=await fx(U,{},{'X-Firebase-ETag':'true'});if(!r.ok)throw new Error('HTTP '+r.status);
+   const et=r.headers.get('ETag'),R=await r.json();let up=true;
+   if(R){const d=unpack(R),del=new Set([...(S.del||[]),...(d.del||[])]);
+    S.p=dedup(mergeT(S.p,d.p,del),del);S.c=mergeT(S.c,d.c,del);S.r=mergeT(S.r,d.r,del);S.l=mergeT(S.l,d.l,del).sort((x,y)=>x.ts-y.ts);S.del=[...del];
+    if((d.cfgM||0)>(S.cfgM||0)){S.nombre=d.nombre;S.t=d.t;S.img=d.img;S.cfgM=d.cfgM}
+    up=fp(S)!==fp(d);if(!up)S.mod=d.mod}
+   if(up)S.mod=Date.now();
+   snap={};cfgSnap='';stamp(1);persist();
+   if(up){const w=await fx(U,{method:'PUT',body:JSON.stringify(pack(S))},et?{'if-match':et}:{});if(w.status==412)continue;if(!w.ok)throw new Error('HTTP '+w.status);
+    await fetch(fb('/indice/'+S.cid),{method:'PUT',body:JSON.stringify({nombre:S.nombre,mod:S.mod})})}
+   ok=true}
+  if(!ok)throw new Error('conflicto con otro dispositivo, se reintentará');
   lastKnown=S.mod;setMsg('sincronizado '+new Date().toLocaleTimeString());
-  if(ch)refresh();else if(!quiet)toast('Sincronizado')
+  const ch=b0!==fp(S);
+  if(ch){const dd={};S.p.forEach(x=>{if(x.dorsal!=='')dd[x.dorsal]=(dd[x.dorsal]||0)+1});if(Object.values(dd).some(n=>n>1))toast('Hay dorsales duplicados tras sincronizar: revisa las filas en rojo');refresh()}
+  else if(!quiet)toast('Sincronizado')
  }catch(e){setMsg('error: '+e.message,1);if(!quiet)toast('Error de sincronización: '+e.message)}
  finally{syncing=false}}
 async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar');
@@ -90,17 +103,29 @@ async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar')
 async function bajar(c){if(IDX.find(x=>x.cid==c))return toast('Ya está en este dispositivo: ábrelo y pulsa Sincronizar');
  try{const r=await fetch(fb('/eventos/'+c));if(!r.ok)throw new Error('HTTP '+r.status);const d=unpack(await r.json());d.cid=c;nuevoEv(d);toast('Evento descargado');view()}catch(e){toast('Error: '+e.message)}}
 setInterval(()=>{if(cur&&cfg.auto&&cfg.url&&S.cid){if(pend)refresh();sync(true)}},8000);
+let F={p:{},c:{},r:{},m:{},k:{}};
+const EXACT={p:['sexo','fed','loc'],c:['sexo'],m:['dup']};
+const iso2=n=>{const m=String(n||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return m?m[3]+'/'+m[2]+'/'+m[1]:''};
+function fmatch(t,vals){return Object.entries(F[t]).every(([k,f])=>{if(!f||!(k in vals))return true;const v=String(vals[k]??'').toLowerCase(),g=String(f).toLowerCase();return(EXACT[t]||[]).includes(k)?v===g:v.includes(g)})}
+function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.apellidos,club:x.club,nac:iso2(x.nac)||'sin fecha',sexo:x.sexo||'Vacío',fed:x.fed?'Sí':'No',loc:x.loc?'Sí':'No',anyo:yr(x)||'',cat:catOf(x)?.nombre||'sin categoría'};
+ if(t=='c')return{nombre:x.nombre,ini:x.ini,fin:x.fin,sexo:x.sexo};
+ return{nombre:x.nombre,hora:x.hora,cats:x.cats.map(id=>{const c=S.c.find(y=>y.id==id);return c?c.nombre+' '+c.sexo:''}).join(' ')}}
+function fcell(t,k,opts){const v=F[t][k]||'',id='f_'+t+'_'+k;
+ if(opts)return`<th><select id="${id}" onchange="fset('${t}','${k}',this.value)"><option value="">Todos</option>${opts.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
+ return`<th><input id="${id}" placeholder="filtrar" style="width:100%;min-width:60px" value="${esc(v)}" oninput="fset('${t}','${k}',this.value,'${id}')">`}
+function fset(t,k,v,id){F[t][k]=v;view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
+function fclr(t){F[t]={};view()}
 const slug=n=>(n||'evento').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w]+/g,'_').replace(/^_|_$/g,'')||'evento';
 function dl(n,o){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));a.download=slug(n)+'.json';a.click()}
 const load=id=>JSON.parse(localStorage.getItem('crono_ev_'+id));
 function nuevoEv(d){const id=uid();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.push({id,nombre:d.nombre,mod:Date.now(),cid:d.cid});idxSave();return id}
 function migrar(){try{const old=localStorage.getItem('crono');if(old&&!IDX.length){const o=JSON.parse(old);o.nombre=o.nombre||'Evento anterior';nuevoEv(o)}}catch(e){}}
 function crear(){const n=$('#en').value.trim();if(!n)return toast('Escribe un nombre para el evento');abrir(nuevoEv(newS(n)))}
-function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';lastSig=sig();lastKnown=0;view()}catch(e){toast('No se pudo abrir el evento')}}
+function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{}};view()}catch(e){toast('No se pudo abrir el evento')}}
 function salir(){cur=null;S=null;FH=null;view()}
 function dup(id){const d=load(id);d.nombre+=' (copia)';delete d.cid;d.del=[];d.l=[];d.r.forEach(r=>r.t0=null);nuevoEv(d);view()}
 async function borrarEv(id){if(await ask('¿Borrar este evento y todos sus datos? (descárgalo antes si quieres conservarlo)')){localStorage.removeItem('crono_ev_'+id);IDX=IDX.filter(x=>x.id!=id);idxSave();view()}}
-function renEv(id,v){const d=load(id);d.nombre=v;localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.find(x=>x.id==id).nombre=v;idxSave()}
+function renEv(id,v){const d=load(id);d.nombre=v;d.cfgM=Date.now();d.mod=Date.now();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.find(x=>x.id==id).nombre=v;idxSave()}
 function descEv(id){const d=load(id);dl(d.nombre,pack(d))}
 function importar(f){if(!f)return;const r=new FileReader();r.onload=e=>{try{const d=unpack(JSON.parse(e.target.result));nuevoEv(d);toast('Evento importado: '+d.nombre);view()}catch(x){toast('Archivo no válido')}};r.readAsText(f)}
 async function vinc(){try{FH=await showSaveFilePicker({suggestedName:slug(S.nombre)+'.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]});save();toast('Fichero vinculado: se guardará con cada cambio');view()}catch(e){}}
@@ -111,7 +136,7 @@ ${cfgHtml()}<div class="sc"><table><tr><th>Evento<th>Última modificación<th></
 function nav(){$('#nav').innerHTML=cur?`<button onclick="salir()">⌂ Eventos</button>`+Object.entries(tabs).map(([k,v])=>`<button class="${k==tab?'on':''}" onclick="tab='${k}';view()">${v}</button>`).join('')+`<span style="color:#fff;align-self:center;margin-left:8px">${esc(S.nombre)}${FH?' · 💾 vinculado':''}</span>`:'<b style="color:#fff;padding:8px">Cronometraje de carreras</b>'}
 function inp(t,i,[k,l,ty]){const v=S[t][i][k];
  if(ty=='chk')return`<input type=checkbox ${v?'checked':''} onchange="ed('${t}',${i},'${k}',this.checked)">`;
- if(Array.isArray(ty))return`<select onchange="ed('${t}',${i},'${k}',this.value)">${ty.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
+ if(Array.isArray(ty))return`<select onchange="ed('${t}',${i},'${k}',this.value)">${v?'':'<option value=""></option>'}${ty.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
  if(ty=='date'){const m=String(v||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return`<input inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" style="width:105px" value="${m?m[3]+'/'+m[2]+'/'+m[1]:''}" oninput="fd(this,${i})">`}
  return`<input type="${ty||'text'}" value="${String(v??'').replace(/"/g,'&quot;')}" onchange="ed('${t}',${i},'${k}',this.type=='number'?+this.value:this.value)">`}
 function fd(el,i){const d=el.value.replace(/\D/g,'').slice(0,8),f=d.length>4?d.slice(0,2)+'/'+d.slice(2,4)+'/'+d.slice(4):d.length>2?d.slice(0,2)+'/'+d.slice(2):d;if(el.value!=f)el.value=f;
@@ -124,14 +149,18 @@ function ed(t,i,k,v){if(t=='p'&&k=='dorsal'&&!v){S.p[i].dorsal='';save();return}
 function add(t){const o=T[t].nuevo();if(!o)return;
  if(t=='p'){S.p.unshift(o);if($('#q'))$('#q').value='';save();view();document.querySelector('#v table tr:nth-child(2) input')?.focus()}
  else{S[t].push(o);save();view()}}
-async function del(t,i){if(await ask('¿Borrar este registro?')){S[t].splice(i,1);save();view()}}
+async function del(t,i){if(await ask('¿Borrar este registro?')){(S.del=S.del||[]).push(S[t][i].id);S[t].splice(i,1);save();view()}}
 function tcat(i,id){const a=S.r[i].cats,j=a.indexOf(id);j<0?a.push(id):a.splice(j,1);save()}
 function tabla(t){const d=T[t];let q=t=='p'?($('#q')?.value||''):'';
  let h=`<h2>${d.n}</h2><button class="b" onclick="add('${t}')">+ Añadir</button>`;
  if(t=='p')h+=` <input id="q" placeholder="Buscar..." value="${q}" oninput="view();$('#q').focus()">`;
- h+=`<div class="sc"><table><tr>${d.cols.map(c=>`<th>${c[1]}`).join('')}${t=='p'?'<th>Año<th>Categoría':''}${t=='r'?'<th>Categorías':''}<th></tr>`;
- S[t].forEach((x,i)=>{if(q&&!JSON.stringify(x).toLowerCase().includes(q.toLowerCase()))return;
-  h+=`<tr>${d.cols.map(c=>`<td>${inp(t,i,c)}`).join('')}`;
+ const fr=`<tr class="np">${d.cols.map(c=>fcell(t,c[0],c[2]=='chk'?['Sí','No']:Array.isArray(c[2])?(t=='p'&&c[0]=='sexo'?[...c[2],'Vacío']:c[2]):null)).join('')}${t=='p'?fcell('p','anyo')+fcell('p','cat'):''}${t=='r'?fcell('r','cats'):''}<th><button class="b" onclick="fclr('${t}')">Limpiar</button></tr>`;
+ h+=`<div class="sc"><table><tr>${d.cols.map(c=>`<th>${c[1]}`).join('')}${t=='p'?'<th>Año<th>Categoría':''}${t=='r'?'<th>Categorías':''}<th></tr>${fr}`;
+const dd={};if(t=='p')S.p.forEach(x=>{dd[x.dorsal]=(dd[x.dorsal]||0)+1});
+ S[t].forEach((x,i)=>{if(q&&!d.cols.map(c=>x[c[0]]).join(' ').toLowerCase().includes(q.toLowerCase()))return;
+  if(!fmatch(t,fv(t,x)))return;
+  const falta=t=='p'&&(!x.nac||!x.sexo),dupd=t=='p'&&x.dorsal!==''&&dd[x.dorsal]>1;
+  h+=`<tr${falta?' style="background:#ffb3b3" title="Falta '+[!x.nac&&'fecha de nacimiento',!x.sexo&&'sexo'].filter(Boolean).join(' y ')+'"':dupd?' style="background:#ffd8a8" title="Dorsal duplicado"':''}>${d.cols.map(c=>`<td>${inp(t,i,c)}`).join('')}`;
   if(t=='p')h+=`<td id="y${i}">${yr(x)||''}<td id="k${i}">${catOf(x)?.nombre||'<i>sin categoría</i>'}`;
   if(t=='r')h+=`<td>${S.c.map(c=>`<label style="white-space:nowrap"><input type=checkbox ${x.cats.includes(c.id)?'checked':''} onchange="tcat(${i},'${c.id}')">${c.nombre} (${c.sexo})</label>`).join('<br>')}`;
   h+=`<td><button class="b r" onclick="del('${t}',${i})">✕</button></tr>`});
@@ -139,26 +168,29 @@ function tabla(t){const d=T[t];let q=t=='p'?($('#q')?.value||''):'';
 // ---- Meta
 async function salida(i){const r=S.r[i];if(r.t0&&!(await ask('Esta carrera ya tiene salida. ¿Reiniciar?')))return;r.t0=Date.now();save();view()}
 function ajustar(i){const v=$('#aj'+i).value;if(!v)return toast('Escribe el tiempo, ej. 15:00');const p=v.split(':').map(Number).reverse();const ms=((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;S.r[i].t0=Date.now()-ms;save();view()}
-async function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d)return;
- 
- if(S.l.some(x=>x.d==d)&&!(await ask('El dorsal '+d+' ya llegó. ¿Duplicar?')))return;
+function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d)return;
+ if(!S.p.some(x=>x.dorsal==d)){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false})}
  S.l.push({id:uid(),d,ts});save();view()}
+function mins(){const m={};S.l.forEach(l=>{const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
 function info(l){const p=S.p.find(x=>x.dorsal==l.d),c=p&&catOf(p),r=raceOf(c);return{p,c,r,ms:r&&r.t0?l.ts-r.t0:null}}
 function editL(id,v){const l=S.l.find(x=>x.id==id),f=info(l);if(f.ms==null)return toast('La carrera no tiene salida');if(!v)return;const p=v.split(':').map(Number).reverse();l.ts=f.r.t0+((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;save();view()}
 async function delL(id){if(await ask('¿Borrar llegada?')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
-function vMeta(){let h='<h2>Meta y cronómetro</h2>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="mm:ss (ej. 15:00)" style="width:160px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
+function vMeta(){const M=mins();let h='<h2>Meta y cronómetro</h2>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="mm:ss (ej. 15:00)" style="width:160px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
  h+=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter')meta()" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
- h+='<table><tr><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th></tr>'+S.l.slice().reverse().slice(0,30).map((l,j)=>{const f=info(l);return`<tr><td>${S.l.length-j}<td>${l.d}<td>${f.p?f.p.nombre+' '+f.p.apellidos:'<i>desconocido</i>'}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table>';
+ const fr=`<tr class="np">${['n','d','nom','cat','t'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',['TRUE','FALSE'])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
+ const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'';return fmatch('m',{n,d:l.d,nom:nm||'sin datos',cat:f.c?.nombre||'-',t:f.ms==null?'--':fmt(f.ms),dup:M[l.d]!==l?'TRUE':'FALSE'})});
+ h+='<table><tr><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th>Duplicado<th></tr>'+fr+rows.slice(0,any?500:30).map(({l,n})=>{const f=info(l),du=M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim());return`<tr style="${sd?'background:#ffb3b3':du?'background:#fff3b0':''}"><td>${n}<td>${l.d}<td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${du?'<b>TRUE</b>':'FALSE'}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table>'+(!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':'');
  return h}
 setInterval(()=>document.querySelectorAll('.clk').forEach(e=>{const r=S&&S.r[e.dataset.i];e.textContent=r&&r.t0?fmt(Date.now()-r.t0):'--:--:--'}),200);
 // ---- Resultados
-function res(){const o={};S.l.forEach((l,i)=>{if(S.l.findIndex(x=>x.d==l.d)!=i)return;const f=info(l);if(!f.p||!f.c||f.ms==null)return;(o[f.c.id]=o[f.c.id]||[]).push({p:f.p,ms:f.ms})});Object.values(o).forEach(a=>a.sort((x,y)=>x.ms-y.ms));return o}
-function rep(fil){const R=res(),im=k=>S.img[k]?`<img src="${S.img[k]}" style="width:100%">`:'';
- return im('h')+`<h2>${S.t}</h2>`+S.c.filter(c=>R[c.id]&&(!fil||fil==c.id)).map(c=>`<h3>${c.nombre}</h3><table><tr><th>Pos<th>Dorsal<th>Nombre<th>Club<th>Tiempo</tr>${R[c.id].map((x,i)=>`<tr><td>${i+1}<td>${x.p.dorsal}<td>${x.p.nombre} ${x.p.apellidos}<td>${x.p.club||''}<td>${fmt(x.ms)}`).join('')}</table>`).join('')+im('f')}
-function vK(){return`<div class="np"><select id="fc" onchange="$('#rep').innerHTML=rep(this.value)"><option value="">Todas las categorías</option>${S.c.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('')}</select> <button class="b" onclick="imprimir()">🖨 Imprimir / PDF</button><button class="b" onclick="xl()">Exportar Excel</button></div><div id="rep">${rep('')}</div>`}
-function imprimir(){const f=$('#fc')?.value||'';
+function res(){const o={},M=mins();S.l.forEach(l=>{if(M[l.d]!==l)return;const f=info(l);if(!f.p||!f.c||f.ms==null)return;(o[f.c.id]=o[f.c.id]||[]).push({p:f.p,ms:f.ms})});Object.values(o).forEach(a=>a.sort((x,y)=>x.ms-y.ms));return o}
+function rep(){const R=res(),K=F.k,im=k=>S.img[k]?`<img src="${S.img[k]}" style="width:100%">`:'',any=['pos','dorsal','nom','club','t'].some(k=>K[k]);
+ return im('h')+`<h2>${S.t}</h2>`+S.c.filter(c=>R[c.id]&&(!K.cat||K.cat==c.id)).map(c=>{const rows=R[c.id].map((x,i)=>({x,i:i+1})).filter(({x,i})=>fmatch('k',{pos:i,dorsal:x.p.dorsal,nom:x.p.nombre+' '+x.p.apellidos,club:x.p.club,t:fmt(x.ms)}));if(any&&!rows.length)return'';
+  return`<h3>${c.nombre}</h3><table><tr><th>Pos<th>Dorsal<th>Nombre<th>Club<th>Tiempo</tr>${rows.map(({x,i})=>`<tr><td>${i}<td>${x.p.dorsal}<td>${esc(x.p.nombre+' '+x.p.apellidos)}<td>${esc(x.p.club||'')}<td>${fmt(x.ms)}`).join('')}</table>`}).join('')+im('f')}
+function vK(){return`<div class="np"><select id="fc" onchange="fset('k','cat',this.value)"><option value="">Todas las categorías</option>${S.c.map(c=>`<option value="${c.id}" ${F.k.cat==c.id?'selected':''}>${c.nombre}</option>`).join('')}</select> ${[['pos','Pos'],['dorsal','Dorsal'],['nom','Nombre'],['club','Club'],['t','Tiempo']].map(([k,l])=>`<input id="f_k_${k}" placeholder="${l}" style="width:100px" value="${esc(F.k[k]||'')}" oninput="fset('k','${k}',this.value,'f_k_${k}')">`).join(' ')} <button class="b" onclick="fclr('k')">Limpiar</button> <button class="b" onclick="imprimir()">🖨 Imprimir / PDF</button><button class="b" onclick="xl()">Exportar Excel</button><br><small>Los filtros afectan a la pantalla y a la impresión; el Excel exporta todos los resultados.</small></div><div id="rep">${rep()}</div>`}
+function imprimir(){
  if(!document.querySelector('#rep table')){return toast('Aún no hay resultados que imprimir')}
- const h='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(S.t)+'</title><style>body{font-family:system-ui,sans-serif;margin:20px}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #999;padding:4px 6px;text-align:left}th{background:#e6ebf2}h3{page-break-after:avoid}tr{page-break-inside:avoid}img{max-width:100%}</style></head><body>'+rep(f)+'<script>setTimeout(function(){window.print()},500)<\/script></body></html>';
+ const h='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(S.t)+'</title><style>body{font-family:system-ui,sans-serif;margin:20px}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #999;padding:4px 6px;text-align:left}th{background:#e6ebf2}h3{page-break-after:avoid}tr{page-break-inside:avoid}img{max-width:100%}</style></head><body>'+rep()+'<script>setTimeout(function(){window.print()},500)<\/script></body></html>';
  const w=window.open('','_blank');
  if(!w){try{window.print()}catch(e){}toast('El navegador bloquea la impresión desde esta vista. Abre cronometraje.html directamente en el navegador (doble clic en el archivo) y vuelve a probar.');return}
  w.document.open();w.document.write(h);w.document.close()}
@@ -172,11 +204,11 @@ function imp(f){const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.targe
  else if(/^\d{4}$/.test(String(nac)))nac=nac+'-01-01';
  const si=v=>/^(s|si|sí|x|1|true|yes)/i.test(String(v||'').trim());
  const p={dorsal:+g.dorsal,nombre:g.nombre||'',apellidos:g.apellidos||'',club:g.club||'',nac:String(nac),sexo:/^(f|mu)/i.test(String(g.sexo||'').trim())?'F':'M',fed:si(g.federado),loc:si(g.local)};
- if(!p.dorsal)return;const i=S.p.findIndex(x=>x.dorsal==p.dorsal);i<0?S.p.push(p):S.p[i]=p;n++});
+ if(!p.dorsal)return;const i=S.p.findIndex(x=>x.dorsal==p.dorsal);p._m=Date.now();if(i<0){p.id=uid();S.p.push(p)}else{p.id=S.p[i].id;S.p[i]=p}n++});
  save();toast(n+' participantes importados');view()};r.readAsArrayBuffer(f)}
 function img(k,f){if(!f)return;const r=new FileReader();r.onload=e=>{S.img[k]=e.target.result;save();view()};r.readAsDataURL(f)}
 function bak(){dl(S.nombre,pack(S))}
-function rest(f){if(!f)return;const r=new FileReader();r.onload=async e=>{try{const d=unpack(JSON.parse(e.target.result));if(await ask('Esto reemplazará los datos de este evento por los del fichero. ¿Continuar?')){Object.assign(S,d);save();view()}}catch(x){toast('Archivo no válido')}};r.readAsText(f)}
+function rest(f){if(!f)return;const r=new FileReader();r.onload=async e=>{try{const d=unpack(JSON.parse(e.target.result));if(await ask('Esto reemplazará los datos de este evento por los del fichero. Con la sincronización activa, lo que no esté en el fichero también se borrará en la nube. ¿Continuar?')){const keep=new Set([...d.p,...d.c,...d.r,...d.l].map(x=>x.id)),ds=new Set([...(S.del||[]),...[...S.p,...S.c,...S.r,...S.l].filter(x=>x.id&&!keep.has(x.id)).map(x=>x.id)]);Object.assign(S,d);S.del=[...ds].filter(id=>!keep.has(id));save();view()}}catch(x){toast('Archivo no válido')}};r.readAsText(f)}
 function vD(){return`<h2>Datos del evento</h2><div class="card"><b>Nombre del evento</b><br><input style="width:90%" value="${esc(S.nombre)}" onchange="S.nombre=this.value;save();nav()"></div>
 <div class="card"><b>Título del informe</b><br><input style="width:90%" value="${S.t}" onchange="S.t=this.value;save()"><br><br>
 Imagen cabecera: <input type=file accept="image/*" onchange="img('h',this.files[0])"> <button class="b r" onclick="S.img.h='';save();view()">Quitar</button><br>
