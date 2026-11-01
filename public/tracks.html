@@ -41,8 +41,12 @@
     .map-btn:hover {
       background-color: #3367D6;
     }
+    .custom-emoji-marker {
+      background: transparent !important;
+      border: none !important;
+    }
 
-    /* Control responsivo garantizado por CSS clásico */
+    /* Control responsivo por CSS */
     .vista-movil-cards {
       display: grid;
       gap: 0.75rem;
@@ -75,28 +79,80 @@
       <a href="javascript:history.back()" class="btn-secondary text-xs py-2 px-4">← Volver</a>
     </div>
 
-    <!-- Panel de Resumen -->
-    <div id="summaryPanel" class="p-4 bg-blue-50 border border-blue-200 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Panel de Resumen General Desglosado con Hora Inicio, Hora Primero y Hora Fin -->
+    <div id="summaryPanel" class="p-4 bg-blue-50 border border-blue-200 rounded-lg grid grid-cols-1 md:grid-cols-4 gap-4">
       <div>
-        <p class="text-sm text-gray-600 font-medium">Distancia Total:</p>
+        <p class="text-sm text-gray-600 font-medium">Distancia y Desnivel:</p>
         <p id="resTotalDist" class="text-base font-bold text-gray-800">-</p>
+        <p id="resElevation" class="text-xs text-gray-600 mt-1">D+: - | D-: -</p>
       </div>
       <div>
-        <p class="text-sm text-gray-600 font-medium">Desnivel:</p>
-        <p id="resElevation" class="text-base font-bold text-gray-800">-</p>
+        <p class="text-sm text-gray-600 font-medium">Horarios de Meta / Salida:</p>
+        <p id="resStartTime" class="text-xs text-gray-800">🚀 Hora Inicio: <span class="font-bold text-gray-900">-</span></p>
+        <p id="resFirstHourMeta" class="text-xs text-gray-800 mt-1">🥇 Hora 1º (Meta): <span class="font-bold text-indigo-600">-</span></p>
+        <p id="resEndTime" class="text-xs text-gray-800 mt-1">🏁 Hora Fin / Último: <span class="font-bold text-indigo-600">-</span></p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Ritmos Estimados:</p>
+        <p id="resPaceFirst" class="text-sm text-gray-800">Ritmo 1º: <span class="font-semibold text-gray-700">- min/km</span></p>
+        <p id="resPaceLast" class="text-sm text-gray-800">Ritmo Último: <span class="font-semibold text-gray-700">- min/km</span></p>
       </div>
       <div>
         <p class="text-sm text-gray-600 font-medium">Total Waypoints:</p>
-        <p id="resWptCount" class="text-base font-bold text-indigo-600">-</p>
+        <p id="resWptCount" class="text-lg font-bold text-indigo-600">-</p>
       </div>
     </div>
 
-    <!-- Sección de Waypoints -->
+    <!-- Contenedor del Mapa -->
+    <div style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #d1d5db; position: relative; overflow: hidden;">
+      <div id="map" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+    </div>
+
+    <!-- Sección de Gráfica de Desnivel basada en fulltrack -->
+    <div id="elevationSection" class="mt-8 p-4 bg-white border border-gray-200 rounded-lg shadow-sm space-y-4">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-3">
+        <h3 class="text-lg font-bold text-gray-800">Perfil de Desnivel y Pendientes (Ruta Completa)</h3>
+        
+        <!-- Controles de Umbral de Pendiente -->
+        <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-gray-700">
+          <div class="flex items-center space-x-1">
+            <span class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+            <label for="thresholdMedium">Media (&le;):</label>
+            <input type="number" id="thresholdMedium" value="5" min="1" max="30" class="w-14 border p-1 rounded text-center">
+            <span>%</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <span class="inline-block w-3 h-3 rounded-full bg-red-500"></span>
+            <label for="thresholdHigh">Alta (&gt;):</label>
+            <input type="number" id="thresholdHigh" value="12" min="2" max="40" class="w-14 border p-1 rounded text-center">
+            <span>%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros Multiselect para Waypoints en el Perfil -->
+      <div class="p-3 bg-gray-50 border border-gray-200 rounded-md text-xs space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-gray-700">📍 Mostrar Waypoints en el perfil por tipo:</span>
+          <div class="space-x-2">
+            <button type="button" id="selectAllWpts" class="text-indigo-600 hover:underline font-semibold">Seleccionar todos</button>
+            <span>|</span>
+            <button type="button" id="deselectAllWpts" class="text-gray-600 hover:underline font-semibold">Deseleccionar todos</button>
+          </div>
+        </div>
+        <div id="wptFilterCheckboxes" class="flex flex-wrap gap-x-4 gap-y-2 pt-1"></div>
+      </div>
+
+      <!-- Canvas de la Gráfica -->
+      <div class="relative w-full h-72 bg-gray-50 border border-gray-200 rounded overflow-hidden">
+        <canvas id="elevationCanvas" class="w-full h-full"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabla y Tarjetas de Waypoints -->
     <div class="mt-8 space-y-4">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h3 class="text-xl font-bold">Waypoints y Tiempos de Paso</h3>
-        
-        <!-- Input de Búsqueda por Nombre -->
         <div class="w-full md:w-72">
           <input type="text" id="tableSearchInput" placeholder="🔍 Buscar waypoint..." class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-indigo-500 bg-white">
         </div>
@@ -104,10 +160,10 @@
 
       <!-- VISTA MÓVIL: Tarjetas -->
       <div id="waypointsCardsContainer" class="vista-movil-cards">
-        <div class="text-center text-gray-500 py-4">Cargando datos de la ruta...</div>
+        <div class="text-center text-gray-500 py-4">Cargando datos...</div>
       </div>
 
-      <!-- VISTA ESCRITORIO / TABLET: Tabla clásica -->
+      <!-- VISTA ESCRITORIO: Tabla -->
       <div class="vista-escritorio-tabla">
         <table id="waypointsTable" class="gpx-table">
           <thead>
@@ -123,22 +179,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td colspan="8" class="text-center text-gray-500 py-4">Cargando datos de la ruta...</td></tr>
+            <tr><td colspan="8" class="text-center text-gray-500 py-4">Cargando datos...</td></tr>
           </tbody>
         </table>
       </div>
-    </div>
-
-    <!-- Contenedor del Mapa -->
-    <div style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #d1d5db; position: relative; overflow: hidden;">
-      <div id="map" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
     </div>
   </main>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Lógica de Carga con Firebase Modular Directo por URL -->
   <script type="module">
     import { db } from './firebase.config.js';
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -154,23 +204,70 @@
       'Alojamiento': '🏨', 'Inicio': '🚀', 'Fin': '🏁'
     };
 
+    let activeWptTypes = new Set(Object.keys(symbolIcons));
+
     function getSymbolIcon(sym) {
       return symbolIcons[sym] || '📍';
     }
 
-    const map = L.map('map', { center: [40.4168, -3.7038], zoom: 6 });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '© OpenStreetMap contributors'
+    });
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19, attribution: 'Tiles &copy; Esri'
+    });
+
+    const map = L.map('map', { center: [40.4168, -3.7038], zoom: 6, layers: [osmLayer] });
+    L.control.layers({ "Calles": osmLayer, "Satélite": satelliteLayer }).addTo(map);
 
     let featureGroup = L.layerGroup().addTo(map);
     let allWaypointsCache = [];
+    let fulltrackCoordsCache = [];
+    let trackProfileData = [];
+    let lastTotalGain = 0;
+    let lastTotalLoss = 0;
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const rad = Math.PI / 180;
+      const dLat = (lat2 - lat1) * rad;
+      const dLon = (lon2 - lon1) * rad;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function drawTrackWithArrows(trackCoords) {
+      if (!trackCoords || trackCoords.length === 0) return;
+      const polyline = L.polyline(trackCoords, { color: '#0055FF', weight: 5, opacity: 0.85 }).addTo(featureGroup);
+
+      const decoratorFn = L.polylineDecorator || (L.Polyline && L.Polyline.decorator);
+      if (typeof decoratorFn === 'function') {
+        const decorator = decoratorFn(polyline, {
+          patterns: [
+            {
+              offset: 25,
+              repeat: 60,
+              symbol: L.Symbol.arrowHead({
+                pixelSize: 14,
+                headAngle: 60,
+                polygon: true,
+                pathOptions: { fillColor: '#FFD700', fillOpacity: 1, stroke: true, color: '#000000', weight: 1.5 }
+              })
+            }
+          ]
+        }).addTo(featureGroup);
+        if (decorator.bringToFront) decorator.bringToFront();
+      }
+      return polyline;
+    }
 
     async function cargarTrackData() {
       if (!eventoId || !trackId) {
         document.getElementById('trackTitulo').textContent = "Error de Parámetros";
-        document.getElementById('trackSubtitulo').textContent = "No se ha especificado un evento o un track válido en la URL.";
+        document.getElementById('trackSubtitulo').textContent = "Faltan parámetros en la URL.";
         return;
       }
 
@@ -180,26 +277,48 @@
 
         if (!trackSnap.exists()) {
           document.getElementById('trackTitulo').textContent = "Track no encontrado";
-          document.getElementById('trackSubtitulo').textContent = `No existe el track "${trackId}" para el evento "${eventoId}".`;
           return;
         }
 
         const data = trackSnap.data();
         allWaypointsCache = data.waypoints || [];
         
+        if (data.fulltrack && Array.isArray(data.fulltrack)) {
+          fulltrackCoordsCache = data.fulltrack;
+        } else {
+          fulltrackCoordsCache = [];
+        }
+
+        // Obtener la hora del primero en meta (último waypoint si existe o campo específico)
+        let horaPrimeroMeta = '-';
+        if (allWaypointsCache.length > 0) {
+          const lastWpt = allWaypointsCache[allWaypointsCache.length - 1];
+          horaPrimeroMeta = lastWpt.hourFirstStr || '-';
+        }
+        
         document.getElementById('trackTitulo').textContent = data.title || trackId;
         document.getElementById('trackSubtitulo').textContent = `Evento: ${eventoId} | ID Ruta: ${trackId}`;
         document.getElementById('resTotalDist').textContent = data.totalDistance || '-';
         document.getElementById('resElevation').textContent = data.elevation || 'D+: - | D-: -';
+        
+        // Renderizado explícito de los 3 horarios requeridos
+        document.getElementById('resStartTime').innerHTML = `🚀 Hora Inicio: <span class="font-bold text-gray-900">${data.horaInicio || '-'}</span>`;
+        document.getElementById('resFirstHourMeta').innerHTML = `🥇 Hora 1º (Meta): <span class="font-bold text-indigo-600">${horaPrimeroMeta}</span>`;
+        document.getElementById('resEndTime').innerHTML = `🏁 Hora Fin (Meta): <span class="font-bold text-indigo-600">${data.horaFin || '-'}</span>`;
+        
+        document.getElementById('resPaceFirst').innerHTML = `Ritmo 1º: <span class="font-semibold text-gray-700">${data.ritmoPrimeroMinKm ? data.ritmoPrimeroMinKm + ' min/km' : '-'}</span>`;
+        document.getElementById('resPaceLast').innerHTML = `Ritmo Último: <span class="font-semibold text-gray-700">${data.ritmoUltimoMinKm ? data.ritmoUltimoMinKm + ' min/km' : '-'}</span>`;
+
         document.getElementById('resWptCount').textContent = allWaypointsCache.length;
 
+        await buildProfileFromFulltrack(fulltrackCoordsCache, data.elevation);
+
+        initFilterCheckboxes();
         renderizarVista(allWaypointsCache);
 
         document.getElementById('tableSearchInput').addEventListener('input', function(e) {
           const query = e.target.value.toLowerCase().trim();
-          const filtered = allWaypointsCache.filter(wp => 
-            (wp.name || '').toLowerCase().includes(query)
-          );
+          const filtered = allWaypointsCache.filter(wp => (wp.name || '').toLowerCase().includes(query));
           renderizarVista(filtered);
         });
 
@@ -207,6 +326,300 @@
         console.error("Error al cargar el track:", err);
         alert("Error al cargar los datos desde Firebase.");
       }
+    }
+
+    async function buildProfileFromFulltrack(fulltrack, elevationStr) {
+      trackProfileData = [];
+      if (!fulltrack || fulltrack.length === 0) return;
+
+      if (elevationStr) {
+        const gainMatch = elevationStr.match(/D\+:\s*(\d+)/i);
+        const lossMatch = elevationStr.match(/D\-:\s*(\d+)/i);
+        if (gainMatch) lastTotalGain = parseFloat(gainMatch[1]);
+        if (lossMatch) lastTotalLoss = parseFloat(lossMatch[1]);
+      }
+
+      let elevations = [];
+      const hasElevationData = fulltrack.some(pt => pt.ele !== undefined);
+
+      if (hasElevationData) {
+        elevations = fulltrack.map(pt => pt.ele || 0);
+      } else {
+        const chunkSize = 100;
+        const lats = fulltrack.map(pt => pt.lat);
+        const lons = fulltrack.map(pt => pt.lon);
+
+        try {
+          for (let i = 0; i < lats.length; i += chunkSize) {
+            const chunkLats = lats.slice(i, i + chunkSize);
+            const chunkLons = lons.slice(i, i + chunkSize);
+            const url = `https://api.open-meteo.com/v1/elevation?latitude=${chunkLats.join(',')}&longitude=${chunkLons.join(',')}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data && data.elevation) {
+              elevations.push(...data.elevation);
+            } else {
+              chunkLats.forEach(() => elevations.push(0));
+            }
+          }
+        } catch (e) {
+          console.warn("No se pudieron cargar altitudes desde Open-Meteo:", e);
+          elevations = new Array(fulltrack.length).fill(0);
+        }
+      }
+
+      let accDistM = 0;
+      let calculatedGain = 0;
+      let calculatedLoss = 0;
+
+      let prevLat = fulltrack[0].lat;
+      let prevLon = fulltrack[0].lon;
+      let prevEle = elevations[0] || 0;
+
+      trackProfileData.push({ dist: 0, ele: prevEle, slope: 0 });
+
+      for (let i = 1; i < fulltrack.length; i++) {
+        const currLat = fulltrack[i].lat;
+        const currLon = fulltrack[i].lon;
+        const currEle = elevations[i] !== undefined ? elevations[i] : prevEle;
+
+        const diffEle = currEle - prevEle;
+        if (diffEle > 0) calculatedGain += diffEle;
+        else calculatedLoss += Math.abs(diffEle);
+
+        const dDistM = calculateDistance(prevLat, prevLon, currLat, currLon);
+        accDistM += dDistM;
+
+        let slope = 0;
+        if (dDistM > 0) slope = (diffEle / dDistM) * 100;
+
+        trackProfileData.push({
+          dist: accDistM / 1000,
+          ele: currEle,
+          slope: slope
+        });
+
+        prevLat = currLat;
+        prevLon = currLon;
+        prevEle = currEle;
+      }
+
+      if (!elevationStr) {
+        lastTotalGain = calculatedGain;
+        lastTotalLoss = calculatedLoss;
+      }
+
+      drawElevationChart();
+    }
+
+    function getElevationAtDistance(targetDistKm) {
+      if (trackProfileData.length === 0) return 0;
+      let closest = trackProfileData[0];
+      let minDist = Math.abs(closest.dist - targetDistKm);
+      for (let i = 1; i < trackProfileData.length; i++) {
+        const dist = Math.abs(trackProfileData[i].dist - targetDistKm);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = trackProfileData[i];
+        }
+      }
+      return closest.ele;
+    }
+
+    function drawElevationChart() {
+      const canvas = document.getElementById('elevationCanvas');
+      if (!canvas || trackProfileData.length === 0) return;
+
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const padding = 35;
+      const topReserved = 65;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const maxDist = trackProfileData[trackProfileData.length - 1].dist || 1;
+      const elevations = trackProfileData.map(p => p.ele);
+      let minEle = Math.min(...elevations);
+      let maxEle = Math.max(...elevations);
+      if (minEle === maxEle) { maxEle += 10; }
+
+      const medLimit = parseFloat(document.getElementById('thresholdMedium').value) || 5;
+      const highLimit = parseFloat(document.getElementById('thresholdHigh').value) || 12;
+
+      const getX = (d) => padding + (d / maxDist) * (width - 2 * padding);
+      const getY = (e) => topReserved + (height - padding - topReserved) - ((e - minEle) / (maxEle - minEle)) * (height - padding - topReserved - 25);
+
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.font = '10px sans-serif';
+      ctx.fillStyle = '#6b7280';
+      for (let i = 0; i <= 4; i++) {
+        const eleVal = minEle + (maxEle - minEle) * (i / 4);
+        const y = getY(eleVal);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+        ctx.fillText(`${Math.round(eleVal)}m`, 2, y + 3);
+      }
+
+      const baselineY = height - padding;
+
+      for (let i = 0; i < trackProfileData.length - 1; i++) {
+        const p1 = trackProfileData[i];
+        const p2 = trackProfileData[i + 1];
+
+        const x1 = getX(p1.dist);
+        const y1 = getY(p1.ele);
+        const x2 = getX(p2.dist);
+        const y2 = getY(p2.ele);
+
+        let color = '#22c55e';
+        let fillColor = 'rgba(34, 197, 94, 0.35)';
+
+        if (p2.slope > highLimit) {
+          color = '#ef4444';
+          fillColor = 'rgba(239, 68, 68, 0.35)';
+        } else if (p2.slope > medLimit) {
+          color = '#f59e0b';
+          fillColor = 'rgba(245, 158, 11, 0.35)';
+        }
+
+        ctx.fillStyle = fillColor;
+        ctx.beginPath();
+        ctx.moveTo(x1, baselineY);
+        ctx.lineTo(x1, y1);
+        ctx.lineTo(x2 + 0.5, y2);
+        ctx.lineTo(x2 + 0.5, baselineY);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2 + 0.5, y2);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#9ca3af';
+      ctx.beginPath();
+      ctx.moveTo(padding, baselineY);
+      ctx.lineTo(width - padding, baselineY);
+      ctx.stroke();
+
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillStyle = '#374151';
+      ctx.fillText(`Distancia: ${maxDist.toFixed(2)} km`, padding, height - 10);
+      ctx.fillText(`D+: +${Math.round(lastTotalGain)}m`, padding + 140, height - 10);
+      ctx.fillText(`D-: -${Math.round(lastTotalLoss)}m`, padding + 240, height - 10);
+
+      const activeWaypoints = allWaypointsCache.filter(wp => activeWptTypes.has(wp.sym || 'Waypoint'));
+      activeWaypoints.sort((a, b) => (a.distKmNum || 0) - (b.distKmNum || 0));
+
+      const minPixelDistance = 32; 
+      const levels = [0, 1, 2, 3]; 
+      let lastXPerLevel = [-Infinity, -Infinity, -Infinity, -Infinity];
+
+      activeWaypoints.forEach(wp => {
+        const wptDist = wp.distKmNum !== undefined ? wp.distKmNum : parseFloat(wp.distKm) || 0;
+        if (wptDist >= 0 && wptDist <= maxDist) {
+          const wptEle = getElevationAtDistance(wptDist);
+          const wx = getX(wptDist);
+          const baseWy = getY(wptEle);
+          const iconEmoji = getSymbolIcon(wp.sym || 'Waypoint');
+
+          let chosenLevel = 0;
+          for (let l = 0; l < levels.length; l++) {
+            if (wx - lastXPerLevel[l] >= minPixelDistance) {
+              chosenLevel = l;
+              break;
+            }
+            if (l === levels.length - 1) {
+              let maxDiff = -1;
+              for (let k = 0; k < levels.length; k++) {
+                const diff = wx - lastXPerLevel[k];
+                if (diff > maxDiff) {
+                  maxDiff = diff;
+                  chosenLevel = k;
+                }
+              }
+            }
+          }
+
+          lastXPerLevel[chosenLevel] = wx;
+          const levelOffset = chosenLevel * 22; 
+          const wy = baseWy - levelOffset;
+
+          ctx.save();
+          ctx.strokeStyle = '#4f46e5';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 2]);
+          ctx.beginPath();
+          ctx.moveTo(wx, baseWy);
+          ctx.lineTo(wx, wy);
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(wx, wy, 9, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#4f46e5';
+          ctx.stroke();
+
+          ctx.font = '11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(iconEmoji, wx, wy);
+
+          ctx.save();
+          ctx.font = 'bold 9px sans-serif';
+          ctx.fillStyle = '#1f2937';
+          ctx.translate(wx, wy - 13);
+          ctx.rotate(-Math.PI / 4);
+          ctx.textAlign = 'left';
+          ctx.fillText(wp.name || '', 0, 0);
+          ctx.restore();
+        }
+      });
+    }
+
+    function initFilterCheckboxes() {
+      const container = document.getElementById('wptFilterCheckboxes');
+      container.innerHTML = '';
+      Object.keys(symbolIcons).forEach(sym => {
+        const isChecked = activeWptTypes.has(sym);
+        const label = document.createElement('label');
+        label.className = 'flex items-center space-x-1.5 cursor-pointer font-medium text-gray-700';
+        label.innerHTML = `
+          <input type="checkbox" value="${sym}" ${isChecked ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
+          <span>${symbolIcons[sym]} ${sym}</span>
+        `;
+        label.querySelector('input').addEventListener('change', function() {
+          if (this.checked) activeWptTypes.add(sym);
+          else activeWptTypes.delete(sym);
+          drawElevationChart();
+        });
+        container.appendChild(label);
+      });
+
+      document.getElementById('selectAllWpts').onclick = () => {
+        document.querySelectorAll('#wptFilterCheckboxes input[type="checkbox"]').forEach(cb => { cb.checked = true; activeWptTypes.add(cb.value); });
+        drawElevationChart();
+      };
+      document.getElementById('deselectAllWpts').onclick = () => {
+        document.querySelectorAll('#wptFilterCheckboxes input[type="checkbox"]').forEach(cb => { cb.checked = false; activeWptTypes.delete(cb.value); });
+        drawElevationChart();
+      };
+
+      document.getElementById('thresholdMedium').addEventListener('input', drawElevationChart);
+      document.getElementById('thresholdHigh').addEventListener('input', drawElevationChart);
     }
 
     function renderizarVista(waypoints) {
@@ -223,11 +636,11 @@
         return;
       }
 
-      let latLngs = [];
+      let latLngsWpts = [];
 
       waypoints.forEach((wp) => {
         if (wp.lat && wp.lon) {
-          latLngs.push([wp.lat, wp.lon]);
+          latLngsWpts.push([wp.lat, wp.lon]);
 
           const iconEmoji = getSymbolIcon(wp.sym);
           const customIcon = L.divIcon({
@@ -243,8 +656,8 @@
               <p class="font-bold text-sm text-gray-800">${iconEmoji} ${wp.name}</p>
               <p class="font-bold text-sm text-gray-800">${wp.lat.toFixed(5)}, ${wp.lon.toFixed(5)}</p>
               <p class="text-gray-600"><b>Distancia:</b> ${wp.distKm || '-'}</p>
-              <p class="text-gray-600"><b>1º Hora:</b> ${wp.hourFirstStr || '-'}</p>
-              <p class="text-gray-600"><b>Últ. Hora:</b> ${wp.hourLastStr || '-'}</p>
+              <p class="text-gray-600"><b>🚀 1º Hora:</b> ${wp.hourFirstStr || '-'}</p>
+              <p class="text-gray-600"><b>🏁 Últ. Hora:</b> ${wp.hourLastStr || '-'}</p>
             </div>
           `;
           L.marker([wp.lat, wp.lon], { icon: customIcon }).bindPopup(popupHtml).addTo(featureGroup);
@@ -253,7 +666,7 @@
         const mapsUrl = wp.lat && wp.lon ? `https://www.google.com/maps/search/?api=1&query=${wp.lat},${wp.lon}` : '#';
         const iconoSimbolo = getSymbolIcon(wp.sym);
 
-        // 1. Fila para la tabla de escritorio (forzada por CSS)
+        // Tabla de Escritorio
         const row = document.createElement('tr');
         row.innerHTML = `
           <td class="font-bold text-gray-800">${iconoSimbolo} ${wp.name || '-'}</td>
@@ -261,13 +674,13 @@
           <td class="text-xs text-gray-500">${wp.lat ? wp.lat.toFixed(5) : '-'}, ${wp.lon ? wp.lon.toFixed(5) : '-'}</td>
           <td><a href="${mapsUrl}" target="_blank" class="map-btn">🗺️ Maps</a></td>
           <td><span class="text-gray-600">${wp.timeFirstStr || '-'}</span></td>
-          <td><span class="font-semibold text-indigo-600">${wp.hourFirstStr || '-'}</span></td>
+          <td><span class="font-bold text-indigo-600">${wp.hourFirstStr || '-'}</span></td>
           <td><span class="text-gray-600">${wp.timeLastStr || '-'}</span></td>
-          <td><span class="font-semibold text-indigo-600">${wp.hourLastStr || '-'}</span></td>
+          <td><span class="font-semibold text-gray-700">${wp.hourLastStr || '-'}</span></td>
         `;
         tableBody.appendChild(row);
 
-        // 2. Tarjeta para la vista móvil (forzada por CSS)
+        // Tarjetas Vista Móvil
         const card = document.createElement('div');
         card.className = "bg-white border border-gray-200 rounded-lg p-4 shadow-sm space-y-3";
         card.innerHTML = `
@@ -300,8 +713,16 @@
         cardsContainer.appendChild(card);
       });
 
-      if (latLngs.length > 0) {
-        map.fitBounds(L.latLngBounds(latLngs));
+      let mapPath = [];
+      if (fulltrackCoordsCache.length > 0) {
+        mapPath = fulltrackCoordsCache.map(pt => [pt.lat, pt.lon]);
+      } else {
+        mapPath = latLngsWpts;
+      }
+
+      if (mapPath.length > 0) {
+        drawTrackWithArrows(mapPath);
+        map.fitBounds(L.latLngBounds(mapPath));
       }
       setTimeout(() => { map.invalidateSize(); }, 200);
     }

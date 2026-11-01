@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="HilandoPixel">
+    <meta content="carrera, fotos, running, tusresulta2, hilandopixel, subida ermitas" name="keywords">
+    <meta content="Búsqueda de fotos y resultados de la Final Interprovincial Andaluza CxM Edad Escolar 2026" name="description">
+    <meta property="og:image" content="/larompepiernas2026/previewWeb.png">
+    <meta property="og:title" content="Final Interprovincial Andaluza CxM Edad Escolar 2026 - TusResulta2 - Búsqueda de fotos" />
+    <meta property="og:description" content="Búsqueda de fotos y resultados de la Final Interprovincial Andaluza CxM Edad Escolar 2026" />
+    <title>Final Interprovincial Andaluza CxM Edad Escolar 2026 - HilandoPixel - TusResulta2 - Búsqueda de fotos</title>
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/navbar.js" defer></script>
+
+  <style>
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .info-table th, .info-table td {
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+    }
+    .info-table th {
+      background-color: #f9fafb;
+      font-weight: 600;
+    }
+    
+    .vista-movil-cards {
+      display: grid;
+      gap: 1rem;
+    }
+    .vista-escritorio-tabla {
+      display: none;
+    }
+
+    @media (min-width: 3000px) {
+      .vista-movil-cards {
+        display: none !important;
+      }
+      .vista-escritorio-tabla {
+        display: block !important;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+    <navbar-header></navbar-header>
+    <div>
+        <a><img class="width-full" src="./preview.png" alt="Fotos y resultados de Final Interprovincial Andaluza CxM Edad Escolar 2026" /></a>
+    </div>
+
+    <div class="flex justify-between items-center border-b pb-4 custom-hilandopixel">
+      <div>
+        <h1 id="eventoTitulo" class="text-2xl font-bold">Final Interprovincial Andaluza CxM Edad Escolar 2026</h1>
+        <h2 class="text-m font-bold">8 de Noviembre 2026 | Cerro Muriano, Córdoba</h1>
+      </div>
+    </div>
+
+    <!-- VISTA MÓVIL / TABLET (Tarjetas) -->
+    <div id="carrerasCardsContainer" class="vista-movil-cards custom-hilandopixel">
+      <div class="text-center text-gray-500 py-8 bg-gray-50 rounded-lg border">Cargando carreras...</div>
+    </div>
+
+    <!-- VISTA ESCRITORIO (Tabla Completa) -->
+    <div class="vista-escritorio-tabla">
+      <table id="carrerasTable" class="info-table">
+        <thead>
+          <tr>
+            <th>Carrera</th>
+            <th>Distancia</th>
+            <th>Desnivel</th>
+            <th>Hora Salida</th>
+            <th>Recursos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="9" class="text-center text-gray-500 py-6">Cargando carreras...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  <script type="module">
+    import { db } from '/firebase.config.js';
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let eventoId = 'final-interprovincial-cxm-escolar-andalucia-2026'
+
+    let carrerasCache = [];
+
+    async function cargarTodosLoscarreras() {
+      if (!eventoId) {
+        document.getElementById('eventoTitulo').textContent = "Error: Evento no especificado";
+        return;
+      }
+
+      try {
+        const refColeccion = collection(db, 'eventos', eventoId, 'tracks');
+        const querySnapshot = await getDocs(refColeccion);
+
+        carrerasCache = [];
+
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          
+          let horaPrimeroMeta = '-';
+          if (data.waypoints && data.waypoints.length > 0) {
+            const lastWpt = data.waypoints[data.waypoints.length - 1];
+            horaPrimeroMeta = lastWpt.hourFirstStr || '-';
+          }
+
+          // Enlace personalizado desde trackUrl en Firebase (o alternativa por defecto)
+          const urlAccion = data.trackUrl 
+            ? data.trackUrl 
+            : `carreras.html?evento=${encodeURIComponent(eventoId)}&track=${encodeURIComponent(docSnap.id)}`;
+
+          carrerasCache.push({
+            id: docSnap.id,
+            title: data.title || docSnap.id,
+            distancia: data.totalDistance || '-',
+            elevation: data.elevation || 'D+: - | D-: -',
+            horaSalida: data.horaInicio || '23:59',
+            horaPrimero: horaPrimeroMeta,
+            horaUltimo: data.horaFin || '-',
+            ritmoPrimero: data.ritmoPrimeroMinKm ? `${data.ritmoPrimeroMinKm} min/km` : '-',
+            ritmoUltimo: data.ritmoUltimoMinKm ? `${data.ritmoUltimoMinKm} min/km` : '-',
+            trackUrl: urlAccion,
+            photosUrl: `.${data.photosUrl}` });
+        });
+
+        // Ordenar por hora de inicio (horaSalida) en sentido ascendente
+        carrerasCache.sort((a, b) => a.horaSalida.localeCompare(b.horaSalida));
+
+        renderizarcarreras(carrerasCache);
+
+      } catch (error) {
+        console.error("Error al obtener los carreras de Firebase:", error);
+        alert("Hubo un error al cargar los carreras desde Firebase.");
+      }
+    }
+
+    function renderizarcarreras(lista) {
+      const cardsContainer = document.getElementById('carrerasCardsContainer');
+      const tableBody = document.querySelector('#carrerasTable tbody');
+
+      cardsContainer.innerHTML = '';
+      tableBody.innerHTML = '';
+
+      if (lista.length === 0) {
+        cardsContainer.innerHTML = `<div class="text-center text-gray-500 py-8 bg-gray-50 rounded-lg border">No se encontraron carreras en este evento.</div>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500 py-6">No se encontraron carreras en este evento.</td></tr>`;
+        return;
+      }
+
+      lista.forEach((track) => {
+        // 1. Tarjeta Vista Móvil
+        const card = document.createElement('div');
+        card.className = "bg-white border border-gray-200 rounded-lg p-5 shadow-sm space-y-4 hover:shadow-md transition";
+        card.innerHTML = `
+          <div class="flex justify-between items-start border-b pb-3">
+            <div>
+              <h2 class="font-bold text-lg text-primary">${track.title}</h2>
+            </div>
+            <span class="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">${track.distancia}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="bg-gray-50 p-2.5 rounded">
+              <span class="text-gray-500 block">🚀 Hora Salida</span>
+              <span class="font-bold text-primary text-sm">${track.horaSalida}</span>
+            </div>
+            <div class="bg-gray-50 p-2.5 rounded">
+              <span class="text-gray-500 block">⛰️ Desnivel</span>
+              <span class="font-bold text-gray-800 text-sm">${track.elevation}</span>
+            </div>
+          </div>
+
+          <a href="${track.trackUrl}" class="block text-center w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">
+            🗺️ Track
+          </a>
+          <a href="${track.photosUrl}" class="block text-center w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">
+            📷 Fotos
+          </a>
+        `;
+        cardsContainer.appendChild(card);
+
+        // 2. Fila Vista Escritorio
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="font-bold text-primary">
+            ${track.title}
+          </td>
+          <td class="font-semibold text-primary">${track.distancia}</td>
+          <td class="text-xs text-gray-600">${track.elevation}</td>
+          <td><span class="font-bold text-primary">${track.horaSalida}</span></td>
+          <td>
+            <a href="${track.trackUrl}" class="bg-primary hover:bg-indigo-700 text-white font-medium px-3 py-1.5 rounded text-xs inline-block">
+              🗺️ Track
+            </a>
+            <a href="${track.photosUrl}" class="block text-center w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">
+              📷 Fotos
+            </a>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    cargarTodosLoscarreras();
+  </script>
+</body>
+</html>

@@ -103,7 +103,7 @@
       <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
         <label class="flex items-center space-x-3 cursor-pointer">
           <input type="checkbox" id="genKmWaypoints" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
-          <span class="font-semibold text-gray-700">Generar waypoints automáticos cada "X" kilómetros</span>
+          <span class="font-semibold text-gray-700">Generar waypoints automáticos cada "X" kilómetros (incluye Km 0)</span>
         </label>
         
         <div id="kmIntervalContainer" class="hidden pl-8 space-y-3">
@@ -262,7 +262,6 @@
   </div>
 
   <!-- Modal / Diálogo para Seleccionar ID de Firebase -->
-<!-- Modal / Diálogo para Seleccionar ID de Firebase -->
   <div id="firebaseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
       <h3 class="text-lg font-bold text-gray-800">🔥 Guardar Ruta en Firebase (tracks)</h3>
@@ -291,13 +290,12 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
+
   <!-- Lógica Principal y Firebase Modular conectado a firebase.config.js -->
   <script type="module">
     import { db } from './firebase.config.js';
     import { collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
@@ -336,6 +334,7 @@
     let trackProfileData = []; 
     let lastTotalGain = 0;
     let lastTotalLoss = 0;
+    let calculatedLastParticipantHour = "-";
 
     const symbolIcons = {
       'Waypoint': '📍',
@@ -360,6 +359,51 @@
 
     function getSymbolIcon(sym) {
       return symbolIcons[sym] || '📍';
+    }
+
+    // Extrae las coordenadas continuas de la ruta como objetos { lat, lon } válidos para Firestore
+    function extractOptimizedFulltrackCoords(gpxDoc) {
+      if (!gpxDoc) return [];
+      const trkpts = gpxDoc.getElementsByTagName('trkpt');
+      const coords = [];
+      for (let i = 0; i < trkpts.length; i++) {
+        const lat = parseFloat(parseFloat(trkpts[i].getAttribute('lat')).toFixed(6));
+        const lon = parseFloat(parseFloat(trkpts[i].getAttribute('lon')).toFixed(6));
+        coords.push({ lat, lon });
+      }
+      return coords;
+    }
+
+    function drawTrackWithArrows(trackCoords) {
+      const polyline = L.polyline(trackCoords, { color: '#0055FF', weight: 5, opacity: 0.85 }).addTo(featureGroup);
+
+      if (typeof L.polylineDecorator === 'function') {
+        const decorator = L.polylineDecorator(polyline, {
+          patterns: [
+            {
+              offset: 25,
+              repeat: 60,
+              symbol: L.Symbol.arrowHead({
+                pixelSize: 14,
+                headAngle: 60,
+                polygon: true,
+                pathOptions: { 
+                  fillColor: '#FFD700', 
+                  fillOpacity: 1, 
+                  stroke: true, 
+                  color: '#000000', 
+                  weight: 1.5 
+                }
+              })
+            }
+          ]
+        }).addTo(featureGroup);
+
+        if (decorator.bringToFront) {
+          decorator.bringToFront();
+        }
+      }
+      return polyline;
     }
 
     function cleanHtmlText(htmlStr) {
@@ -435,7 +479,6 @@
               
               const nameEl = placemarks[p].getElementsByTagName('name')[0];
               const name = nameEl ? nameEl.textContent.trim() : `Punto ${p+1}`;
-              const desc = '';
 
               let finalTitle = name;
               const wptEl = gpxDoc.createElement('wpt');
@@ -503,8 +546,6 @@
     });
 
     function initFilterCheckboxes() {
-      const urlParams = new URLSearchParams(window.location.search);
-let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');      console.log("++" + eventoIdParam)
       const profileContainer = document.getElementById('wptFilterCheckboxes');
       profileContainer.innerHTML = '';
       Object.keys(symbolIcons).forEach(sym => {
@@ -1145,7 +1186,7 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
             parseFloat(trkpts[i].getAttribute('lon'))
           ]);
         }
-        const polyline = L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
+        const polyline = drawTrackWithArrows(trackCoords);
         map.fitBounds(polyline.getBounds());
       }
 
@@ -1387,12 +1428,29 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       });
 
       if (includeKmWaypoints && intervalKm && intervalKm > 0) {
+        const startLat = parseFloat(trkpts[0].getAttribute('lat'));
+        const startLon = parseFloat(trkpts[0].getAttribute('lon'));
+
+        // Generar el primer Waypoint (Km 0 / Salida)
+        generatedWaypointsData.push({ 
+          lat: startLat, 
+          lon: startLon, 
+          name: "Km 0 (Salida)", 
+          sym: kmSym,
+          distKmNum: 0,
+          distKm: "0.0 km",
+          timeFirstStr: formatTime(0),
+          hourFirstStr: addMinutesToTime(startTime, 0),
+          timeLastStr: formatTime(0),
+          hourLastStr: addMinutesToTime(startTime, 0)
+        });
+
         const intervalMeters = intervalKm * 1000;
         let accumulatedDistance = 0;
         let nextTargetDistance = intervalMeters;
         
-        let pLat = parseFloat(trkpts[0].getAttribute('lat'));
-        let pLon = parseFloat(trkpts[0].getAttribute('lon'));
+        let pLat = startLat;
+        let pLon = startLon;
 
         for (let i = 1; i < trkpts.length; i++) {
           const cLat = parseFloat(trkpts[i].getAttribute('lat'));
@@ -1442,10 +1500,12 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       const durationFirstMin = totalDistanceKm * paceFirst;
       const durationLastMin = totalDistanceKm * paceLast;
 
+      calculatedLastParticipantHour = addMinutesToTime(startTime, durationLastMin);
+
       document.getElementById('resFirstTime').textContent = `Duración: ${formatTime(durationFirstMin)}`;
       document.getElementById('resFirstHour').textContent = `Llegada: ${addMinutesToTime(startTime, durationFirstMin)}`;
       document.getElementById('resLastTime').textContent = `Duración: ${formatTime(durationLastMin)}`;
-      document.getElementById('resLastHour').textContent = `Llegada: ${addMinutesToTime(startTime, durationLastMin)}`;
+      document.getElementById('resLastHour').textContent = `Llegada: ${calculatedLastParticipantHour}`;
       document.getElementById('summaryPanel').classList.remove('hidden');
 
       renderMapAndTable();
@@ -1528,7 +1588,7 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
           parseFloat(trkpts[i].getAttribute('lon'))
         ]);
       }
-      L.polyline(trackCoords, { color: 'blue', weight: 4 }).addTo(featureGroup);
+      drawTrackWithArrows(trackCoords);
       setTimeout(() => { map.invalidateSize(); }, 200);
 
       generatedWaypointsData.forEach((wp, index) => {
@@ -1648,7 +1708,7 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
     }
 
     // ==========================================
-    // LÓGICA DE FIREBASE (Colección "tracks") CONECTADA A firebase.config.js
+    // LÓGICA DE FIREBASE CON GUARDA OPTIMIZADA DE fulltrack
     // ==========================================
     const firebaseModal = document.getElementById('firebaseModal');
     const firebaseExistingIdsSelect = document.getElementById('firebaseExistingIds');
@@ -1666,7 +1726,7 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
 
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');      console.log("++" + eventoIdParam)
+        let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');
 
         const refColeccion = collection(db, 'eventos', eventoIdParam, 'tracks');
 
@@ -1683,6 +1743,10 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       }
     });
 
+    document.getElementById('firebaseCancelBtn').addEventListener('click', function() {
+      firebaseModal.classList.add('hidden');
+    });
+
     firebaseExistingIdsSelect.addEventListener('change', function() {
       if (this.value) {
         firebaseInputId.value = this.value;
@@ -1696,19 +1760,29 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
         return;
       }
 
-      // Validar que existan waypoints procesados
       if (!generatedWaypointsData || generatedWaypointsData.length === 0) {
         alert("No hay waypoints procesados para guardar.");
         return;
       }
 
-      // Estructura limpia que contiene únicamente los datos de la tabla y resumen
+      const startTime = document.getElementById('startTime').value;
+      const paceFirst = parseFloat(document.getElementById('paceFirst').value);
+      const paceLast = parseFloat(document.getElementById('paceLast').value);
+
+      // Extraer array optimizado de objetos { lat, lon } compatible con Firestore
+      const fulltrackCoords = extractOptimizedFulltrackCoords(currentGpxDoc);
+
       const trackData = {
         title: outputFilenameBase || 'ruta',
         updatedAt: new Date().toISOString(),
         totalDistance: document.getElementById('resTotalDist').textContent || '-',
         elevation: document.getElementById('resElevation').textContent || '-',
-        waypoints: generatedWaypointsData // Contiene la tabla exacta con nombres, símbolos, distancias y horas
+        horaInicio: startTime,
+        horaFin: calculatedLastParticipantHour,
+        ritmoPrimeroMinKm: paceFirst,
+        ritmoUltimoMinKm: paceLast,
+        fulltrack: fulltrackCoords, // Array de objetos { lat, lon }
+        waypoints: generatedWaypointsData
       };
 
       try {
@@ -1717,15 +1791,13 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
         btn.disabled = true;
 
         const urlParams = new URLSearchParams(window.location.search);
-        let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');      console.log("++" + eventoIdParam)
+        let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoActivoTrack');
 
-
-        // Guardar en la subcolección del evento o de forma global según corresponda
         const docRef = doc(db, 'eventos', eventoIdParam, 'tracks', trackId);
 
         await setDoc(docRef, trackData, { merge: true });
 
-        alert(`¡Waypoints de la ruta guardados con éxito en Firebase con el ID: "${trackId}"!`);
+        alert(`¡Ruta guardada con éxito en Firebase ("${trackId}") con ${fulltrackCoords.length} puntos en fulltrack!`);
         firebaseModal.classList.add('hidden');
       } catch (error) {
         console.error("Error al guardar en Firebase:", error);
@@ -1788,7 +1860,7 @@ let eventoIdParam = urlParams.get('evento') || sessionStorage.getItem('eventoAct
       const encodedUri = encodeURI(csvContent);
       const a = document.createElement('a');
       a.href = encodedUri;
-      a.download = `${outputFirestoreBaseName || outputFilenameBase}_waypoints.csv`;
+      a.download = `${outputFilenameBase}_waypoints.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

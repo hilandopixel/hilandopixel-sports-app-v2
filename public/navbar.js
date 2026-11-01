@@ -10,7 +10,7 @@ class NavbarHeader extends HTMLElement {
               <img id="logo"
                 src="/logo.png" 
                 alt="Hilando Pixel Logo" 
-                class="h-8 sm:h-10 w-auto object-contain max-w-full transition-all duration-200"
+                class="h-4 sm:h-4 w-auto object-contain max-w-full transition-all duration-200"
               >
             </a>
             

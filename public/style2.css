@@ -22,9 +22,6 @@ body.event-theme-bg {
   background-color: var(--color-primary) !important;
 }
 
-
-.text-primary { color: var(--color-primary);  }
-
 .bg-primary { background-color: var(--color-primary); }
 .bg-primary-dark { background-color: var(--color-primary-dark); }
 .text-primary { color: var(--color-primary); }

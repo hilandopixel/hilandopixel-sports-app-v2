@@ -48,19 +48,30 @@ const yr=p=>p.nac?+String(p.nac).slice(0,4):0;
 const catOf=p=>S.c.find(c=>yr(p)>=c.ini&&yr(p)<=c.fin&&(c.sexo=='X'||c.sexo==p.sexo));
 const raceOf=c=>c&&S.r.find(r=>r.cats.includes(c.id));
 const T={
- p:{n:'Participantes',cols:[['dorsal','Dorsal','number'],['nombre','Nombre'],['apellidos','Apellidos'],['club','Club'],['nac','F. nacimiento','date'],['sexo','Sexo',['M','F']],['fed','Federado','chk'],['loc','Local','chk']],nuevo:()=>({id:uid(),dorsal:'',nombre:'',apellidos:'',club:'',nac:'',sexo:'M',fed:false,loc:false})},
+ p:{n:'Participantes',cols:[['dorsal','Dorsal','number'],['nombre','Nombre'],['apellidos','Apellidos'],['club','Club'],['nac','F. nacimiento','date'],['sexo','Sexo',['M','F']],['fed','Federado','chk'],['loc','Local','chk'],['salio','Ha salido','chk']],nuevo:()=>({id:uid(),dorsal:'',nombre:'',apellidos:'',club:'',nac:'',sexo:'M',fed:false,loc:false,salio:false})},
  c:{n:'Categorías',cols:[['nombre','Nombre'],['ini','Año inicio','number'],['fin','Año fin','number'],['sexo','Sexo (X = mixto)',['M','F','X']]],nuevo:()=>({id:uid(),nombre:'Nueva',ini:2000,fin:2010,sexo:'M'})},
  r:{n:'Carreras',cols:[['nombre','Nombre'],['hora','Hora inicio prevista','time']],nuevo:()=>({id:uid(),nombre:'Nueva carrera',hora:'',cats:[],t0:null})}
 };
 let tab='p';
-const tabs={p:'Participantes',c:'Categorías',r:'Carreras',m:'Meta / Cronómetro',k:'Clasificación',d:'Datos'};
+const tabs={p:'Participantes',c:'Categorías',r:'Carreras',s:'Control salida',m:'Meta / Cronómetro',k:'Clasificación',d:'Datos'};
+let RTOK='',TEXP=0,CRED={};
+const AE={EMAIL_NOT_FOUND:'usuario no encontrado',INVALID_PASSWORD:'contraseña incorrecta',INVALID_LOGIN_CREDENTIALS:'usuario o contraseña incorrectos',OPERATION_NOT_ALLOWED:'activa Email/Password en Firebase Authentication',USER_DISABLED:'usuario deshabilitado',TOO_MANY_ATTEMPTS_TRY_LATER:'demasiados intentos, espera un poco'};
+const herr=r=>{if(r.status==401||r.status==403)TEXP=0;return new Error(r.status==401||r.status==403?'acceso denegado: conecta con usuario y contraseña (página de eventos)':'HTTP '+r.status)};
+async function authReq(u,o){const r=await fetch(u,o),j=await r.json();if(!r.ok){const m=String((j.error&&j.error.message)||r.status);throw new Error(AE[m.split(' ')[0]]||m)}return j}
+async function login(){if(!cfg.key||!CRED.email)return;
+ const j=await authReq('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+encodeURIComponent(cfg.key),{method:'POST',body:JSON.stringify({email:CRED.email,password:CRED.pass,returnSecureToken:true})});
+ TOKEN=j.idToken;RTOK=j.refreshToken;TEXP=Date.now()+(+j.expiresIn-120)*1000}
+async function tok(){if(!cfg.key||(TOKEN&&Date.now()<TEXP))return;
+ if(RTOK)try{const j=await authReq('https://securetoken.googleapis.com/v1/token?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(RTOK)});TOKEN=j.id_token;RTOK=j.refresh_token;TEXP=Date.now()+(+j.expires_in-120)*1000;return}catch(e){}
+ await login()}
 const fb=p=>cfg.url.replace(/\/+$/,'')+p+'.json'+(TOKEN?'?auth='+encodeURIComponent(TOKEN):'');
-const cfgHtml=()=>`<div class="card"><b>Firebase (Realtime Database)</b> · sincronización entre dispositivos<br>URL de la base de datos:<br><input id="fu" style="width:95%" placeholder="https://tu-proyecto-default-rtdb.europe-west1.firebasedatabase.app" value="${esc(cfg.url)}"><br>Token o secreto (opcional · solo se mantiene en esta sesión, nunca se guarda):<br><input id="fa" type="password" autocomplete="off" style="width:95%" value="${esc(TOKEN)}"><br><button class="b" onclick="cfgSave()">Guardar</button><button class="b" onclick="nube()">Ver eventos en la nube</button><div id="nb"></div></div>`;
+const cfgHtml=()=>`<div class="card"><b>Firebase (Realtime Database)</b> · sincronización entre dispositivos<br>URL de la base de datos:<br><input id="fu" style="width:95%" placeholder="https://tu-proyecto-default-rtdb.europe-west1.firebasedatabase.app" value="${esc(cfg.url)}"><br>Web API Key del proyecto (para el acceso con usuario):<br><input id="fk" style="width:95%" value="${esc(cfg.key)}"><br>Usuario (email) · solo en esta sesión:<br><input id="fe" type="email" autocomplete="off" style="width:95%" value="${esc(CRED.email)}"><br>Contraseña · solo en esta sesión, nunca se guarda:<br><input id="fa" type="password" autocomplete="off" style="width:95%" value="${esc(CRED.pass)}"><br><button class="b" onclick="cfgSave()">Guardar y conectar</button><button class="b" onclick="nube()">Ver eventos en la nube</button> ${TOKEN?'🔒 conectado':''}<div id="nb"></div></div>`;
 function cfgStore(){try{localStorage.setItem('crono_fb',JSON.stringify(cfg))}catch(e){}}
-function cfgSave(){cfg.url=$('#fu').value.trim();TOKEN=$('#fa').value.trim();cfgStore();toast('Configuración guardada')}
+async function cfgSave(){cfg.url=$('#fu').value.trim();cfg.key=$('#fk').value.trim();CRED={email:$('#fe').value.trim(),pass:$('#fa').value};TOKEN='';RTOK='';TEXP=0;cfgStore();
+ if(cfg.key&&CRED.email){try{await login();toast('Conectado');view()}catch(e){toast('No se pudo conectar: '+e.message)}}else toast('Configuración guardada')}
 function cfgAuto(v){cfg.auto=v;cfgStore();setMsg(syncMsg||'automática '+(v?'activada':'desactivada'));if(v)sync()}
 function setMsg(m,err){syncMsg=m;const a=$('#sy');if(a)a.textContent=m;let b=$('#cl');if(!b){b=document.createElement('div');b.id='cl';b.className='np';b.style.cssText='position:fixed;bottom:6px;right:8px;font-size:12px;padding:3px 8px;border-radius:10px;color:#fff;z-index:5';document.body.append(b)}b.style.display=cfg.auto&&cur?'block':'none';b.style.background=err?'#b3261e':'#2e7d32';b.textContent=(err?'☁ ✕ ':'☁ ✓ ')+m}
-function refresh(){const a=document.activeElement,busy=a&&(a.tagName=='INPUT'||a.tagName=='SELECT')&&a.closest&&a.closest('#v')&&(a.id!='dor'||a.value);if(busy){pend=true;return}pend=false;view()}
+function refresh(){const a=document.activeElement,busy=a&&(a.tagName=='INPUT'||a.tagName=='SELECT')&&a.closest&&a.closest('#v')&&((a.id!='dor'&&a.id!='sal')||a.value);if(busy){pend=true;return}pend=false;view()}
 let snap={},cfgSnap='',noET=false;
 const rk=x=>{const{_m,...o}=x;return JSON.stringify(o)};
 function stamp(init){const now=Date.now();['p','c','r','l'].forEach(t=>(S[t]||[]).forEach(x=>{if(!x.id)return;const k=rk(x);if(snap[x.id]!==k){snap[x.id]=k;if(!init)x._m=now}}));
@@ -74,12 +85,13 @@ async function sync(quiet){
  if(!cur||!cfg.url){if(!quiet)toast('Configura Firebase en la página de eventos');return}
  if(syncing)return;syncing=true;
  try{
+  await tok();
   if(!S.cid){S.cid=uid()+uid();persist()}
   const U=fb('/eventos/'+S.cid);
   if(quiet&&lastKnown){const x=await fetch(fb('/indice/'+S.cid));if(x.ok){const ix=await x.json();if(ix&&ix.mod===lastKnown&&S.mod===lastKnown){setMsg('al día '+new Date().toLocaleTimeString());return}}}
   const b0=fp(S);let ok=false;
   for(let n=0;n<4&&!ok;n++){
-   const r=await fx(U,{},{'X-Firebase-ETag':'true'});if(!r.ok)throw new Error('HTTP '+r.status);
+   const r=await fx(U,{},{'X-Firebase-ETag':'true'});if(!r.ok)throw herr(r);
    const et=r.headers.get('ETag'),R=await r.json();let up=true;
    if(R){const d=unpack(R),del=new Set([...(S.del||[]),...(d.del||[])]);
     S.p=dedup(mergeT(S.p,d.p,del),del);S.c=mergeT(S.c,d.c,del);S.r=mergeT(S.r,d.r,del);S.l=mergeT(S.l,d.l,del).sort((x,y)=>x.ts-y.ts);S.del=[...del];
@@ -87,7 +99,7 @@ async function sync(quiet){
     up=fp(S)!==fp(d);if(!up)S.mod=d.mod}
    if(up)S.mod=Date.now();
    snap={};cfgSnap='';stamp(1);persist();
-   if(up){const w=await fx(U,{method:'PUT',body:JSON.stringify(pack(S))},et?{'if-match':et}:{});if(w.status==412)continue;if(!w.ok)throw new Error('HTTP '+w.status);
+   if(up){const w=await fx(U,{method:'PUT',body:JSON.stringify(pack(S))},et?{'if-match':et}:{});if(w.status==412)continue;if(!w.ok)throw herr(w);
     await fetch(fb('/indice/'+S.cid),{method:'PUT',body:JSON.stringify({nombre:S.nombre,mod:S.mod})})}
    ok=true}
   if(!ok)throw new Error('conflicto con otro dispositivo, se reintentará');
@@ -98,16 +110,16 @@ async function sync(quiet){
  }catch(e){setMsg('error: '+(e.message||e),1);if(!quiet)toast('Error de sincronización: '+(e.message||e))}
  finally{syncing=false}}
 async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar');
- try{const r=await fetch(fb('/indice'));if(!r.ok)throw new Error('HTTP '+r.status);const I=(await r.json())||{},k=Object.keys(I);
+ try{await tok();const r=await fetch(fb('/indice'));if(!r.ok)throw herr(r);const I=(await r.json())||{},k=Object.keys(I);
   $('#nb').innerHTML=k.length?'<table>'+k.map(c=>`<tr><td>${esc(I[c].nombre)}<td>${new Date(I[c].mod).toLocaleString()}<td><button class="b" onclick="bajar('${c}')">Descargar a este dispositivo</button></tr>`).join('')+'</table>':'<i>No hay eventos en la nube</i>'}catch(e){toast('Error: '+e.message)}}
 async function bajar(c){if(IDX.find(x=>x.cid==c))return toast('Ya está en este dispositivo: ábrelo y pulsa Sincronizar');
- try{const r=await fetch(fb('/eventos/'+c));if(!r.ok)throw new Error('HTTP '+r.status);const d=unpack(await r.json());d.cid=c;nuevoEv(d);toast('Evento descargado');view()}catch(e){toast('Error: '+e.message)}}
+ try{await tok();const r=await fetch(fb('/eventos/'+c));if(!r.ok)throw herr(r);const d=unpack(await r.json());d.cid=c;nuevoEv(d);toast('Evento descargado');view()}catch(e){toast('Error: '+e.message)}}
 setInterval(()=>{if(cur&&cfg.auto&&cfg.url&&S.cid){if(pend)refresh();sync(true)}},8000);
 let F={p:{},c:{},r:{},m:{},k:{}};
-const EXACT={p:['sexo','fed','loc'],c:['sexo'],m:['dup']};
+const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['dup']};
 const iso2=n=>{const m=String(n||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return m?m[3]+'/'+m[2]+'/'+m[1]:''};
 function fmatch(t,vals){return Object.entries(F[t]).every(([k,f])=>{if(!f||!(k in vals))return true;const v=String(vals[k]??'').toLowerCase(),g=String(f).toLowerCase();return(EXACT[t]||[]).includes(k)?v===g:v.includes(g)})}
-function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.apellidos,club:x.club,nac:iso2(x.nac)||'sin fecha',sexo:x.sexo||'Vacío',fed:x.fed?'Sí':'No',loc:x.loc?'Sí':'No',anyo:yr(x)||'',cat:catOf(x)?.nombre||'sin categoría'};
+function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.apellidos,club:x.club,nac:iso2(x.nac)||'sin fecha',sexo:x.sexo||'Vacío',fed:x.fed?'Sí':'No',loc:x.loc?'Sí':'No',salio:x.salio?'Sí':'No',anyo:yr(x)||'',cat:catOf(x)?.nombre||'sin categoría'};
  if(t=='c')return{nombre:x.nombre,ini:x.ini,fin:x.fin,sexo:x.sexo};
  return{nombre:x.nombre,hora:x.hora,cats:x.cats.map(id=>{const c=S.c.find(y=>y.id==id);return c?c.nombre+' '+c.sexo:''}).join(' ')}}
 function fcell(t,k,opts){const v=F[t][k]||'',id='f_'+t+'_'+k;
@@ -169,17 +181,26 @@ const dd={};if(t=='p')S.p.forEach(x=>{dd[x.dorsal]=(dd[x.dorsal]||0)+1});
 async function salida(i){const r=S.r[i];if(r.t0&&!(await ask('Esta carrera ya tiene salida. ¿Reiniciar?')))return;r.t0=Date.now();save();view()}
 function ajustar(i){const v=$('#aj'+i).value;if(!v)return toast('Escribe el tiempo, ej. 15:00');const p=v.split(':').map(Number).reverse();const ms=((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;S.r[i].t0=Date.now()-ms;save();view()}
 function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d)return;
- if(!S.p.some(x=>x.dorsal==d)){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false})}
+ if(!S.p.some(x=>x.dorsal==d)){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false})}
  S.l.push({id:uid(),d,ts});save();view()}
 function mins(){const m={};S.l.forEach(l=>{const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
 function info(l){const p=S.p.find(x=>x.dorsal==l.d),c=p&&catOf(p),r=raceOf(c);return{p,c,r,ms:r&&r.t0?l.ts-r.t0:null}}
 function editL(id,v){const l=S.l.find(x=>x.id==id),f=info(l);if(f.ms==null)return toast('La carrera no tiene salida');if(!v)return;const p=v.split(':').map(Number).reverse();l.ts=f.r.t0+((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;save();view()}
 async function delL(id){if(await ask('¿Borrar llegada?')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
-function vMeta(){const M=mins();let h='<h2>Meta y cronómetro</h2>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="mm:ss (ej. 15:00)" style="width:160px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
+function marcarSalida(){const e=$('#sal'),d=+e.value;if(!d)return;const p=S.p.find(x=>x.dorsal==d);
+ if(!p){toast('El dorsal '+d+' no existe en participantes');e.value='';return}
+ if(p.salio)toast('El dorsal '+d+' ya estaba marcado como salido');else{p.salio=true;p.tsal=Date.now();save()}
+ view()}
+function deshacerSalida(id){const p=S.p.find(x=>x.id==id);if(p){p.salio=false;delete p.tsal;save();view()}}
+function vS(){const sal=S.p.filter(p=>p.salio).sort((a,b)=>(b.tsal||0)-(a.tsal||0));
+ return`<h2>Control de salida</h2><div class="card"><b>Dorsal que sale:</b><br><input id="sal" type="text" inputmode="numeric" autocomplete="off" style="font-size:30px;width:160px" onkeydown="if(event.key=='Enter')marcarSalida()"> <button class="b" onclick="marcarSalida()">Marcar salida</button><br><small>Han salido ${sal.length} de ${S.p.length} participantes.</small></div>
+<table><tr><th>Dorsal<th>Nombre<th>Carrera<th>Hora<th></tr>${sal.slice(0,30).map(p=>`<tr><td>${p.dorsal}<td>${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'sin datos')}<td>${esc(raceOf(catOf(p))?.nombre||'-')}<td>${p.tsal?new Date(p.tsal).toLocaleTimeString():'--'}<td><button class="b r" onclick="deshacerSalida('${p.id}')">Deshacer</button></tr>`).join('')}</table>`}
+function cnt(){const M=mins(),k=S.r.map(()=>({l:0,s:0,e:0,q:0}));S.p.forEach(p=>{const r=raceOf(catOf(p));if(!r)return;const o=k[S.r.indexOf(r)],ar=!!M[p.dorsal];o.l++;if(p.salio)o.s++;if(ar)o.e++;if(p.salio&&!ar)o.q++});return k}
+function vMeta(){const M=mins(),K=cnt();let h='<h2>Meta y cronómetro</h2>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">En lista: <b>${K[i].l}</b> · Han salido: <b>${K[i].s}</b> · Han entrado: <b>${K[i].e}</b> · Quedan por entrar: <b>${K[i].q}</b></div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="mm:ss (ej. 15:00)" style="width:160px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
  h+=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter')meta()" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
  const fr=`<tr class="np">${['n','d','nom','cat','t'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',['TRUE','FALSE'])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
  const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'';return fmatch('m',{n,d:l.d,nom:nm||'sin datos',cat:f.c?.nombre||'-',t:f.ms==null?'--':fmt(f.ms),dup:M[l.d]!==l?'TRUE':'FALSE'})});
- h+='<table><tr><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th>Duplicado<th></tr>'+fr+rows.slice(0,any?500:30).map(({l,n})=>{const f=info(l),du=M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim());return`<tr style="${sd?'background:#ffb3b3':du?'background:#fff3b0':''}"><td>${n}<td>${l.d}<td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${du?'<b>TRUE</b>':'FALSE'}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table>'+(!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':'');
+ h+='<table><tr><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th>Duplicado<th></tr>'+fr+rows.slice(0,any?500:30).map(({l,n})=>{const f=info(l),du=M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim());const nc=!f.c;return`<tr style="${sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':''}"${nc&&!sd?' title="Sin categoría"':''}><td>${n}<td>${l.d}<td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${du?'<b>TRUE</b>':'FALSE'}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table>'+(!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':'');
  return h}
 setInterval(()=>document.querySelectorAll('.clk').forEach(e=>{const r=S&&S.r[e.dataset.i];e.textContent=r&&r.t0?fmt(Date.now()-r.t0):'--:--:--'}),200);
 // ---- Resultados
@@ -204,7 +225,7 @@ function imp(f){const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.targe
  else if(/^\d{4}$/.test(String(nac)))nac=nac+'-01-01';
  const si=v=>/^(s|si|sí|x|1|true|yes)/i.test(String(v||'').trim());
  const p={dorsal:+g.dorsal,nombre:g.nombre||'',apellidos:g.apellidos||'',club:g.club||'',nac:String(nac),sexo:/^(f|mu)/i.test(String(g.sexo||'').trim())?'F':'M',fed:si(g.federado),loc:si(g.local)};
- if(!p.dorsal)return;const i=S.p.findIndex(x=>x.dorsal==p.dorsal);p._m=Date.now();if(i<0){p.id=uid();S.p.push(p)}else{p.id=S.p[i].id;S.p[i]=p}n++});
+ if(!p.dorsal)return;const i=S.p.findIndex(x=>x.dorsal==p.dorsal);p._m=Date.now();if(i<0){p.id=uid();p.salio=false;S.p.push(p)}else{p.id=S.p[i].id;p.salio=S.p[i].salio;if(S.p[i].tsal)p.tsal=S.p[i].tsal;S.p[i]=p}n++});
  save();toast(n+' participantes importados');view()};r.readAsArrayBuffer(f)}
 function img(k,f){if(!f)return;const r=new FileReader();r.onload=e=>{S.img[k]=e.target.result;save();view()};r.readAsDataURL(f)}
 function bak(){dl(S.nombre,pack(S))}
@@ -216,8 +237,8 @@ Imagen pie: <input type=file accept="image/*" onchange="img('f',this.files[0])">
 <div class="card"><b>Importar participantes (Excel/CSV)</b><br>Columnas: dorsal, nombre, apellidos, club, fecha_nacimiento, sexo (M/F), federado, local<br><input type=file accept=".xlsx,.xls,.csv" onchange="imp(this.files[0])"></div>
 <div class="card"><b>Fichero del evento (.json)</b><br>Contiene todas las tablas. Úsalo para llevar el evento a otro dispositivo, subirlo a la nube o archivarlo.<br><button class="b" onclick="bak()">Descargar evento</button> Cargar desde fichero: <input type=file accept=".json" onchange="rest(this.files[0]);this.value=''"><br>${FH?'Vinculado a <b>'+esc(FH.name)+'</b> (se guarda solo con cada cambio) <button class="b" onclick="FH=null;view()">Desvincular</button>':window.showSaveFilePicker?'<button class="b" onclick="vinc()">Vincular fichero (guardado automático)</button>':'<i>Tu navegador no permite vincular ficheros; usa Descargar evento.</i>'}</div>
 <div class="card"><b>Sincronización con la nube</b><br>${cfg.url?`<button class="b" onclick="sync()">⇅ Sincronizar ahora</button> <label><input type=checkbox ${cfg.auto?'checked':''} onchange="cfgAuto(this.checked)"> Automática (cada pocos segundos)</label><div id="sy">${esc(syncMsg)}</div>`:'Configura Firebase en la página de eventos (botón ⌂ Eventos).'}</div>
-<div class="card"><button class="b r" onclick="ask('¿Borrar TODAS las llegadas y salidas?').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
+<div class="card"><button class="b r" onclick="ask('¿Borrar TODAS las llegadas y salidas?').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
 function ordenar(){S.c.sort((a,b)=>(a.ini-b.ini)||(a.fin-b.fin)||String(a.sexo).localeCompare(b.sexo));S.r.sort((a,b)=>(a.hora||'99:99').localeCompare(b.hora||'99:99'))}
-function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus()}
+function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus();if(tab=='s')$('#sal')?.focus()}
 migrar();view();
 </script></body></html>
