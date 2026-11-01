@@ -21,6 +21,15 @@ button.r{background:#b3261e}
 .clk{font:bold 44px monospace}
 #dor{font-size:30px;width:160px}
 .sc{overflow-x:auto}
+#mt{overflow:scroll;max-height:calc(100vh - 320px);min-height:260px;scrollbar-width:auto;scrollbar-color:#12355b #dde3ea}
+#mt::-webkit-scrollbar{width:14px;height:14px}
+#mt::-webkit-scrollbar-track{background:#dde3ea}
+#mt::-webkit-scrollbar-thumb{background:#12355b;border-radius:7px;border:2px solid #dde3ea}
+#mt table{border-collapse:separate;border-spacing:0;margin:0;border-left:1px solid #ccd;border-top:1px solid #ccd}
+#mt th,#mt td{border:0;border-right:1px solid #ccd;border-bottom:1px solid #ccd}
+#mt thead th{position:sticky;z-index:2;background:#e6ebf2}
+#mt thead tr:nth-child(1) th{top:0;height:30px;box-sizing:border-box}
+#mt thead tr:nth-child(2) th{top:30px}
 .ins td{padding:0!important;height:7px;line-height:7px;font-size:11px;text-align:center;color:transparent;background:#e8f5e9;border:none!important;cursor:pointer}
 .ins:hover td{height:22px;line-height:22px;color:#2e7d32;background:#c8e6c9}
 @media(hover:none){.ins td{height:14px;line-height:14px;color:#2e7d32}}
@@ -279,7 +288,7 @@ function vMeta(){const M=mins(),K=cnt(),RK=rank(),B=S.r.map(()=>[]);
  const tr=({l,n})=>{const f=info(l),pv=!!l.prov,du=!pv&&M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim()),nc=!f.c,pk=RK.pos[l.id],sx=f.p?.sexo||'';
   const bg=pv?'background:#e0e0e0;color:#777':sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':'';
   return`<tr style="${bg}"${nc&&!sd?' title="Sin categoría"':''}><td><input type=checkbox class="sel_m" data-id="${l.id}" ${SEL.m.has(l.id)?'checked':''} onchange="selOne('m','${l.id}',this.checked)"><td>${n}<td><span onclick="popD(${l.d})" title="Pulsa para editar el participante" style="cursor:pointer;text-decoration:underline;font-weight:bold">${l.d}</span><td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td style="text-align:center;background:${sxc(sx)}">${sx}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${pk?pk.pg:'-'}<td>${pk?pk.pc:'-'}<td style="text-align:center" title="${pv?'Provisional: excluida de las clasificaciones':du?'Duplicado':'No duplicado'}">${pv?'⏸':du?'⚠️':'✅'}<td style="white-space:nowrap"><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b" onclick="provL('${l.id}')" title="${pv?'Volver a incluirla en las clasificaciones':'Excluirla de las clasificaciones'}">${pv?'▶ Activar':'⏸ Provisional'}</button><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`};
- h+=`<button class="b r" id="bs_m" onclick="borrarSel('m')">🗑 Borrar seleccionados (${SEL.m.size})</button><div class="sc" id="mt"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('m',this.checked)"><th>#<th>Dorsal<th>Nombre<th>Sexo<th>Categoría<th>Tiempo<th>Pos.<th>Pos. cat.<th>Duplicado<th></tr>${fr}${(v=>v.map(x=>`<tr class="ins" onclick="insL('${x.l.id}','a')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`+tr(x)).join('')+(v.length?`<tr class="ins" onclick="insL('${v[v.length-1].l.id}','b')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`:''))(rows.slice(0,any?500:30))}</table></div>${!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':''}`;
+ h+=`<button class="b r" id="bs_m" onclick="borrarSel('m')">🗑 Borrar seleccionados (${SEL.m.size})</button><div class="sc" id="mt"><table><thead><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('m',this.checked)"><th>#<th>Dorsal<th>Nombre<th>Sexo<th>Categoría<th>Tiempo<th>Pos.<th>Pos. cat.<th>Duplicado<th></tr>${fr}</thead><tbody>${(v=>v.map(x=>`<tr class="ins" onclick="insL('${x.l.id}','a')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`+tr(x)).join('')+(v.length?`<tr class="ins" onclick="insL('${v[v.length-1].l.id}','b')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`:''))(rows.slice(0,any?500:30))}</tbody></table></div>${!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':''}`;
  return'<h2>Meta y cronómetro</h2><div class="g2"><div>'+h+'</div><div>'+cr+'</div></div>'}
 
 setInterval(()=>document.querySelectorAll('.clk').forEach(e=>{const r=S&&S.r[e.dataset.i];e.textContent=r&&r.t0?fmt(Date.now()-r.t0):'--:--:--'}),200);
