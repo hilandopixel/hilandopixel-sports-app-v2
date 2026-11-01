@@ -22,14 +22,23 @@ button.r{background:#b3261e}
 #dor{font-size:30px;width:160px}
 .sc{overflow-x:auto}
 #mt{overflow:scroll;max-height:calc(100vh - 320px);min-height:260px;scrollbar-width:auto;scrollbar-color:#12355b #dde3ea}
+#st{overflow:scroll;max-height:calc(100vh - 320px);min-height:260px;scrollbar-width:auto;scrollbar-color:#12355b #dde3ea}
 #mt::-webkit-scrollbar{width:14px;height:14px}
+#st::-webkit-scrollbar{width:14px;height:14px}
 #mt::-webkit-scrollbar-track{background:#dde3ea}
+#st::-webkit-scrollbar-track{background:#dde3ea}
 #mt::-webkit-scrollbar-thumb{background:#12355b;border-radius:7px;border:2px solid #dde3ea}
+#st::-webkit-scrollbar-thumb{background:#12355b;border-radius:7px;border:2px solid #dde3ea}
 #mt table{border-collapse:separate;border-spacing:0;margin:0;border-left:1px solid #ccd;border-top:1px solid #ccd}
+#st table{border-collapse:separate;border-spacing:0;margin:0;border-left:1px solid #ccd;border-top:1px solid #ccd}
 #mt th,#mt td{border:0;border-right:1px solid #ccd;border-bottom:1px solid #ccd}
+#st th,#st td{border:0;border-right:1px solid #ccd;border-bottom:1px solid #ccd}
 #mt thead th{position:sticky;z-index:2;background:#e6ebf2}
+#st thead th{position:sticky;z-index:2;background:#e6ebf2}
 #mt thead tr:nth-child(1) th{top:0;height:30px;box-sizing:border-box}
+#st thead tr:nth-child(1) th{top:0;height:30px;box-sizing:border-box}
 #mt thead tr:nth-child(2) th{top:30px}
+#st thead tr:nth-child(2) th{top:30px}
 .ins td{padding:0!important;height:7px;line-height:7px;font-size:11px;text-align:center;color:transparent;background:#e8f5e9;border:none!important;cursor:pointer}
 .ins:hover td{height:22px;line-height:22px;color:#2e7d32;background:#c8e6c9}
 @media(hover:none){.ins td{height:14px;line-height:14px;color:#2e7d32}}
@@ -131,8 +140,10 @@ async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar')
 async function bajar(c){if(IDX.find(x=>x.cid==c))return toast('Ya está en este dispositivo: ábrelo y pulsa Sincronizar');
  try{await tok();const r=await fetch(fb('/eventos/'+c));if(!r.ok)throw herr(r);const d=unpack(await r.json());d.cid=c;nuevoEv(d);toast('Evento descargado');view()}catch(e){toast('Error: '+e.message)}}
 setInterval(()=>{if(cur&&cfg.auto&&cfg.url&&S.cid){if(pend)refresh();sync(true)}},8000);
-let F={p:{},c:{},r:{},m:{},k:{}},dupF=false;
-const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['dup','sx']};
+let F={p:{},c:{},r:{},m:{},k:{},s:{}},QF={};
+function qset(k,v){QF[k]=1;fset('m',k,v)}
+function qclear(){const ks=Object.keys(QF);QF={};let ch=false;ks.forEach(k=>{if(F.m[k]){F.m[k]='';ch=true}});return ch}
+const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['est','sx']};
 const iso2=n=>{const m=String(n||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return m?m[3]+'/'+m[2]+'/'+m[1]:''};
 function fmatch(t,vals){return Object.entries(F[t]).every(([k,f])=>{if(!f||!(k in vals))return true;const v=String(vals[k]??'').toLowerCase(),g=String(f).toLowerCase();return(EXACT[t]||[]).includes(k)?v===g:v.includes(g)})}
 function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.apellidos,club:x.club,nac:iso2(x.nac)||'sin fecha',sexo:x.sexo||'Vacío',fed:x.fed?'Sí':'No',loc:x.loc?'Sí':'No',salio:x.salio?'Sí':'No',anyo:yr(x)||'',cat:catOf(x)?.nombre||'sin categoría'};
@@ -141,16 +152,19 @@ function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.ap
 function fcell(t,k,opts){const v=F[t][k]||'',id='f_'+t+'_'+k;
  if(opts)return`<th><select id="${id}" onchange="fset('${t}','${k}',this.value)"><option value="">Todos</option>${opts.map(o=>{const[a,b]=Array.isArray(o)?o:[o,o];return`<option value="${esc(a)}" ${a==v?'selected':''}>${esc(b)}</option>`}).join('')}</select>`;
  return`<th><input id="${id}" placeholder="filtrar" style="width:100%;min-width:60px" value="${esc(v)}" oninput="fset('${t}','${k}',this.value,'${id}')">`}
-function fset(t,k,v,id){if(t=='m'&&k=='d'&&id)dupF=false;F[t][k]=v;if(SEL[t])SEL[t].clear();view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
-function fclr(t){if(t=='m')dupF=false;F[t]={};if(SEL[t])SEL[t].clear();view()}
-const SEL={p:new Set(),c:new Set(),r:new Set(),m:new Set()};
+function fset(t,k,v,id){if(t=='m'&&id)delete QF[k];F[t][k]=v;if(SEL[t])SEL[t].clear();view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
+function fclr(t){if(t=='m')QF={};F[t]={};if(SEL[t])SEL[t].clear();view()}
+const SEL={p:new Set(),c:new Set(),r:new Set(),m:new Set(),s:new Set()};
 function selUpd(t){const b=$('#bs_'+t);if(b)b.textContent='🗑 Borrar seleccionados ('+SEL[t].size+')'}
 function selOne(t,id,v){v?SEL[t].add(id):SEL[t].delete(id);selUpd(t)}
 function selAll(t,v){document.querySelectorAll('.sel_'+t).forEach(e=>{e.checked=v;v?SEL[t].add(e.dataset.id):SEL[t].delete(e.dataset.id)});selUpd(t)}
 function askCode(t){return new Promise(ok=>{const code=Array.from({length:5},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random()*32|0]).join('');const d=document.createElement('div');d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
  d.innerHTML='<div class="card" style="max-width:360px">'+t+'<br><br>Escribe <b style="font:bold 22px monospace;letter-spacing:3px">'+code+'</b> para confirmar:<br><input id="cc" autocomplete="off" style="font-size:20px;width:90%;text-transform:uppercase"><br><br><button class="b r" id="y" disabled>Borrar</button><button class="b" id="n">Cancelar</button></div>';
  document.body.append(d);d.onpointerdown=e=>{if(e.target===d){d.remove();focoMeta();ok(false)}};const i=d.querySelector('#cc'),y=d.querySelector('#y');i.oninput=()=>{y.disabled=i.value.trim().toUpperCase()!==code};i.onkeydown=e=>{if(e.key=='Enter'&&!y.disabled)y.click()};y.onclick=()=>{d.remove();focoMeta();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();focoMeta();ok(false)};i.focus()})}
-async function borrarSel(t){const arr=t=='m'?'l':t,ids=[...SEL[t]].filter(id=>S[arr].some(x=>x.id==id));if(!ids.length)return toast('Selecciona primero los registros que quieres borrar');
+async function borrarSel(t){
+ if(t=='s'){const ids=[...SEL.s].filter(id=>S.p.some(x=>x.id==id&&x.salio));if(!ids.length)return toast('Selecciona primero las salidas que quieres borrar');
+  if(!(await askCode('Vas a borrar <b>'+ids.length+' salidas</b>. Los participantes no se borran: pasan a «no ha salido».')))return;
+  const set=new Set(ids);S.p.forEach(p=>{if(set.has(p.id)){p.salio=false;delete p.tsal}});SEL.s.clear();save();view();toast(ids.length+' salidas borradas');return}const arr=t=='m'?'l':t,ids=[...SEL[t]].filter(id=>S[arr].some(x=>x.id==id));if(!ids.length)return toast('Selecciona primero los registros que quieres borrar');
  const nm={p:'participantes',c:'categorías',r:'carreras',m:'llegadas'}[t];
  if(!(await askCode('Vas a borrar <b>'+ids.length+' '+nm+'</b>. No se puede deshacer'+(cfg.url?' y, si usas sincronización, también se borrarán en los demás dispositivos':'')+'.')))return;
  const set=new Set(ids);S.del=[...new Set([...(S.del||[]),...ids])];S[arr]=S[arr].filter(x=>!set.has(x.id));SEL[t].clear();save();view();toast(ids.length+' registros borrados')}
@@ -160,9 +174,9 @@ const load=id=>JSON.parse(localStorage.getItem('crono_ev_'+id));
 function nuevoEv(d){const id=uid();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.push({id,nombre:d.nombre,mod:Date.now(),cid:d.cid});idxSave();return id}
 function migrar(){try{const old=localStorage.getItem('crono');if(old&&!IDX.length){const o=JSON.parse(old);o.nombre=o.nombre||'Evento anterior';nuevoEv(o)}}catch(e){}}
 function crear(){const n=$('#en').value.trim();if(!n)return toast('Escribe un nombre para el evento');abrir(nuevoEv(newS(n)))}
-function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{}};Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
+function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{},s:{}};Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
 function salir(){cur=null;S=null;FH=null;view()}
-function dup(id){const d=load(id);d.nombre+=' (copia)';delete d.cid;d.del=[];d.l=[];d.r.forEach(r=>r.t0=null);nuevoEv(d);view()}
+function dup(id){const d=load(id);d.nombre+=' (copia)';delete d.cid;d.del=[];d.l=[];d.p.forEach(p=>{p.salio=false;delete p.tsal});d.r.forEach(r=>r.t0=null);nuevoEv(d);view()}
 async function borrarEv(id){if(await ask('¿Borrar este evento y todos sus datos? (descárgalo antes si quieres conservarlo)')){localStorage.removeItem('crono_ev_'+id);IDX=IDX.filter(x=>x.id!=id);idxSave();view()}}
 function renEv(id,v){const d=load(id);d.nombre=v;d.cfgM=Date.now();d.mod=Date.now();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.find(x=>x.id==id).nombre=v;idxSave()}
 function descEv(id){const d=load(id);dl(d.nombre,pack(d))}
@@ -209,9 +223,13 @@ async function salida(i){const r=S.r[i];if(r.t0&&!(await ask('Esta carrera ya ti
 function ajustar(i){const v=$('#aj'+i).value;if(!v)return toast('Escribe el tiempo, ej. 15:00');const p=v.split(':').map(Number).reverse();const ms=((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;S.r[i].t0=Date.now()-ms;save();view()}
 function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d){focoMeta();return}
  if(!S.p.some(x=>x.dorsal==d)){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false})}
- S.l.push({id:uid(),d,ts});if(dupF){dupF=false;F.m.d=''}save();view();focoMeta()}
+ S.l.push({id:uid(),d,ts});qclear();save();view();focoMeta()}
 function mins(){const m={};S.l.forEach(l=>{if(l.prov)return;const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
 function info(l){const p=S.p.find(x=>x.dorsal==l.d),c=p&&catOf(p),r=raceOf(c);return{p,c,r,ms:r&&r.t0?l.ts-r.t0:null}}
+function tEdit(td,id){if(td.querySelector('input'))return;const cur=td.textContent.trim(),v=cur=='--'?'':cur;
+ td.innerHTML=`<input value="${v}" placeholder="hh:mm:ss" style="width:84px">`;const i=td.querySelector('input');
+ const done=ok=>{i.onblur=null;const val=i.value.trim();if(ok&&val&&val!==v)editL(id,val);else{td.textContent=cur;focoMeta()}};
+ i.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();done(true)}if(e.key=='Escape')done(false)};i.onblur=()=>done(true);i.focus();i.select()}
 function editL(id,v){const l=S.l.find(x=>x.id==id),f=info(l);if(f.ms==null)return toast('La carrera no tiene salida');if(!v)return;const p=v.split(':').map(Number).reverse();l.ts=f.r.t0+((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;save();view()}
 function provL(id){const l=S.l.find(x=>x.id==id);if(!l)return;if(l.prov)delete l.prov;else l.prov=true;save();view()}
 async function delL(id){if(await askCode('Vas a borrar <b>1 llegada</b>. No se puede deshacer.')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
@@ -219,11 +237,18 @@ function marcarSalida(){const e=$('#sal'),d=+e.value;if(!d)return;const p=S.p.fi
  if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:true,tsal:Date.now()});save();toast('Dorsal '+d+' creado en participantes');view();return}
  if(p.salio)toast('El dorsal '+d+' ya estaba marcado como salido');else{p.salio=true;p.tsal=Date.now();save()}
  view()}
-function deshacerSalida(id){const p=S.p.find(x=>x.id==id);if(p){p.salio=false;delete p.tsal;save();view()}}
-function vS(){const sal=S.p.filter(p=>p.salio).sort((a,b)=>(b.tsal||0)-(a.tsal||0));
- return`<h2>Control de salida</h2><div class="card"><b>Dorsal que sale:</b><br><input id="sal" type="text" inputmode="numeric" autocomplete="off" style="font-size:30px;width:160px" onkeydown="if(event.key=='Enter')marcarSalida()"> <button class="b" onclick="marcarSalida()">Marcar salida</button><br><small>Han salido ${sal.length} de ${S.p.length} participantes.</small></div>
-<table><tr><th>Dorsal<th>Nombre<th>Carrera<th>Hora<th></tr>${sal.slice(0,30).map(p=>`<tr><td>${p.dorsal}<td>${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'sin datos')}<td>${esc(raceOf(catOf(p))?.nombre||'-')}<td>${p.tsal?new Date(p.tsal).toLocaleTimeString():'--'}<td><button class="b r" onclick="deshacerSalida('${p.id}')">Deshacer</button></tr>`).join('')}</table>`}
-function cnt(){const M=mins(),k=S.r.map(()=>({l:0,s:0,e:0,q:0}));S.p.forEach(p=>{const r=raceOf(catOf(p));if(!r)return;const o=k[S.r.indexOf(r)],ar=!!M[p.dorsal];o.l++;if(p.salio)o.s++;if(ar)o.e++;if(p.salio&&!ar)o.q++});return k}
+let SORT={s:{k:'hora',d:-1}};
+function sortS(k){const o=SORT.s;if(o.k==k)o.d=-o.d;else{o.k=k;o.d=1}view()}
+async function deshacerSalida(id){if(await askCode('Vas a borrar <b>1 salida</b>. El participante no se borra: pasa a «no ha salido».')){const p=S.p.find(x=>x.id==id);if(p){p.salio=false;delete p.tsal;SEL.s.delete(id);save();view()}}}
+function vS(){const o=SORT.s,nm=p=>((p.nombre||'')+' '+(p.apellidos||'')).trim(),car=p=>raceOf(catOf(p))?.nombre||'';
+ const val={dorsal:p=>+p.dorsal||0,nombre:p=>nm(p).toLowerCase(),carrera:p=>car(p).toLowerCase(),hora:p=>p.tsal||0};
+ const fvs=p=>({dorsal:p.dorsal,nom:nm(p)||'sin datos',car:car(p)||'-',hora:p.tsal?new Date(p.tsal).toLocaleTimeString():'--'});
+ const all=S.p.filter(p=>p.salio),rows=all.filter(p=>fmatch('s',fvs(p))).sort((a,b)=>{const x=val[o.k](a),y=val[o.k](b);return(x<y?-1:x>y?1:0)*o.d});
+ const th=(k,l)=>`<th style="cursor:pointer" title="Ordenar" onclick="sortS('${k}')">${l}${o.k==k?(o.d>0?' ▲':' ▼'):''}`;
+ const fr=`<tr class="np"><th>${['dorsal','nom','car','hora'].map(k=>fcell('s',k)).join('')}<th><button class="b" onclick="fclr('s')">Limpiar</button></tr>`;
+ return`<h2>Control de salida</h2><div class="card"><b>Dorsal que sale:</b><br><input id="sal" type="text" inputmode="numeric" autocomplete="off" style="font-size:30px;width:160px" onkeydown="if(event.key=='Enter')marcarSalida()"> <button class="b" onclick="marcarSalida()">Marcar salida</button><br><small>Han salido ${all.length} de ${S.p.length} participantes.</small></div>
+<button class="b r" id="bs_s" onclick="borrarSel('s')">🗑 Borrar seleccionados (${SEL.s.size})</button><div class="sc" id="st"><table><thead><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('s',this.checked)">${th('dorsal','Dorsal')}${th('nombre','Nombre')}${th('carrera','Carrera')}${th('hora','Hora')}<th></tr>${fr}</thead><tbody>${rows.slice(0,500).map(p=>`<tr><td><input type=checkbox class="sel_s" data-id="${p.id}" ${SEL.s.has(p.id)?'checked':''} onchange="selOne('s','${p.id}',this.checked)"><td>${esc(p.dorsal)}<td>${esc(nm(p)||'sin datos')}<td>${esc(car(p)||'-')}<td>${p.tsal?new Date(p.tsal).toLocaleTimeString():'--'}<td><button class="b r" onclick="deshacerSalida('${p.id}')">✕</button></tr>`).join('')}</tbody></table></div>${rows.length>500?'<small>Mostrando 500 de '+rows.length+'; usa los filtros.</small>':''}`}
+function cnt(){const M=mins(),k=S.r.map(()=>({l:0,s:0,e:0,q:0,a:0}));S.p.forEach(p=>{const r=raceOf(catOf(p));if(!r)return;const o=k[S.r.indexOf(r)],ar=!!M[p.dorsal];o.l++;if(p.salio)o.s++;if(ar)o.e++;if(p.salio&&ar)o.a++;if(p.salio&&!ar)o.q++});return k}
 function focoMeta(){if(cur&&tab=='m'){const e=$('#dor');if(e)e.focus()}}
 function maskD(el){const g=el.value.replace(/\D/g,'').slice(0,8),f=g.length>4?g.slice(0,2)+'/'+g.slice(2,4)+'/'+g.slice(4):g.length>2?g.slice(0,2)+'/'+g.slice(2):g;if(el.value!=f)el.value=f}
 function parseD(v){const g=String(v).replace(/\D/g,'');if(!g)return'';if(g.length!=8)return null;const D=+g.slice(0,2),M=+g.slice(2,4),Y=+g.slice(4),t=new Date(Y,M-1,D);return Y>=1900&&Y<=new Date().getFullYear()&&t.getMonth()==M-1&&t.getDate()==D?`${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`:null}
@@ -232,7 +257,7 @@ function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
  d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9;overflow:auto';
  const L=(l,h)=>`<b>${l}</b><div>${h}</div>`,T=(k,ty)=>`<input id="pp_${k}" ${ty?'type="'+ty+'"':''} value="${esc(p[k])}" style="width:100%">`,C=k=>`<input id="pp_${k}" type="checkbox" ${p[k]?'checked':''}>`;
  d.innerHTML=`<div class="card" style="max-width:440px;width:92%;max-height:92vh;overflow:auto"><h3 style="margin-top:0">Participante · dorsal ${esc(p.dorsal)}</h3><div style="display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center">`
-  +L('Dorsal',T('dorsal','number'))+L('Nombre',T('nombre'))+L('Apellidos',T('apellidos'))+L('Club',T('club'))
+  +L('Dorsal',`<input id="pp_dorsal" type="number" value="${esc(p.dorsal)}" readonly style="width:100%;background:#eee;color:#555" title="Para cambiar el dorsal usa «Corregir dorsal» en la tabla de Meta">`)+L('Nombre',T('nombre'))+L('Apellidos',T('apellidos'))+L('Club',T('club'))
   +L('F. nacimiento',`<input id="pp_nac" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" value="${iso2(p.nac)}" style="width:100%">`)
   +L('Sexo',`<select id="pp_sexo"><option value=""></option><option ${p.sexo=='M'?'selected':''}>M</option><option ${p.sexo=='F'?'selected':''}>F</option></select>`)
   +L('Federado',C('fed'))+L('Local',C('loc'))+L('Ha salido',C('salio'))
@@ -249,6 +274,23 @@ function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
   const sal=g('salio').checked;if(sal&&!q.salio)q.tsal=Date.now();if(!sal)delete q.tsal;q.salio=sal;
   d.remove();save();view()};
  g('nombre').focus()}
+function corregirD(id,n){const l=S.l.find(x=>x.id==id);if(!l)return;const old=l.d;asegP(n);l.d=n;
+ const po=S.p.find(x=>x.dorsal==old);
+ if(po&&old!=n&&!S.l.some(x=>x.d==old)&&!po.salio&&!po.fed&&!po.loc&&!['nombre','apellidos','club','nac','sexo'].some(k=>String(po[k]||'').trim())){S.del=[...new Set([...(S.del||[]),po.id])];S.p=S.p.filter(x=>x.id!=po.id)}
+ save()}
+function dorMenu(id){const l=S.l.find(x=>x.id==id);if(!l)return;const d=document.createElement('div'),close=()=>{d.remove();focoMeta()};
+ d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
+ const B='display:block;width:100%;margin:6px 0';
+ d.innerHTML=`<div class="card" style="max-width:340px;width:92%"><h3 style="margin-top:0">Dorsal ${l.d}</h3><div id="dm_b"><button class="b" id="dm_c" style="${B}">✏️ Corregir dorsal</button><button class="b" id="dm_m" style="${B}">👤 Modificar datos</button><button class="b r" id="dm_x" style="${B}">Cancelar</button></div></div>`;
+ document.body.append(d);const q=k=>d.querySelector(k);
+ d.onpointerdown=e=>{if(e.target===d)close()};d.onkeydown=e=>{if(e.key=='Escape')close()};
+ q('#dm_x').onclick=close;
+ q('#dm_m').onclick=()=>{d.remove();popD(l.d)};
+ q('#dm_c').onclick=()=>{q('#dm_b').innerHTML=`Nuevo dorsal para esta llegada:<br><input id="dm_n" type="number" style="font-size:24px;width:150px"><div id="dm_p" style="margin:8px 0;min-height:20px"></div><button class="b" id="dm_ok">Aceptar</button><button class="b r" id="dm_no">Cancelar</button>`;
+  const n=q('#dm_n');n.oninput=()=>{const v=+n.value,p=v?S.p.find(x=>x.dorsal==v):null;q('#dm_p').textContent=!v?'':v==l.d?'Es el mismo dorsal':p?(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'Participante sin datos')+(raceOf(catOf(p))?' · '+raceOf(catOf(p)).nombre:''):'El dorsal no existe: se creará vacío'};
+  q('#dm_no').onclick=close;
+  const ok=()=>{const v=+n.value;if(!v)return toast('Escribe el nuevo dorsal');if(v==l.d)return close();corregirD(id,v);d.remove();view();focoMeta()};
+  q('#dm_ok').onclick=ok;n.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();ok()}};n.focus()}}
 function popD(d){let p=S.p.find(x=>x.dorsal==d);if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p);save()}popP(p.id)}
 function insL(id,mode){const i=S.l.findIndex(x=>x.id==id);if(i<0)return;const R=S.l[i];let ts;
  if(mode=='a'){const nx=S.l[i+1];ts=R.ts+1000;if(nx&&nx.ts<=ts)ts=R.ts+Math.floor((nx.ts-R.ts)/2)}
@@ -279,16 +321,21 @@ function vMeta(){const M=mins(),K=cnt(),RK=rank(),B=S.r.map(()=>[]);
  const unreg=`<div class="card"><b>Llegadas sin datos de participante (${U.length})</b><div style="margin:6px 0">${U.length?U.map(d=>`<span onclick="popD(${d})" title="Pulsa para completar sus datos" style="${bd}background:#fff;color:#c62828;border:2px solid #c62828">${d}</span>`).join(''):'<small>✓ Todas las llegadas tienen datos</small>'}</div></div>`;
  const dm={};S.l.forEach(l=>{if(!l.prov)(dm[l.d]=dm[l.d]||[]).push(l)});
  const DU=Object.keys(dm).filter(d=>dm[d].length>1).map(Number).sort((a,b)=>a-b);
- const dups=`<div class="card"><b>Dorsales duplicados (${DU.length})</b><div style="margin:6px 0">${DU.length?DU.map(d=>`<span class="dupb" onclick="dupF=true;fset('m','d','${d}')" title="${dm[d].length} llegadas · pulsa para filtrar la tabla" style="${bd}background:#fff3b0;color:#000;border:2px solid #f9a825">${d} ×${dm[d].length}</span>`).join(''):'<small>✓ No hay dorsales duplicados</small>'}</div></div>`;
- let cr=unreg+dups+'<small>🟢 ya tiene llegada · 🔴 no ha salido · 🟡 en carrera, sin llegada</small>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">En lista: <b>${K[i].l}</b> · Han salido: <b>${K[i].s}</b> · Han entrado: <b>${K[i].e}</b> · Quedan por entrar: <b>${K[i].q}</b></div><div style="margin:6px 0">${B[i].sort((a,b)=>a.dorsal-b.dorsal).map(badge).join('')}</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="hh:mm:ss (ej. 00:15:30)" style="width:210px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
+ const dups=`<div class="card"><b>Dorsales duplicados (${DU.length})</b><div style="margin:6px 0">${DU.length?DU.map(d=>`<span class="dupb" onclick="qset('d','${d}')" title="${dm[d].length} llegadas · pulsa para filtrar la tabla" style="${bd}background:#fff3b0;color:#000;border:2px solid #f9a825">${d} ×${dm[d].length}</span>`).join(''):'<small>✓ No hay dorsales duplicados</small>'}</div></div>`;
+ const ig={};S.l.forEach(l=>{if(l.prov)(ig[l.d]=ig[l.d]||[]).push(l)});
+ const IG=Object.keys(ig).map(Number).sort((a,b)=>a-b);
+ const ign=`<div class="card"><b>Dorsales ignorados (${IG.length})</b><div style="margin:6px 0">${IG.length?IG.map(d=>`<span class="dupb" onclick="qset('d','${d}')" title="${ig[d].length} llegada(s) ignorada(s) · pulsa para filtrar la tabla" style="${bd}background:#e0e0e0;color:#555;border:2px solid #9e9e9e">${d}${ig[d].length>1?' ×'+ig[d].length:''}</span>`).join(''):'<small>✓ No hay dorsales ignorados</small>'}</div></div>`;
+ let cr=unreg+dups+ign+'<small>🟢 ya tiene llegada · 🔴 no ha salido · 🟡 en carrera, sin llegada</small>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">Total (<b>${K[i].e}/${K[i].l}</b> - <b style="color:#e53935">${K[i].l-K[i].e}</b>)<br>Total control (<b>${K[i].a}/${K[i].s}</b> - <b style="color:#e53935">${K[i].s-K[i].a}</b>)</div><div style="margin:6px 0">${B[i].sort((a,b)=>a.dorsal-b.dorsal).map(badge).join('')}</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="hh:mm:ss (ej. 00:15:30)" style="width:210px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
  let h=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter'){event.preventDefault();meta()}" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
  const sxc=x=>x=='F'?'#f8bbd0':x=='M'?'#bbdefb':'transparent';
- const fr=`<tr class="np"><th>${['n','d','nom'].map(k=>fcell('m',k)).join('')}${fcell('m','sx',['M','F'])}${['cat','t','pg','pc'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',[['TRUE','⚠️ Duplicado'],['FALSE','✅ No duplicado']])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
- const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'',pk=RK.pos[l.id];return fmatch('m',{n,d:l.d,nom:nm||'sin datos',sx:f.p?.sexo||'',cat:f.c?.nombre||'-',t:f.ms==null?'--':fmt(f.ms),pg:pk?pk.pg:'-',pc:pk?pk.pc:'-',dup:!l.prov&&M[l.d]!==l?'TRUE':'FALSE'})});
+ const fr=`<tr class="np"><th>${['d','nom'].map(k=>fcell('m',k)).join('')}${['cat','t','pg'].map(k=>fcell('m',k)).join('')}${fcell('m','est',[['Duplicado','⚠️ Duplicado'],['Ignorado','🚫 Ignorado'],['OK','✅ OK'],['Sin datos','❓ Sin datos']])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
+ const st=(l,f)=>l.prov?'Ignorado':(!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim())||!f.c)?'Sin datos':M[l.d]!==l?'Duplicado':'OK',IC={'Duplicado':'⚠️','Ignorado':'🚫','OK':'✅','Sin datos':'❓'};
+ const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'',pk=RK.pos[l.id];return fmatch('m',{n,d:l.d,nom:nm||'sin datos',sx:f.p?.sexo||'',cat:f.c?f.c.nombre+(pk?' ('+pk.pc+')':''):'-',t:f.ms==null?'--':fmt(f.ms),pg:pk?pk.pg:'-',pc:pk?pk.pc:'-',est:st(l,f)})});
  const tr=({l,n})=>{const f=info(l),pv=!!l.prov,du=!pv&&M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim()),nc=!f.c,pk=RK.pos[l.id],sx=f.p?.sexo||'';
   const bg=pv?'background:#e0e0e0;color:#777':sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':'';
-  return`<tr style="${bg}"${nc&&!sd?' title="Sin categoría"':''}><td><input type=checkbox class="sel_m" data-id="${l.id}" ${SEL.m.has(l.id)?'checked':''} onchange="selOne('m','${l.id}',this.checked)"><td>${n}<td><span onclick="popD(${l.d})" title="Pulsa para editar el participante" style="cursor:pointer;text-decoration:underline;font-weight:bold">${l.d}</span><td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td style="text-align:center;background:${sxc(sx)}">${sx}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${pk?pk.pg:'-'}<td>${pk?pk.pc:'-'}<td style="text-align:center" title="${pv?'Provisional: excluida de las clasificaciones':du?'Duplicado':'No duplicado'}">${pv?'⏸':du?'⚠️':'✅'}<td style="white-space:nowrap"><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b" onclick="provL('${l.id}')" title="${pv?'Volver a incluirla en las clasificaciones':'Excluirla de las clasificaciones'}">${pv?'▶ Activar':'⏸ Provisional'}</button><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`};
- h+=`<button class="b r" id="bs_m" onclick="borrarSel('m')">🗑 Borrar seleccionados (${SEL.m.size})</button><div class="sc" id="mt"><table><thead><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('m',this.checked)"><th>#<th>Dorsal<th>Nombre<th>Sexo<th>Categoría<th>Tiempo<th>Pos.<th>Pos. cat.<th>Duplicado<th></tr>${fr}</thead><tbody>${(v=>v.map(x=>`<tr class="ins" onclick="insL('${x.l.id}','a')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`+tr(x)).join('')+(v.length?`<tr class="ins" onclick="insL('${v[v.length-1].l.id}','b')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`:''))(rows.slice(0,any?500:30))}</tbody></table></div>${!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':''}`;
+  return`<tr style="${bg}"${nc&&!sd?' title="Sin categoría"':''}><td><input type=checkbox class="sel_m" data-id="${l.id}" ${SEL.m.has(l.id)?'checked':''} onchange="selOne('m','${l.id}',this.checked)"><td><span onclick="dorMenu('${l.id}')" title="Pulsa para corregir el dorsal o modificar sus datos" style="cursor:pointer;text-decoration:underline;font-weight:bold">${l.d}</span><td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td style="background:${sxc(sx)}">${f.c?esc(f.c.nombre)+(pk?' ('+pk.pc+')':''):'-'}<td style="cursor:text" title="Pulsa para editar el tiempo" onclick="tEdit(this,'${l.id}')">${f.ms==null?'--':fmt(f.ms)}<td>${pk?pk.pg:'-'}<td style="white-space:nowrap" title="${pv?'Ignorada: excluida de las clasificaciones':'Estado de la llegada'}">${IC[st(l,f)]} ${st(l,f)}<td style="white-space:nowrap"><button class="b" onclick="provL('${l.id}')" title="${pv?'Volver a incluirla en las clasificaciones':'Excluirla de las clasificaciones'}">${pv?'▶ Activar':'🚫 Ignorar'}</button><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`};
+ const cE=e=>S.l.filter(l=>st(l,info(l))===e).length,qb=(e,lbl,bg,fg,bo)=>`<span class="dupb" onclick="qset('est','${e}')" title="Mostrar solo estado ${e}" style="${bd}background:${bg};color:${fg};border:2px solid ${bo}${F.m.est==e?';box-shadow:0 0 0 3px '+bo:''}">${lbl} (${cE(e)})</span>`;
+ h+=`<div style="margin:6px 0"><small>Filtros rápidos:</small> <span class="dupb" onclick="qset('sx','M')" title="Mostrar solo sexo M" style="${bd}background:#bbdefb;color:#0d47a1;border:2px solid #64b5f6${F.m.sx=='M'?';box-shadow:0 0 0 3px #1565c0':''}">♂ Sexo M</span><span class="dupb" onclick="qset('sx','F')" title="Mostrar solo sexo F" style="${bd}background:#f8bbd0;color:#880e4f;border:2px solid #f06292${F.m.sx=='F'?';box-shadow:0 0 0 3px #ad1457':''}">♀ Sexo F</span>${qb('Duplicado','⚠️ Duplicados','#fff3b0','#000','#f9a825')}${qb('Sin datos','❓ Sin datos','#ffb3b3','#7f0000','#e53935')}${qb('Ignorado','🚫 Ignorados','#e0e0e0','#555','#9e9e9e')}</div><button class="b r" id="bs_m" onclick="borrarSel('m')">🗑 Borrar seleccionados (${SEL.m.size})</button><div class="sc" id="mt"><table><thead><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('m',this.checked)"><th>Dorsal<th>Nombre<th>Categoría (pos. cat.)<th>Tiempo<th>Pos.Gral<th>Estado<th></tr>${fr}</thead><tbody>${(v=>v.map(x=>`<tr class="ins" onclick="insL('${x.l.id}','a')" title="Añadir una llegada justo aquí"><td colspan="8">+ añadir llegada aquí</td></tr>`+tr(x)).join('')+(v.length?`<tr class="ins" onclick="insL('${v[v.length-1].l.id}','b')" title="Añadir una llegada justo aquí"><td colspan="8">+ añadir llegada aquí</td></tr>`:''))(rows.slice(0,any?500:30))}</tbody></table></div>${!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':''}`;
  return'<h2>Meta y cronómetro</h2><div class="g2"><div>'+h+'</div><div>'+cr+'</div></div>'}
 
 setInterval(()=>document.querySelectorAll('.clk').forEach(e=>{const r=S&&S.r[e.dataset.i];e.textContent=r&&r.t0?fmt(Date.now()-r.t0):'--:--:--'}),200);
@@ -359,7 +406,7 @@ function impX(k,f){rdX(f,rows=>{let n=0,sk=0;
  if(k=='s')rows.forEach(g=>{const d=+gv(g,'dorsal');if(!d){sk++;return}const v=gv(g,'salio','hasalido','salido','salida');if(v!==''&&!siV(v))return;const p=asegP(d);if(!p.salio){p.salio=true;const q=secs(gv(g,'hora','horasalida'),1),t=new Date();if(q!=null)t.setHours(q/3600|0,(q/60|0)%60,q%60,0);p.tsal=t.getTime()}n++});
  if(k=='l'){rows.forEach(g=>{const d=+gv(g,'dorsal');if(!d){sk++;return}const p=asegP(d),r=raceOf(catOf(p)),tm=gv(g,'tiempo','time'),hr=gv(g,'hora','horallegada','horadellegada');let ts=null;
   if(tm!==''){const q=secs(tm);if(q!=null&&r&&r.t0)ts=r.t0+q*1000}else if(hr!==''){const q=secs(hr,1);if(q!=null){const t=new Date(r&&r.t0?r.t0:Date.now());t.setHours(q/3600|0,(q/60|0)%60,q%60,0);ts=t.getTime()}}
-  if(ts==null||S.l.some(x=>x.d==d&&x.ts==ts)){sk++;return}const l={id:uid(),d,ts};if(siV(gv(g,'provisional')))l.prov=true;S.l.push(l);n++});S.l.sort((x,y)=>x.ts-y.ts)}
+  if(ts==null||S.l.some(x=>x.d==d&&x.ts==ts)){sk++;return}const l={id:uid(),d,ts};if(siV(gv(g,'ignorado','ignorada','provisional')))l.prov=true;S.l.push(l);n++});S.l.sort((x,y)=>x.ts-y.ts)}
  save();toast(n+' importados'+(sk?' · '+sk+' omitidos (datos incompletos, ya existentes, o carrera sin hora de salida)':''));view()})}
 function img(k,f){if(!f)return;const r=new FileReader();r.onload=e=>{S.img[k]=e.target.result;save();view()};r.readAsDataURL(f)}
 function bak(){dl(S.nombre,pack(S))}
@@ -374,13 +421,13 @@ Imagen pie: <input type=file accept="image/*" onchange="img('f',this.files[0])">
 <p><b>Categorías</b> · nombre, año_inicio, año_fin, sexo (M/F/X)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('c',this.files[0]);this.value=''"></p>
 <p><b>Carreras</b> · nombre, hora_inicio, categorias (separadas por ; o ,)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('r',this.files[0]);this.value=''"></p>
 <p><b>Control de salida</b> · dorsal, salido (sí/no, opcional), hora (opcional)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('s',this.files[0]);this.value=''"></p>
-<p><b>Llegadas de meta</b> · dorsal y tiempo (hh:mm:ss desde la salida de su carrera) o hora (hora del día); provisional (opcional)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('l',this.files[0]);this.value=''"></p></div>
+<p><b>Llegadas de meta</b> · dorsal y tiempo (hh:mm:ss desde la salida de su carrera) o hora (hora del día); ignorado (opcional)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('l',this.files[0]);this.value=''"></p></div>
 <div class="card"><b>Fichero del evento (.json)</b><br>Contiene todas las tablas. Úsalo para llevar el evento a otro dispositivo, subirlo a la nube o archivarlo.<br><button class="b" onclick="bak()">Descargar evento</button> Cargar desde fichero: <input type=file accept=".json" onchange="rest(this.files[0]);this.value=''"><br>${FH?'Vinculado a <b>'+esc(FH.name)+'</b> (se guarda solo con cada cambio) <button class="b" onclick="FH=null;view()">Desvincular</button>':window.showSaveFilePicker?'<button class="b" onclick="vinc()">Vincular fichero (guardado automático)</button>':'<i>Tu navegador no permite vincular ficheros; usa Descargar evento.</i>'}</div>
 <div class="card"><b>Sincronización con la nube</b><br>${cfg.url?`<button class="b" onclick="sync()">⇅ Sincronizar ahora</button> <label><input type=checkbox ${cfg.auto?'checked':''} onchange="cfgAuto(this.checked)"> Automática (cada pocos segundos)</label><div id="sy">${esc(syncMsg)}</div>`:'Configura Firebase en la página de eventos (botón ⌂ Eventos).'}</div>
 <div class="card"><button class="b r" onclick="askCode('Vas a borrar <b>todas las llegadas y las salidas</b>. No se puede deshacer.').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
 function ordenar(){S.c.sort((a,b)=>(a.ini-b.ini)||(a.fin-b.fin)||String(a.sexo).localeCompare(b.sexo));S.r.sort((a,b)=>(a.hora||'99:99').localeCompare(b.hora||'99:99'))}
 function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus();if(tab=='s')$('#sal')?.focus()}
 document.addEventListener('click',e=>{if(!cur||tab!='m'||document.querySelector('.modal'))return;if(e.target.closest&&e.target.closest('input,select,textarea,button,a'))return;setTimeout(()=>{if(document.querySelector('.modal')||!cur||tab!='m')return;const a=document.activeElement;if(!a||a===document.body||!/INPUT|SELECT|TEXTAREA/.test(a.tagName))focoMeta()},0)});
-document.addEventListener('click',e=>{if(!dupF)return;const t=e.target;if(t&&t.closest&&t.closest('.dupb,#mt,.modal'))return;dupF=false;if(F.m.d){F.m.d='';if(tab=='m'&&cur)view()}});
+document.addEventListener('click',e=>{if(!Object.keys(QF).length)return;const t=e.target;if(t&&t.closest&&t.closest('.dupb,#mt,.modal'))return;if(qclear()&&tab=='m'&&cur)view()});
 migrar();view();if(cfg.key&&CRED.email)login().then(()=>view()).catch(()=>{});
 </script></body></html>
