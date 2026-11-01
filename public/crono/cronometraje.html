@@ -8,7 +8,7 @@ body{font-family:system-ui,sans-serif;margin:0;background:#f4f5f7;color:#222}
 nav{display:flex;flex-wrap:wrap;gap:4px;background:#12355b;padding:8px;position:sticky;top:0}
 nav button{background:#2a5a8f;color:#fff;border:0;padding:10px 14px;border-radius:6px;font-size:15px;cursor:pointer}
 nav button.on{background:#f5a623;color:#000}
-main{padding:12px;max-width:1100px;margin:auto}
+main{padding:12px;max-width:1400px;margin:auto}
 table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0}
 th,td{border:1px solid #ccd;padding:4px 6px;text-align:left}
 th{background:#e6ebf2}
@@ -21,6 +21,8 @@ button.r{background:#b3261e}
 .clk{font:bold 44px monospace}
 #dor{font-size:30px;width:160px}
 .sc{overflow-x:auto}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+@media(max-width:800px){.g2{grid-template-columns:1fr}}
 @media print{nav,.np{display:none}body{background:#fff}}
 </style></head><body>
 <nav id="nav"></nav><main id="v"></main>
@@ -54,7 +56,9 @@ const T={
 };
 let tab='p';
 const tabs={p:'Participantes',c:'Categorías',r:'Carreras',s:'Control salida',m:'Meta / Cronómetro',k:'Clasificación',d:'Datos'};
-let RTOK='',TEXP=0,CRED={};
+let RTOK='',TEXP=0,CRED={};try{CRED=JSON.parse(sessionStorage.getItem('crono_cred'))||{}}catch(e){}
+function credStore(){try{CRED.email||CRED.pass?sessionStorage.setItem('crono_cred',JSON.stringify(CRED)):sessionStorage.removeItem('crono_cred')}catch(e){}}
+function cfgOut(){CRED={};TOKEN='';RTOK='';TEXP=0;credStore();view()}
 const AE={EMAIL_NOT_FOUND:'usuario no encontrado',INVALID_PASSWORD:'contraseña incorrecta',INVALID_LOGIN_CREDENTIALS:'usuario o contraseña incorrectos',OPERATION_NOT_ALLOWED:'activa Email/Password en Firebase Authentication',USER_DISABLED:'usuario deshabilitado',TOO_MANY_ATTEMPTS_TRY_LATER:'demasiados intentos, espera un poco'};
 const herr=r=>{if(r.status==401||r.status==403)TEXP=0;return new Error(r.status==401||r.status==403?'acceso denegado: conecta con usuario y contraseña (página de eventos)':'HTTP '+r.status)};
 async function authReq(u,o){const r=await fetch(u,o),j=await r.json();if(!r.ok){const m=String((j.error&&j.error.message)||r.status);throw new Error(AE[m.split(' ')[0]]||m)}return j}
@@ -65,9 +69,9 @@ async function tok(){if(!cfg.key||(TOKEN&&Date.now()<TEXP))return;
  if(RTOK)try{const j=await authReq('https://securetoken.googleapis.com/v1/token?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(RTOK)});TOKEN=j.id_token;RTOK=j.refresh_token;TEXP=Date.now()+(+j.expires_in-120)*1000;return}catch(e){}
  await login()}
 const fb=p=>cfg.url.replace(/\/+$/,'')+p+'.json'+(TOKEN?'?auth='+encodeURIComponent(TOKEN):'');
-const cfgHtml=()=>`<div class="card"><b>Firebase (Realtime Database)</b> · sincronización entre dispositivos<br>URL de la base de datos:<br><input id="fu" style="width:95%" placeholder="https://tu-proyecto-default-rtdb.europe-west1.firebasedatabase.app" value="${esc(cfg.url)}"><br>Web API Key del proyecto (para el acceso con usuario):<br><input id="fk" style="width:95%" value="${esc(cfg.key)}"><br>Usuario (email) · solo en esta sesión:<br><input id="fe" type="email" autocomplete="off" style="width:95%" value="${esc(CRED.email)}"><br>Contraseña · solo en esta sesión, nunca se guarda:<br><input id="fa" type="password" autocomplete="off" style="width:95%" value="${esc(CRED.pass)}"><br><button class="b" onclick="cfgSave()">Guardar y conectar</button><button class="b" onclick="nube()">Ver eventos en la nube</button> ${TOKEN?'🔒 conectado':''}<div id="nb"></div></div>`;
+const cfgHtml=()=>`<div class="card"><b>Firebase (Realtime Database)</b> · sincronización entre dispositivos<br>URL de la base de datos:<br><input id="fu" style="width:95%" placeholder="https://tu-proyecto-default-rtdb.europe-west1.firebasedatabase.app" value="${esc(cfg.url)}"><br>Web API Key del proyecto (para el acceso con usuario):<br><input id="fk" style="width:95%" value="${esc(cfg.key)}"><br>Usuario (email) · se guarda solo en la sesión de este navegador:<br><input id="fe" type="email" autocomplete="off" style="width:95%" value="${esc(CRED.email)}"><br>Contraseña · se guarda solo en la sesión de este navegador (se borra al cerrar la pestaña):<br><input id="fa" type="password" autocomplete="off" style="width:95%" value="${esc(CRED.pass)}"><br><button class="b" onclick="cfgSave()">Guardar y conectar</button><button class="b" onclick="nube()">Ver eventos en la nube</button><button class="b" onclick="cfgOut()">Olvidar usuario</button> ${TOKEN?'🔒 conectado':''}<div id="nb"></div></div>`;
 function cfgStore(){try{localStorage.setItem('crono_fb',JSON.stringify(cfg))}catch(e){}}
-async function cfgSave(){cfg.url=$('#fu').value.trim();cfg.key=$('#fk').value.trim();CRED={email:$('#fe').value.trim(),pass:$('#fa').value};TOKEN='';RTOK='';TEXP=0;cfgStore();
+async function cfgSave(){cfg.url=$('#fu').value.trim();cfg.key=$('#fk').value.trim();CRED={email:$('#fe').value.trim(),pass:$('#fa').value};TOKEN='';RTOK='';TEXP=0;cfgStore();credStore();
  if(cfg.key&&CRED.email){try{await login();toast('Conectado');view()}catch(e){toast('No se pudo conectar: '+e.message)}}else toast('Configuración guardada')}
 function cfgAuto(v){cfg.auto=v;cfgStore();setMsg(syncMsg||'automática '+(v?'activada':'desactivada'));if(v)sync()}
 function setMsg(m,err){syncMsg=m;const a=$('#sy');if(a)a.textContent=m;let b=$('#cl');if(!b){b=document.createElement('div');b.id='cl';b.className='np';b.style.cssText='position:fixed;bottom:6px;right:8px;font-size:12px;padding:3px 8px;border-radius:10px;color:#fff;z-index:5';document.body.append(b)}b.style.display=cfg.auto&&cur?'block':'none';b.style.background=err?'#b3261e':'#2e7d32';b.textContent=(err?'☁ ✕ ':'☁ ✓ ')+m}
@@ -125,15 +129,26 @@ function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.ap
 function fcell(t,k,opts){const v=F[t][k]||'',id='f_'+t+'_'+k;
  if(opts)return`<th><select id="${id}" onchange="fset('${t}','${k}',this.value)"><option value="">Todos</option>${opts.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
  return`<th><input id="${id}" placeholder="filtrar" style="width:100%;min-width:60px" value="${esc(v)}" oninput="fset('${t}','${k}',this.value,'${id}')">`}
-function fset(t,k,v,id){F[t][k]=v;view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
-function fclr(t){F[t]={};view()}
+function fset(t,k,v,id){F[t][k]=v;if(SEL[t])SEL[t].clear();view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
+function fclr(t){F[t]={};if(SEL[t])SEL[t].clear();view()}
+const SEL={p:new Set(),c:new Set(),r:new Set(),m:new Set()};
+function selUpd(t){const b=$('#bs_'+t);if(b)b.textContent='🗑 Borrar seleccionados ('+SEL[t].size+')'}
+function selOne(t,id,v){v?SEL[t].add(id):SEL[t].delete(id);selUpd(t)}
+function selAll(t,v){document.querySelectorAll('.sel_'+t).forEach(e=>{e.checked=v;v?SEL[t].add(e.dataset.id):SEL[t].delete(e.dataset.id)});selUpd(t)}
+function askCode(t){return new Promise(ok=>{const code=Array.from({length:5},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random()*32|0]).join('');const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
+ d.innerHTML='<div class="card" style="max-width:360px">'+t+'<br><br>Escribe <b style="font:bold 22px monospace;letter-spacing:3px">'+code+'</b> para confirmar:<br><input id="cc" autocomplete="off" style="font-size:20px;width:90%;text-transform:uppercase"><br><br><button class="b r" id="y" disabled>Borrar</button><button class="b" id="n">Cancelar</button></div>';
+ document.body.append(d);const i=d.querySelector('#cc'),y=d.querySelector('#y');i.oninput=()=>{y.disabled=i.value.trim().toUpperCase()!==code};i.onkeydown=e=>{if(e.key=='Enter'&&!y.disabled)y.click()};y.onclick=()=>{d.remove();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();ok(false)};i.focus()})}
+async function borrarSel(t){const arr=t=='m'?'l':t,ids=[...SEL[t]].filter(id=>S[arr].some(x=>x.id==id));if(!ids.length)return toast('Selecciona primero los registros que quieres borrar');
+ const nm={p:'participantes',c:'categorías',r:'carreras',m:'llegadas'}[t];
+ if(!(await askCode('Vas a borrar <b>'+ids.length+' '+nm+'</b>. No se puede deshacer'+(cfg.url?' y, si usas sincronización, también se borrarán en los demás dispositivos':'')+'.')))return;
+ const set=new Set(ids);S.del=[...new Set([...(S.del||[]),...ids])];S[arr]=S[arr].filter(x=>!set.has(x.id));SEL[t].clear();save();view();toast(ids.length+' registros borrados')}
 const slug=n=>(n||'evento').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w]+/g,'_').replace(/^_|_$/g,'')||'evento';
 function dl(n,o){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));a.download=slug(n)+'.json';a.click()}
 const load=id=>JSON.parse(localStorage.getItem('crono_ev_'+id));
 function nuevoEv(d){const id=uid();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.push({id,nombre:d.nombre,mod:Date.now(),cid:d.cid});idxSave();return id}
 function migrar(){try{const old=localStorage.getItem('crono');if(old&&!IDX.length){const o=JSON.parse(old);o.nombre=o.nombre||'Evento anterior';nuevoEv(o)}}catch(e){}}
 function crear(){const n=$('#en').value.trim();if(!n)return toast('Escribe un nombre para el evento');abrir(nuevoEv(newS(n)))}
-function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{}};view()}catch(e){toast('No se pudo abrir el evento')}}
+function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{}};Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
 function salir(){cur=null;S=null;FH=null;view()}
 function dup(id){const d=load(id);d.nombre+=' (copia)';delete d.cid;d.del=[];d.l=[];d.r.forEach(r=>r.t0=null);nuevoEv(d);view()}
 async function borrarEv(id){if(await ask('¿Borrar este evento y todos sus datos? (descárgalo antes si quieres conservarlo)')){localStorage.removeItem('crono_ev_'+id);IDX=IDX.filter(x=>x.id!=id);idxSave();view()}}
@@ -164,15 +179,15 @@ function add(t){const o=T[t].nuevo();if(!o)return;
 async function del(t,i){if(await ask('¿Borrar este registro?')){(S.del=S.del||[]).push(S[t][i].id);S[t].splice(i,1);save();view()}}
 function tcat(i,id){const a=S.r[i].cats,j=a.indexOf(id);j<0?a.push(id):a.splice(j,1);save()}
 function tabla(t){const d=T[t];let q=t=='p'?($('#q')?.value||''):'';
- let h=`<h2>${d.n}</h2><button class="b" onclick="add('${t}')">+ Añadir</button>`;
- if(t=='p')h+=` <input id="q" placeholder="Buscar..." value="${q}" oninput="view();$('#q').focus()">`;
- const fr=`<tr class="np">${d.cols.map(c=>fcell(t,c[0],c[2]=='chk'?['Sí','No']:Array.isArray(c[2])?(t=='p'&&c[0]=='sexo'?[...c[2],'Vacío']:c[2]):null)).join('')}${t=='p'?fcell('p','anyo')+fcell('p','cat'):''}${t=='r'?fcell('r','cats'):''}<th><button class="b" onclick="fclr('${t}')">Limpiar</button></tr>`;
- h+=`<div class="sc"><table><tr>${d.cols.map(c=>`<th>${c[1]}`).join('')}${t=='p'?'<th>Año<th>Categoría':''}${t=='r'?'<th>Categorías':''}<th></tr>${fr}`;
+ let h=`<h2>${d.n}</h2><button class="b" onclick="add('${t}')">+ Añadir</button> <button class="b r" id="bs_${t}" onclick="borrarSel('${t}')">🗑 Borrar seleccionados (${SEL[t].size})</button>`;
+ if(t=='p')h+=` <input id="q" placeholder="Buscar..." value="${q}" oninput="SEL.p.clear();view();$('#q').focus()">`;
+ const fr=`<tr class="np"><th>${d.cols.map(c=>fcell(t,c[0],c[2]=='chk'?['Sí','No']:Array.isArray(c[2])?(t=='p'&&c[0]=='sexo'?[...c[2],'Vacío']:c[2]):null)).join('')}${t=='p'?fcell('p','anyo')+fcell('p','cat'):''}${t=='r'?fcell('r','cats'):''}<th><button class="b" onclick="fclr('${t}')">Limpiar</button></tr>`;
+ h+=`<div class="sc"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('${t}',this.checked)">${d.cols.map(c=>`<th>${c[1]}`).join('')}${t=='p'?'<th>Año<th>Categoría':''}${t=='r'?'<th>Categorías':''}<th></tr>${fr}`;
 const dd={};if(t=='p')S.p.forEach(x=>{dd[x.dorsal]=(dd[x.dorsal]||0)+1});
  S[t].forEach((x,i)=>{if(q&&!d.cols.map(c=>x[c[0]]).join(' ').toLowerCase().includes(q.toLowerCase()))return;
   if(!fmatch(t,fv(t,x)))return;
   const falta=t=='p'&&(!x.nac||!x.sexo),dupd=t=='p'&&x.dorsal!==''&&dd[x.dorsal]>1;
-  h+=`<tr${falta?' style="background:#ffb3b3" title="Falta '+[!x.nac&&'fecha de nacimiento',!x.sexo&&'sexo'].filter(Boolean).join(' y ')+'"':dupd?' style="background:#ffd8a8" title="Dorsal duplicado"':''}>${d.cols.map(c=>`<td>${inp(t,i,c)}`).join('')}`;
+  h+=`<tr${falta?' style="background:#ffb3b3" title="Falta '+[!x.nac&&'fecha de nacimiento',!x.sexo&&'sexo'].filter(Boolean).join(' y ')+'"':dupd?' style="background:#ffd8a8" title="Dorsal duplicado"':''}><td><input type=checkbox class="sel_${t}" data-id="${x.id}" ${SEL[t].has(x.id)?'checked':''} onchange="selOne('${t}','${x.id}',this.checked)">${d.cols.map(c=>`<td>${inp(t,i,c)}`).join('')}`;
   if(t=='p')h+=`<td id="y${i}">${yr(x)||''}<td id="k${i}">${catOf(x)?.nombre||'<i>sin categoría</i>'}`;
   if(t=='r')h+=`<td>${S.c.map(c=>`<label style="white-space:nowrap"><input type=checkbox ${x.cats.includes(c.id)?'checked':''} onchange="tcat(${i},'${c.id}')">${c.nombre} (${c.sexo})</label>`).join('<br>')}`;
   h+=`<td><button class="b r" onclick="del('${t}',${i})">✕</button></tr>`});
@@ -188,7 +203,7 @@ function info(l){const p=S.p.find(x=>x.dorsal==l.d),c=p&&catOf(p),r=raceOf(c);re
 function editL(id,v){const l=S.l.find(x=>x.id==id),f=info(l);if(f.ms==null)return toast('La carrera no tiene salida');if(!v)return;const p=v.split(':').map(Number).reverse();l.ts=f.r.t0+((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;save();view()}
 async function delL(id){if(await ask('¿Borrar llegada?')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
 function marcarSalida(){const e=$('#sal'),d=+e.value;if(!d)return;const p=S.p.find(x=>x.dorsal==d);
- if(!p){toast('El dorsal '+d+' no existe en participantes');e.value='';return}
+ if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:true,tsal:Date.now()});save();toast('Dorsal '+d+' creado en participantes');view();return}
  if(p.salio)toast('El dorsal '+d+' ya estaba marcado como salido');else{p.salio=true;p.tsal=Date.now();save()}
  view()}
 function deshacerSalida(id){const p=S.p.find(x=>x.id==id);if(p){p.salio=false;delete p.tsal;save();view()}}
@@ -196,12 +211,42 @@ function vS(){const sal=S.p.filter(p=>p.salio).sort((a,b)=>(b.tsal||0)-(a.tsal||
  return`<h2>Control de salida</h2><div class="card"><b>Dorsal que sale:</b><br><input id="sal" type="text" inputmode="numeric" autocomplete="off" style="font-size:30px;width:160px" onkeydown="if(event.key=='Enter')marcarSalida()"> <button class="b" onclick="marcarSalida()">Marcar salida</button><br><small>Han salido ${sal.length} de ${S.p.length} participantes.</small></div>
 <table><tr><th>Dorsal<th>Nombre<th>Carrera<th>Hora<th></tr>${sal.slice(0,30).map(p=>`<tr><td>${p.dorsal}<td>${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'sin datos')}<td>${esc(raceOf(catOf(p))?.nombre||'-')}<td>${p.tsal?new Date(p.tsal).toLocaleTimeString():'--'}<td><button class="b r" onclick="deshacerSalida('${p.id}')">Deshacer</button></tr>`).join('')}</table>`}
 function cnt(){const M=mins(),k=S.r.map(()=>({l:0,s:0,e:0,q:0}));S.p.forEach(p=>{const r=raceOf(catOf(p));if(!r)return;const o=k[S.r.indexOf(r)],ar=!!M[p.dorsal];o.l++;if(p.salio)o.s++;if(ar)o.e++;if(p.salio&&!ar)o.q++});return k}
-function vMeta(){const M=mins(),K=cnt();let h='<h2>Meta y cronómetro</h2>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">En lista: <b>${K[i].l}</b> · Han salido: <b>${K[i].s}</b> · Han entrado: <b>${K[i].e}</b> · Quedan por entrar: <b>${K[i].q}</b></div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="mm:ss (ej. 15:00)" style="width:160px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
- h+=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter')meta()" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
- const fr=`<tr class="np">${['n','d','nom','cat','t'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',['TRUE','FALSE'])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
+function maskD(el){const g=el.value.replace(/\D/g,'').slice(0,8),f=g.length>4?g.slice(0,2)+'/'+g.slice(2,4)+'/'+g.slice(4):g.length>2?g.slice(0,2)+'/'+g.slice(2):g;if(el.value!=f)el.value=f}
+function parseD(v){const g=String(v).replace(/\D/g,'');if(!g)return'';if(g.length!=8)return null;const D=+g.slice(0,2),M=+g.slice(2,4),Y=+g.slice(4),t=new Date(Y,M-1,D);return Y>=1900&&Y<=new Date().getFullYear()&&t.getMonth()==M-1&&t.getDate()==D?`${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`:null}
+function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
+ const cat=catOf(p),ra=raceOf(cat),d=document.createElement('div');
+ d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9;overflow:auto';
+ const L=(l,h)=>`<b>${l}</b><div>${h}</div>`,T=(k,ty)=>`<input id="pp_${k}" ${ty?'type="'+ty+'"':''} value="${esc(p[k])}" style="width:100%">`,C=k=>`<input id="pp_${k}" type="checkbox" ${p[k]?'checked':''}>`;
+ d.innerHTML=`<div class="card" style="max-width:440px;width:92%;max-height:92vh;overflow:auto"><h3 style="margin-top:0">Participante · dorsal ${esc(p.dorsal)}</h3><div style="display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center">`
+  +L('Dorsal',T('dorsal','number'))+L('Nombre',T('nombre'))+L('Apellidos',T('apellidos'))+L('Club',T('club'))
+  +L('F. nacimiento',`<input id="pp_nac" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" value="${iso2(p.nac)}" style="width:100%">`)
+  +L('Sexo',`<select id="pp_sexo"><option value=""></option><option ${p.sexo=='M'?'selected':''}>M</option><option ${p.sexo=='F'?'selected':''}>F</option></select>`)
+  +L('Federado',C('fed'))+L('Local',C('loc'))+L('Ha salido',C('salio'))
+  +L('Año',yr(p)||'-')+L('Categoría',esc(cat?.nombre||'sin categoría'))+L('Carrera',esc(ra?.nombre||'-'))
+  +`</div><br><button class="b" id="ok">Guardar</button><button class="b r" id="no">Cancelar</button></div>`;
+ document.body.append(d);const g=k=>d.querySelector('#pp_'+k);
+ g('nac').oninput=()=>maskD(g('nac'));d.onkeydown=e=>{if(e.key=='Escape')d.remove()};
+ d.querySelector('#no').onclick=()=>d.remove();
+ d.querySelector('#ok').onclick=()=>{const q=S.p.find(x=>x.id==id);if(!q){d.remove();return toast('El participante ya no existe')}
+  const dor=+g('dorsal').value;if(!dor)return toast('El dorsal es obligatorio');
+  if(S.p.some(x=>x.id!=id&&x.dorsal==dor))return toast('Dorsal duplicado');
+  const nac=parseD(g('nac').value);if(nac===null)return toast('Fecha no válida (dd/mm/aaaa)');
+  q.dorsal=dor;q.nombre=g('nombre').value.trim();q.apellidos=g('apellidos').value.trim();q.club=g('club').value.trim();q.nac=nac;q.sexo=g('sexo').value;q.fed=g('fed').checked;q.loc=g('loc').checked;
+  const sal=g('salio').checked;if(sal&&!q.salio)q.tsal=Date.now();if(!sal)delete q.tsal;q.salio=sal;
+  d.remove();save();view()};
+ g('nombre').focus()}
+function popD(d){let p=S.p.find(x=>x.dorsal==d);if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p);save()}popP(p.id)}
+function vMeta(){const M=mins(),K=cnt(),B=S.r.map(()=>[]);
+ S.p.forEach(p=>{const r=raceOf(catOf(p));if(r&&p.dorsal!=='')B[S.r.indexOf(r)].push(p)});
+ const badge=p=>`<span onclick="popP('${p.id}')" title="${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim())}" style="display:inline-block;padding:2px 9px;border-radius:12px;margin:2px;font-weight:bold;font-size:13px;cursor:pointer;${M[p.dorsal]?'background:#43a047;color:#fff':!p.salio?'background:#e53935;color:#fff':'background:#fdd835;color:#000'}">${p.dorsal}</span>`;
+ const U=Object.keys(M).map(Number).filter(d=>{const p=S.p.find(x=>x.dorsal==d);return!p||!((p.nombre||'').trim()||(p.apellidos||'').trim())}).sort((a,b)=>a-b);
+ const unreg=`<div class="card"><b>Llegadas sin datos de participante (${U.length})</b><div style="margin:6px 0">${U.length?U.map(d=>`<span onclick="popD(${d})" title="Pulsa para completar sus datos" style="cursor:pointer;display:inline-block;padding:2px 9px;border-radius:12px;margin:2px;font-weight:bold;font-size:13px;background:#fff;color:#c62828;border:2px solid #c62828">${d}</span>`).join(''):'<small>✓ Todas las llegadas tienen datos</small>'}</div></div>`;
+ let cr=unreg+'<small>🟢 ya tiene llegada · 🔴 no ha salido · 🟡 en carrera, sin llegada</small>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">En lista: <b>${K[i].l}</b> · Han salido: <b>${K[i].s}</b> · Han entrado: <b>${K[i].e}</b> · Quedan por entrar: <b>${K[i].q}</b></div><div style="margin:6px 0">${B[i].sort((a,b)=>a.dorsal-b.dorsal).map(badge).join('')}</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="hh:mm:ss (ej. 00:15:30)" style="width:210px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
+ let h=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter')meta()" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
+ const fr=`<tr class="np"><th>${['n','d','nom','cat','t'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',['TRUE','FALSE'])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
  const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'';return fmatch('m',{n,d:l.d,nom:nm||'sin datos',cat:f.c?.nombre||'-',t:f.ms==null?'--':fmt(f.ms),dup:M[l.d]!==l?'TRUE':'FALSE'})});
- h+='<table><tr><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th>Duplicado<th></tr>'+fr+rows.slice(0,any?500:30).map(({l,n})=>{const f=info(l),du=M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim());const nc=!f.c;return`<tr style="${sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':''}"${nc&&!sd?' title="Sin categoría"':''}><td>${n}<td>${l.d}<td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${du?'<b>TRUE</b>':'FALSE'}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table>'+(!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':'');
- return h}
+ h+='<button class="b r" id="bs_m" onclick="borrarSel(\'m\')">🗑 Borrar seleccionados ('+SEL.m.size+')</button><div class="sc"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll(\'m\',this.checked)"><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th>Duplicado<th></tr>'+fr+rows.slice(0,any?500:30).map(({l,n})=>{const f=info(l),du=M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim());const nc=!f.c;return`<tr style="${sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':''}"${nc&&!sd?' title="Sin categoría"':''}><td><input type=checkbox class="sel_m" data-id="${l.id}" ${SEL.m.has(l.id)?'checked':''} onchange="selOne('m','${l.id}',this.checked)"><td>${n}<td><span onclick="popD(${l.d})" title="Pulsa para editar el participante" style="cursor:pointer;text-decoration:underline;font-weight:bold">${l.d}</span><td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${du?'<b>TRUE</b>':'FALSE'}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table></div>'+(!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':'');
+ return'<h2>Meta y cronómetro</h2><div class="g2"><div>'+h+'</div><div>'+cr+'</div></div>'}
 setInterval(()=>document.querySelectorAll('.clk').forEach(e=>{const r=S&&S.r[e.dataset.i];e.textContent=r&&r.t0?fmt(Date.now()-r.t0):'--:--:--'}),200);
 // ---- Resultados
 function res(){const o={},M=mins();S.l.forEach(l=>{if(M[l.d]!==l)return;const f=info(l);if(!f.p||!f.c||f.ms==null)return;(o[f.c.id]=o[f.c.id]||[]).push({p:f.p,ms:f.ms})});Object.values(o).forEach(a=>a.sort((x,y)=>x.ms-y.ms));return o}
@@ -240,5 +285,5 @@ Imagen pie: <input type=file accept="image/*" onchange="img('f',this.files[0])">
 <div class="card"><button class="b r" onclick="ask('¿Borrar TODAS las llegadas y salidas?').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
 function ordenar(){S.c.sort((a,b)=>(a.ini-b.ini)||(a.fin-b.fin)||String(a.sexo).localeCompare(b.sexo));S.r.sort((a,b)=>(a.hora||'99:99').localeCompare(b.hora||'99:99'))}
 function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus();if(tab=='s')$('#sal')?.focus()}
-migrar();view();
+migrar();view();if(cfg.key&&CRED.email)login().then(()=>view()).catch(()=>{});
 </script></body></html>
