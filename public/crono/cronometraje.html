@@ -21,6 +21,9 @@ button.r{background:#b3261e}
 .clk{font:bold 44px monospace}
 #dor{font-size:30px;width:160px}
 .sc{overflow-x:auto}
+.ins td{padding:0!important;height:7px;line-height:7px;font-size:11px;text-align:center;color:transparent;background:#e8f5e9;border:none!important;cursor:pointer}
+.ins:hover td{height:22px;line-height:22px;color:#2e7d32;background:#c8e6c9}
+@media(hover:none){.ins td{height:14px;line-height:14px;color:#2e7d32}}
 .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
 @media(max-width:800px){.g2{grid-template-columns:1fr}}
 @media print{nav,.np{display:none}body{background:#fff}}
@@ -33,9 +36,9 @@ let IDX=[];try{IDX=JSON.parse(localStorage.getItem('crono_idx'))||[]}catch(e){}
 let S=null,cur=null,FH=null,wt;
 const idxSave=()=>{try{localStorage.setItem('crono_idx',JSON.stringify(IDX))}catch(e){}};
 const newS=n=>({nombre:n,p:[],c:[],r:[],l:[],img:{h:'',f:''},t:n});
-const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,cfgM:s.cfgM||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l}});
-const unpack=o=>{if(o&&(o.tablas||o.formato=='cronometraje')){const t=o.tablas||{},c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
- if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[]};throw new Error('formato de datos no válido')};
+const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,cfgM:s.cfgM||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img,col:s.col||null},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l}});
+const unpack=o=>{if(o&&(o.tablas||o.formato=='cronometraje')){const t=o.tablas||{},c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},col:c.col||null,p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
+ if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},col:o.col||null,p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[]};throw new Error('formato de datos no válido')};
 let cfg={},TOKEN='';try{cfg=JSON.parse(localStorage.getItem('crono_fb'))||{}}catch(e){}
 if('auth' in cfg){delete cfg.auth;try{localStorage.setItem('crono_fb',JSON.stringify(cfg))}catch(e){}}
 let lastKnown=0,st,syncing=false,pend=false,syncMsg='';
@@ -43,7 +46,7 @@ const save=()=>{if(!cur)return;S.mod=Date.now();stamp();persist();if(cfg.auto&&c
 const persist=()=>{if(!cur)return;try{localStorage.setItem('crono_ev_'+cur,JSON.stringify(S));const ev=IDX.find(x=>x.id==cur);if(ev){ev.mod=Date.now();ev.nombre=S.nombre;ev.cid=S.cid;idxSave()}}catch(e){toast('No se pudo guardar en el navegador (¿imagen muy grande?)')}
  if(FH){clearTimeout(wt);wt=setTimeout(async()=>{try{const w=await FH.createWritable();await w.write(JSON.stringify(pack(S),null,1));await w.close()}catch(e){toast('No se pudo escribir en el fichero vinculado');FH=null}},500)}};
 function toast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;border-radius:8px;z-index:9;max-width:90%';document.body.append(e);setTimeout(()=>e.remove(),3500)}
-function ask(t){return new Promise(ok=>{const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';d.innerHTML='<div class="card" style="max-width:340px">'+t+'<br><br><button class="b" id="y">Aceptar</button><button class="b r" id="n">Cancelar</button></div>';document.body.append(d);d.querySelector('#y').onclick=()=>{d.remove();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();ok(false)}})}
+function ask(t){return new Promise(ok=>{const d=document.createElement('div');d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';d.innerHTML='<div class="card" style="max-width:340px">'+t+'<br><br><button class="b" id="y">Aceptar</button><button class="b r" id="n">Cancelar</button></div>';document.body.append(d);d.onpointerdown=e=>{if(e.target===d){d.remove();focoMeta();ok(false)}};d.querySelector('#y').onclick=()=>{d.remove();focoMeta();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();focoMeta();ok(false)}})}
 const uid=()=>Math.random().toString(36).slice(2,9);
 const fmt=ms=>{let s=Math.floor(Math.max(0,ms)/1000);return[s/3600|0,(s/60|0)%60,s%60].map(x=>String(x).padStart(2,'0')).join(':')};
 const yr=p=>p.nac?+String(p.nac).slice(0,4):0;
@@ -79,7 +82,7 @@ function refresh(){const a=document.activeElement,busy=a&&(a.tagName=='INPUT'||a
 let snap={},cfgSnap='',noET=false;
 const rk=x=>{const{_m,...o}=x;return JSON.stringify(o)};
 function stamp(init){const now=Date.now();['p','c','r','l'].forEach(t=>(S[t]||[]).forEach(x=>{if(!x.id)return;const k=rk(x);if(snap[x.id]!==k){snap[x.id]=k;if(!init)x._m=now}}));
- const ck=JSON.stringify([S.nombre,S.t,S.img]);if(ck!==cfgSnap){cfgSnap=ck;if(!init)S.cfgM=now}}
+ const ck=JSON.stringify([S.nombre,S.t,S.img,S.col]);if(ck!==cfgSnap){cfgSnap=ck;if(!init)S.cfgM=now}}
 const fixP=p=>p.id?p:{...p,id:p.dorsal?'d'+p.dorsal:uid()};
 function mergeT(a,b,del){const m=new Map();[...a,...b].forEach(x=>{if(!x.id||del.has(x.id))return;const o=m.get(x.id);if(!o||(x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&JSON.stringify(x)>JSON.stringify(o)))m.set(x.id,x)});return[...m.values()]}
 function dedup(p,del){const g={};p.forEach(x=>{const nm=(x.nombre+' '+x.apellidos).trim().toLowerCase();if(x.dorsal===''||x.dorsal==null||!nm)return;const k=x.dorsal+'|'+nm,o=g[k];if(!o){g[k]=x;return}const w=((x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&x.id>o.id))?x:o;g[k]=w;del.add((w===x?o:x).id)});return p.filter(x=>!del.has(x.id))}
@@ -99,7 +102,7 @@ async function sync(quiet){
    const et=r.headers.get('ETag'),R=await r.json();let up=true;
    if(R){const d=unpack(R),del=new Set([...(S.del||[]),...(d.del||[])]);
     S.p=dedup(mergeT(S.p,d.p,del),del);S.c=mergeT(S.c,d.c,del);S.r=mergeT(S.r,d.r,del);S.l=mergeT(S.l,d.l,del).sort((x,y)=>x.ts-y.ts);S.del=[...del];
-    if((d.cfgM||0)>(S.cfgM||0)){S.nombre=d.nombre;S.t=d.t;S.img=d.img;S.cfgM=d.cfgM}
+    if((d.cfgM||0)>(S.cfgM||0)){S.nombre=d.nombre;S.t=d.t;S.img=d.img;S.col=d.col||null;S.cfgM=d.cfgM}
     up=fp(S)!==fp(d);if(!up)S.mod=d.mod}
    if(up)S.mod=Date.now();
    snap={};cfgSnap='';stamp(1);persist();
@@ -119,25 +122,25 @@ async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar')
 async function bajar(c){if(IDX.find(x=>x.cid==c))return toast('Ya está en este dispositivo: ábrelo y pulsa Sincronizar');
  try{await tok();const r=await fetch(fb('/eventos/'+c));if(!r.ok)throw herr(r);const d=unpack(await r.json());d.cid=c;nuevoEv(d);toast('Evento descargado');view()}catch(e){toast('Error: '+e.message)}}
 setInterval(()=>{if(cur&&cfg.auto&&cfg.url&&S.cid){if(pend)refresh();sync(true)}},8000);
-let F={p:{},c:{},r:{},m:{},k:{}};
-const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['dup']};
+let F={p:{},c:{},r:{},m:{},k:{}},dupF=false;
+const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['dup','sx']};
 const iso2=n=>{const m=String(n||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return m?m[3]+'/'+m[2]+'/'+m[1]:''};
 function fmatch(t,vals){return Object.entries(F[t]).every(([k,f])=>{if(!f||!(k in vals))return true;const v=String(vals[k]??'').toLowerCase(),g=String(f).toLowerCase();return(EXACT[t]||[]).includes(k)?v===g:v.includes(g)})}
 function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.apellidos,club:x.club,nac:iso2(x.nac)||'sin fecha',sexo:x.sexo||'Vacío',fed:x.fed?'Sí':'No',loc:x.loc?'Sí':'No',salio:x.salio?'Sí':'No',anyo:yr(x)||'',cat:catOf(x)?.nombre||'sin categoría'};
  if(t=='c')return{nombre:x.nombre,ini:x.ini,fin:x.fin,sexo:x.sexo};
- return{nombre:x.nombre,hora:x.hora,cats:x.cats.map(id=>{const c=S.c.find(y=>y.id==id);return c?c.nombre+' '+c.sexo:''}).join(' ')}}
+ return{nombre:x.nombre,hora:x.hora,hreal:x.t0?new Date(x.t0).toLocaleTimeString():'sin salida',cats:x.cats.map(id=>{const c=S.c.find(y=>y.id==id);return c?c.nombre+' '+c.sexo:''}).join(' ')}}
 function fcell(t,k,opts){const v=F[t][k]||'',id='f_'+t+'_'+k;
- if(opts)return`<th><select id="${id}" onchange="fset('${t}','${k}',this.value)"><option value="">Todos</option>${opts.map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`;
+ if(opts)return`<th><select id="${id}" onchange="fset('${t}','${k}',this.value)"><option value="">Todos</option>${opts.map(o=>{const[a,b]=Array.isArray(o)?o:[o,o];return`<option value="${esc(a)}" ${a==v?'selected':''}>${esc(b)}</option>`}).join('')}</select>`;
  return`<th><input id="${id}" placeholder="filtrar" style="width:100%;min-width:60px" value="${esc(v)}" oninput="fset('${t}','${k}',this.value,'${id}')">`}
-function fset(t,k,v,id){F[t][k]=v;if(SEL[t])SEL[t].clear();view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
-function fclr(t){F[t]={};if(SEL[t])SEL[t].clear();view()}
+function fset(t,k,v,id){if(t=='m'&&k=='d'&&id)dupF=false;F[t][k]=v;if(SEL[t])SEL[t].clear();view();if(id){const e=document.getElementById(id);if(e){e.focus();try{e.setSelectionRange(v.length,v.length)}catch(_){}}}}
+function fclr(t){if(t=='m')dupF=false;F[t]={};if(SEL[t])SEL[t].clear();view()}
 const SEL={p:new Set(),c:new Set(),r:new Set(),m:new Set()};
 function selUpd(t){const b=$('#bs_'+t);if(b)b.textContent='🗑 Borrar seleccionados ('+SEL[t].size+')'}
 function selOne(t,id,v){v?SEL[t].add(id):SEL[t].delete(id);selUpd(t)}
 function selAll(t,v){document.querySelectorAll('.sel_'+t).forEach(e=>{e.checked=v;v?SEL[t].add(e.dataset.id):SEL[t].delete(e.dataset.id)});selUpd(t)}
-function askCode(t){return new Promise(ok=>{const code=Array.from({length:5},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random()*32|0]).join('');const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
+function askCode(t){return new Promise(ok=>{const code=Array.from({length:5},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random()*32|0]).join('');const d=document.createElement('div');d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
  d.innerHTML='<div class="card" style="max-width:360px">'+t+'<br><br>Escribe <b style="font:bold 22px monospace;letter-spacing:3px">'+code+'</b> para confirmar:<br><input id="cc" autocomplete="off" style="font-size:20px;width:90%;text-transform:uppercase"><br><br><button class="b r" id="y" disabled>Borrar</button><button class="b" id="n">Cancelar</button></div>';
- document.body.append(d);const i=d.querySelector('#cc'),y=d.querySelector('#y');i.oninput=()=>{y.disabled=i.value.trim().toUpperCase()!==code};i.onkeydown=e=>{if(e.key=='Enter'&&!y.disabled)y.click()};y.onclick=()=>{d.remove();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();ok(false)};i.focus()})}
+ document.body.append(d);d.onpointerdown=e=>{if(e.target===d){d.remove();focoMeta();ok(false)}};const i=d.querySelector('#cc'),y=d.querySelector('#y');i.oninput=()=>{y.disabled=i.value.trim().toUpperCase()!==code};i.onkeydown=e=>{if(e.key=='Enter'&&!y.disabled)y.click()};y.onclick=()=>{d.remove();focoMeta();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();focoMeta();ok(false)};i.focus()})}
 async function borrarSel(t){const arr=t=='m'?'l':t,ids=[...SEL[t]].filter(id=>S[arr].some(x=>x.id==id));if(!ids.length)return toast('Selecciona primero los registros que quieres borrar');
  const nm={p:'participantes',c:'categorías',r:'carreras',m:'llegadas'}[t];
  if(!(await askCode('Vas a borrar <b>'+ids.length+' '+nm+'</b>. No se puede deshacer'+(cfg.url?' y, si usas sincronización, también se borrarán en los demás dispositivos':'')+'.')))return;
@@ -176,32 +179,33 @@ function ed(t,i,k,v){if(t=='p'&&k=='dorsal'&&!v){S.p[i].dorsal='';save();return}
 function add(t){const o=T[t].nuevo();if(!o)return;
  if(t=='p'){S.p.unshift(o);if($('#q'))$('#q').value='';save();view();document.querySelector('#v table tr:nth-child(2) input')?.focus()}
  else{S[t].push(o);save();view()}}
-async function del(t,i){if(await ask('¿Borrar este registro?')){(S.del=S.del||[]).push(S[t][i].id);S[t].splice(i,1);save();view()}}
+async function del(t,i){if(await askCode('Vas a borrar <b>1 registro</b>. No se puede deshacer.')){(S.del=S.del||[]).push(S[t][i].id);S[t].splice(i,1);save();view()}}
 function tcat(i,id){const a=S.r[i].cats,j=a.indexOf(id);j<0?a.push(id):a.splice(j,1);save()}
 function tabla(t){const d=T[t];let q=t=='p'?($('#q')?.value||''):'';
  let h=`<h2>${d.n}</h2><button class="b" onclick="add('${t}')">+ Añadir</button> <button class="b r" id="bs_${t}" onclick="borrarSel('${t}')">🗑 Borrar seleccionados (${SEL[t].size})</button>`;
  if(t=='p')h+=` <input id="q" placeholder="Buscar..." value="${q}" oninput="SEL.p.clear();view();$('#q').focus()">`;
- const fr=`<tr class="np"><th>${d.cols.map(c=>fcell(t,c[0],c[2]=='chk'?['Sí','No']:Array.isArray(c[2])?(t=='p'&&c[0]=='sexo'?[...c[2],'Vacío']:c[2]):null)).join('')}${t=='p'?fcell('p','anyo')+fcell('p','cat'):''}${t=='r'?fcell('r','cats'):''}<th><button class="b" onclick="fclr('${t}')">Limpiar</button></tr>`;
- h+=`<div class="sc"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('${t}',this.checked)">${d.cols.map(c=>`<th>${c[1]}`).join('')}${t=='p'?'<th>Año<th>Categoría':''}${t=='r'?'<th>Categorías':''}<th></tr>${fr}`;
+ const fr=`<tr class="np"><th>${d.cols.map(c=>fcell(t,c[0],c[2]=='chk'?['Sí','No']:Array.isArray(c[2])?(t=='p'&&c[0]=='sexo'?[...c[2],'Vacío']:c[2]):null)).join('')}${t=='p'?fcell('p','anyo')+fcell('p','cat'):''}${t=='r'?fcell('r','hreal')+fcell('r','cats'):''}<th><button class="b" onclick="fclr('${t}')">Limpiar</button></tr>`;
+ h+=`<div class="sc"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('${t}',this.checked)">${d.cols.map(c=>`<th>${c[1]}`).join('')}${t=='p'?'<th>Año<th>Categoría':''}${t=='r'?'<th>Hora real de inicio<th>Categorías':''}<th></tr>${fr}`;
 const dd={};if(t=='p')S.p.forEach(x=>{dd[x.dorsal]=(dd[x.dorsal]||0)+1});
  S[t].forEach((x,i)=>{if(q&&!d.cols.map(c=>x[c[0]]).join(' ').toLowerCase().includes(q.toLowerCase()))return;
   if(!fmatch(t,fv(t,x)))return;
   const falta=t=='p'&&(!x.nac||!x.sexo),dupd=t=='p'&&x.dorsal!==''&&dd[x.dorsal]>1;
   h+=`<tr${falta?' style="background:#ffb3b3" title="Falta '+[!x.nac&&'fecha de nacimiento',!x.sexo&&'sexo'].filter(Boolean).join(' y ')+'"':dupd?' style="background:#ffd8a8" title="Dorsal duplicado"':''}><td><input type=checkbox class="sel_${t}" data-id="${x.id}" ${SEL[t].has(x.id)?'checked':''} onchange="selOne('${t}','${x.id}',this.checked)">${d.cols.map(c=>`<td>${inp(t,i,c)}`).join('')}`;
   if(t=='p')h+=`<td id="y${i}">${yr(x)||''}<td id="k${i}">${catOf(x)?.nombre||'<i>sin categoría</i>'}`;
-  if(t=='r')h+=`<td>${S.c.map(c=>`<label style="white-space:nowrap"><input type=checkbox ${x.cats.includes(c.id)?'checked':''} onchange="tcat(${i},'${c.id}')">${c.nombre} (${c.sexo})</label>`).join('<br>')}`;
+  if(t=='r')h+=`<td>${x.t0?new Date(x.t0).toLocaleTimeString():'—'}<td>${S.c.map(c=>`<label style="white-space:nowrap"><input type=checkbox ${x.cats.includes(c.id)?'checked':''} onchange="tcat(${i},'${c.id}')">${c.nombre} (${c.sexo})</label>`).join('<br>')}`;
   h+=`<td><button class="b r" onclick="del('${t}',${i})">✕</button></tr>`});
  return h+'</table></div>'}
 // ---- Meta
 async function salida(i){const r=S.r[i];if(r.t0&&!(await ask('Esta carrera ya tiene salida. ¿Reiniciar?')))return;r.t0=Date.now();save();view()}
 function ajustar(i){const v=$('#aj'+i).value;if(!v)return toast('Escribe el tiempo, ej. 15:00');const p=v.split(':').map(Number).reverse();const ms=((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;S.r[i].t0=Date.now()-ms;save();view()}
-function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d)return;
+function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d){focoMeta();return}
  if(!S.p.some(x=>x.dorsal==d)){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false})}
- S.l.push({id:uid(),d,ts});save();view()}
-function mins(){const m={};S.l.forEach(l=>{const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
+ S.l.push({id:uid(),d,ts});if(dupF){dupF=false;F.m.d=''}save();view();focoMeta()}
+function mins(){const m={};S.l.forEach(l=>{if(l.prov)return;const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
 function info(l){const p=S.p.find(x=>x.dorsal==l.d),c=p&&catOf(p),r=raceOf(c);return{p,c,r,ms:r&&r.t0?l.ts-r.t0:null}}
 function editL(id,v){const l=S.l.find(x=>x.id==id),f=info(l);if(f.ms==null)return toast('La carrera no tiene salida');if(!v)return;const p=v.split(':').map(Number).reverse();l.ts=f.r.t0+((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;save();view()}
-async function delL(id){if(await ask('¿Borrar llegada?')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
+function provL(id){const l=S.l.find(x=>x.id==id);if(!l)return;if(l.prov)delete l.prov;else l.prov=true;save();view()}
+async function delL(id){if(await askCode('Vas a borrar <b>1 llegada</b>. No se puede deshacer.')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
 function marcarSalida(){const e=$('#sal'),d=+e.value;if(!d)return;const p=S.p.find(x=>x.dorsal==d);
  if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:true,tsal:Date.now()});save();toast('Dorsal '+d+' creado en participantes');view();return}
  if(p.salio)toast('El dorsal '+d+' ya estaba marcado como salido');else{p.salio=true;p.tsal=Date.now();save()}
@@ -211,11 +215,12 @@ function vS(){const sal=S.p.filter(p=>p.salio).sort((a,b)=>(b.tsal||0)-(a.tsal||
  return`<h2>Control de salida</h2><div class="card"><b>Dorsal que sale:</b><br><input id="sal" type="text" inputmode="numeric" autocomplete="off" style="font-size:30px;width:160px" onkeydown="if(event.key=='Enter')marcarSalida()"> <button class="b" onclick="marcarSalida()">Marcar salida</button><br><small>Han salido ${sal.length} de ${S.p.length} participantes.</small></div>
 <table><tr><th>Dorsal<th>Nombre<th>Carrera<th>Hora<th></tr>${sal.slice(0,30).map(p=>`<tr><td>${p.dorsal}<td>${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'sin datos')}<td>${esc(raceOf(catOf(p))?.nombre||'-')}<td>${p.tsal?new Date(p.tsal).toLocaleTimeString():'--'}<td><button class="b r" onclick="deshacerSalida('${p.id}')">Deshacer</button></tr>`).join('')}</table>`}
 function cnt(){const M=mins(),k=S.r.map(()=>({l:0,s:0,e:0,q:0}));S.p.forEach(p=>{const r=raceOf(catOf(p));if(!r)return;const o=k[S.r.indexOf(r)],ar=!!M[p.dorsal];o.l++;if(p.salio)o.s++;if(ar)o.e++;if(p.salio&&!ar)o.q++});return k}
+function focoMeta(){if(cur&&tab=='m'){const e=$('#dor');if(e)e.focus()}}
 function maskD(el){const g=el.value.replace(/\D/g,'').slice(0,8),f=g.length>4?g.slice(0,2)+'/'+g.slice(2,4)+'/'+g.slice(4):g.length>2?g.slice(0,2)+'/'+g.slice(2):g;if(el.value!=f)el.value=f}
 function parseD(v){const g=String(v).replace(/\D/g,'');if(!g)return'';if(g.length!=8)return null;const D=+g.slice(0,2),M=+g.slice(2,4),Y=+g.slice(4),t=new Date(Y,M-1,D);return Y>=1900&&Y<=new Date().getFullYear()&&t.getMonth()==M-1&&t.getDate()==D?`${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`:null}
 function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
  const cat=catOf(p),ra=raceOf(cat),d=document.createElement('div');
- d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9;overflow:auto';
+ d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9;overflow:auto';
  const L=(l,h)=>`<b>${l}</b><div>${h}</div>`,T=(k,ty)=>`<input id="pp_${k}" ${ty?'type="'+ty+'"':''} value="${esc(p[k])}" style="width:100%">`,C=k=>`<input id="pp_${k}" type="checkbox" ${p[k]?'checked':''}>`;
  d.innerHTML=`<div class="card" style="max-width:440px;width:92%;max-height:92vh;overflow:auto"><h3 style="margin-top:0">Participante · dorsal ${esc(p.dorsal)}</h3><div style="display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center">`
   +L('Dorsal',T('dorsal','number'))+L('Nombre',T('nombre'))+L('Apellidos',T('apellidos'))+L('Club',T('club'))
@@ -224,9 +229,9 @@ function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
   +L('Federado',C('fed'))+L('Local',C('loc'))+L('Ha salido',C('salio'))
   +L('Año',yr(p)||'-')+L('Categoría',esc(cat?.nombre||'sin categoría'))+L('Carrera',esc(ra?.nombre||'-'))
   +`</div><br><button class="b" id="ok">Guardar</button><button class="b r" id="no">Cancelar</button></div>`;
- document.body.append(d);const g=k=>d.querySelector('#pp_'+k);
- g('nac').oninput=()=>maskD(g('nac'));d.onkeydown=e=>{if(e.key=='Escape')d.remove()};
- d.querySelector('#no').onclick=()=>d.remove();
+ document.body.append(d);d.onpointerdown=e=>{if(e.target===d){d.remove();focoMeta()}};const g=k=>d.querySelector('#pp_'+k);
+ g('nac').oninput=()=>maskD(g('nac'));d.onkeydown=e=>{if(e.key=='Escape'){d.remove();focoMeta()}};
+ d.querySelector('#no').onclick=()=>{d.remove();focoMeta()};
  d.querySelector('#ok').onclick=()=>{const q=S.p.find(x=>x.id==id);if(!q){d.remove();return toast('El participante ya no existe')}
   const dor=+g('dorsal').value;if(!dor)return toast('El dorsal es obligatorio');
   if(S.p.some(x=>x.id!=id&&x.dorsal==dor))return toast('Dorsal duplicado');
@@ -236,31 +241,88 @@ function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
   d.remove();save();view()};
  g('nombre').focus()}
 function popD(d){let p=S.p.find(x=>x.dorsal==d);if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p);save()}popP(p.id)}
-function vMeta(){const M=mins(),K=cnt(),B=S.r.map(()=>[]);
+function insL(id,mode){const i=S.l.findIndex(x=>x.id==id);if(i<0)return;const R=S.l[i];let ts;
+ if(mode=='a'){const nx=S.l[i+1];ts=R.ts+1000;if(nx&&nx.ts<=ts)ts=R.ts+Math.floor((nx.ts-R.ts)/2)}
+ else{const pv=S.l[i-1];ts=R.ts-1000;if(pv&&pv.ts>=ts)ts=pv.ts+Math.floor((R.ts-pv.ts)/2)}
+ popL({anchor:id,mode,ts})}
+function popL(o){const d=document.createElement('div'),fh=t=>new Date(t).toTimeString().slice(0,8);let man=false;
+ d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
+ d.innerHTML=`<div class="card" style="max-width:380px;width:92%"><h3 style="margin-top:0">Añadir llegada</h3>Dorsal<br><input id="il_d" type="number" style="font-size:24px;width:150px"><div id="il_p" style="margin:8px 0;min-height:20px"></div>Tiempo de carrera (hh:mm:ss)<br><input id="il_t" placeholder="00:31:10" style="font-size:20px;width:150px"><div style="margin:8px 0">Hora de llegada (automática): <b id="il_h">${fh(o.ts)}</b></div><small>Si no escribes el tiempo, se usa el propuesto (1 segundo respecto a la fila contigua).</small><br><br><button class="b" id="ok">Añadir</button><button class="b r" id="no">Cancelar</button></div>`;
+ document.body.append(d);const g=k=>d.querySelector('#il_'+k);
+ const raza=()=>{const dor=+g('d').value;if(!dor)return{};const p=S.p.find(x=>x.dorsal==dor);return{p,r:p?raceOf(catOf(p)):null}};
+ const calc=()=>{const{r}=raza(),v=g('t').value.trim();if(man&&v!==''){const q=secs(v);if(q==null)return{err:'Tiempo no válido (hh:mm:ss)'};if(!r||!r.t0)return{err:'No se puede calcular la hora: el dorsal no tiene una carrera con salida'};return{ts:r.t0+q*1000}}return{ts:o.ts}};
+ const show=()=>{const{p,r}=raza(),c=calc(),m=d.querySelector('#il_p');g('h').textContent=c.ts?fh(c.ts):'--:--:--';
+  m.textContent=!+g('d').value?'':!p?'El dorsal no existe: se creará vacío (se usa la hora propuesta)':!r?'Sin carrera (revisa fecha de nacimiento y sexo): se usa la hora propuesta':!r.t0?r.nombre+' · sin salida: se usa la hora propuesta':r.nombre;
+  if(c.err)m.textContent=c.err};
+ const fill=()=>{const{r}=raza();if(!man){g('t').value=r&&r.t0?fmt(o.ts-r.t0):''}};
+ g('d').oninput=()=>{fill();show()};g('t').oninput=()=>{man=g('t').value.trim()!=='';if(!man)fill();show()};
+ const close=()=>{d.remove();focoMeta()};
+ d.onpointerdown=e=>{if(e.target===d)close()};d.onkeydown=e=>{if(e.key=='Escape')close();if(e.key=='Enter')d.querySelector('#ok').click()};
+ d.querySelector('#no').onclick=close;
+ d.querySelector('#ok').onclick=()=>{const dor=+g('d').value;if(!dor)return toast('Escribe el dorsal');const c=calc();if(c.err)return toast(c.err);
+  const a=S.l.findIndex(x=>x.id==o.anchor),at=a<0?S.l.length:(o.mode=='a'?a+1:a);asegP(dor);S.l.splice(at,0,{id:uid(),d:dor,ts:c.ts});d.remove();save();view();focoMeta()};
+ g('d').focus()}
+function vMeta(){const M=mins(),K=cnt(),RK=rank(),B=S.r.map(()=>[]);
  S.p.forEach(p=>{const r=raceOf(catOf(p));if(r&&p.dorsal!=='')B[S.r.indexOf(r)].push(p)});
- const badge=p=>`<span onclick="popP('${p.id}')" title="${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim())}" style="display:inline-block;padding:2px 9px;border-radius:12px;margin:2px;font-weight:bold;font-size:13px;cursor:pointer;${M[p.dorsal]?'background:#43a047;color:#fff':!p.salio?'background:#e53935;color:#fff':'background:#fdd835;color:#000'}">${p.dorsal}</span>`;
+ const bd='display:inline-block;padding:2px 9px;border-radius:12px;margin:2px;font-weight:bold;font-size:13px;cursor:pointer;';
+ const badge=p=>`<span onclick="popP('${p.id}')" title="${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim())}" style="${bd}${M[p.dorsal]?'background:#43a047;color:#fff':!p.salio?'background:#e53935;color:#fff':'background:#fdd835;color:#000'}">${p.dorsal}</span>`;
  const U=Object.keys(M).map(Number).filter(d=>{const p=S.p.find(x=>x.dorsal==d);return!p||!((p.nombre||'').trim()||(p.apellidos||'').trim())}).sort((a,b)=>a-b);
- const unreg=`<div class="card"><b>Llegadas sin datos de participante (${U.length})</b><div style="margin:6px 0">${U.length?U.map(d=>`<span onclick="popD(${d})" title="Pulsa para completar sus datos" style="cursor:pointer;display:inline-block;padding:2px 9px;border-radius:12px;margin:2px;font-weight:bold;font-size:13px;background:#fff;color:#c62828;border:2px solid #c62828">${d}</span>`).join(''):'<small>✓ Todas las llegadas tienen datos</small>'}</div></div>`;
- let cr=unreg+'<small>🟢 ya tiene llegada · 🔴 no ha salido · 🟡 en carrera, sin llegada</small>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">En lista: <b>${K[i].l}</b> · Han salido: <b>${K[i].s}</b> · Han entrado: <b>${K[i].e}</b> · Quedan por entrar: <b>${K[i].q}</b></div><div style="margin:6px 0">${B[i].sort((a,b)=>a.dorsal-b.dorsal).map(badge).join('')}</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="hh:mm:ss (ej. 00:15:30)" style="width:210px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
- let h=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter')meta()" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
- const fr=`<tr class="np"><th>${['n','d','nom','cat','t'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',['TRUE','FALSE'])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
- const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'';return fmatch('m',{n,d:l.d,nom:nm||'sin datos',cat:f.c?.nombre||'-',t:f.ms==null?'--':fmt(f.ms),dup:M[l.d]!==l?'TRUE':'FALSE'})});
- h+='<button class="b r" id="bs_m" onclick="borrarSel(\'m\')">🗑 Borrar seleccionados ('+SEL.m.size+')</button><div class="sc"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll(\'m\',this.checked)"><th>#<th>Dorsal<th>Nombre<th>Categoría<th>Tiempo<th>Duplicado<th></tr>'+fr+rows.slice(0,any?500:30).map(({l,n})=>{const f=info(l),du=M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim());const nc=!f.c;return`<tr style="${sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':''}"${nc&&!sd?' title="Sin categoría"':''}><td><input type=checkbox class="sel_m" data-id="${l.id}" ${SEL.m.has(l.id)?'checked':''} onchange="selOne('m','${l.id}',this.checked)"><td>${n}<td><span onclick="popD(${l.d})" title="Pulsa para editar el participante" style="cursor:pointer;text-decoration:underline;font-weight:bold">${l.d}</span><td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${du?'<b>TRUE</b>':'FALSE'}<td><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`}).join('')+'</table></div>'+(!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':'');
+ const unreg=`<div class="card"><b>Llegadas sin datos de participante (${U.length})</b><div style="margin:6px 0">${U.length?U.map(d=>`<span onclick="popD(${d})" title="Pulsa para completar sus datos" style="${bd}background:#fff;color:#c62828;border:2px solid #c62828">${d}</span>`).join(''):'<small>✓ Todas las llegadas tienen datos</small>'}</div></div>`;
+ const dm={};S.l.forEach(l=>{if(!l.prov)(dm[l.d]=dm[l.d]||[]).push(l)});
+ const DU=Object.keys(dm).filter(d=>dm[d].length>1).map(Number).sort((a,b)=>a-b);
+ const dups=`<div class="card"><b>Dorsales duplicados (${DU.length})</b><div style="margin:6px 0">${DU.length?DU.map(d=>`<span class="dupb" onclick="dupF=true;fset('m','d','${d}')" title="${dm[d].length} llegadas · pulsa para filtrar la tabla" style="${bd}background:#fff3b0;color:#000;border:2px solid #f9a825">${d} ×${dm[d].length}</span>`).join(''):'<small>✓ No hay dorsales duplicados</small>'}</div></div>`;
+ let cr=unreg+dups+'<small>🟢 ya tiene llegada · 🔴 no ha salido · 🟡 en carrera, sin llegada</small>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">En lista: <b>${K[i].l}</b> · Han salido: <b>${K[i].s}</b> · Han entrado: <b>${K[i].e}</b> · Quedan por entrar: <b>${K[i].q}</b></div><div style="margin:6px 0">${B[i].sort((a,b)=>a.dorsal-b.dorsal).map(badge).join('')}</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="hh:mm:ss (ej. 00:15:30)" style="width:210px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
+ let h=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter'){event.preventDefault();meta()}" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
+ const sxc=x=>x=='F'?'#f8bbd0':x=='M'?'#bbdefb':'transparent';
+ const fr=`<tr class="np"><th>${['n','d','nom'].map(k=>fcell('m',k)).join('')}${fcell('m','sx',['M','F'])}${['cat','t','pg','pc'].map(k=>fcell('m',k)).join('')}${fcell('m','dup',[['TRUE','⚠️ Duplicado'],['FALSE','✅ No duplicado']])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
+ const rows=S.l.map((l,i)=>({l,n:i+1})).reverse().filter(({l,n})=>{const f=info(l),nm=f.p?(f.p.nombre+' '+f.p.apellidos).trim():'',pk=RK.pos[l.id];return fmatch('m',{n,d:l.d,nom:nm||'sin datos',sx:f.p?.sexo||'',cat:f.c?.nombre||'-',t:f.ms==null?'--':fmt(f.ms),pg:pk?pk.pg:'-',pc:pk?pk.pc:'-',dup:!l.prov&&M[l.d]!==l?'TRUE':'FALSE'})});
+ const tr=({l,n})=>{const f=info(l),pv=!!l.prov,du=!pv&&M[l.d]!==l,sd=!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim()),nc=!f.c,pk=RK.pos[l.id],sx=f.p?.sexo||'';
+  const bg=pv?'background:#e0e0e0;color:#777':sd?'background:#ffb3b3':nc?'background:#ffc078':du?'background:#fff3b0':'';
+  return`<tr style="${bg}"${nc&&!sd?' title="Sin categoría"':''}><td><input type=checkbox class="sel_m" data-id="${l.id}" ${SEL.m.has(l.id)?'checked':''} onchange="selOne('m','${l.id}',this.checked)"><td>${n}<td><span onclick="popD(${l.d})" title="Pulsa para editar el participante" style="cursor:pointer;text-decoration:underline;font-weight:bold">${l.d}</span><td>${sd?'<i>sin datos</i>':esc(f.p.nombre+' '+f.p.apellidos)}<td style="text-align:center;background:${sxc(sx)}">${sx}<td>${f.c?.nombre||'-'}<td>${f.ms==null?'--':fmt(f.ms)}<td>${pk?pk.pg:'-'}<td>${pk?pk.pc:'-'}<td style="text-align:center" title="${pv?'Provisional: excluida de las clasificaciones':du?'Duplicado':'No duplicado'}">${pv?'⏸':du?'⚠️':'✅'}<td style="white-space:nowrap"><input value="${f.ms==null?'':fmt(f.ms)}" style="width:85px" title="Editar tiempo hh:mm:ss" onchange="editL('${l.id}',this.value)"><button class="b" onclick="provL('${l.id}')" title="${pv?'Volver a incluirla en las clasificaciones':'Excluirla de las clasificaciones'}">${pv?'▶ Activar':'⏸ Provisional'}</button><button class="b r" onclick="delL('${l.id}')">✕</button></tr>`};
+ h+=`<button class="b r" id="bs_m" onclick="borrarSel('m')">🗑 Borrar seleccionados (${SEL.m.size})</button><div class="sc" id="mt"><table><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('m',this.checked)"><th>#<th>Dorsal<th>Nombre<th>Sexo<th>Categoría<th>Tiempo<th>Pos.<th>Pos. cat.<th>Duplicado<th></tr>${fr}${(v=>v.map(x=>`<tr class="ins" onclick="insL('${x.l.id}','a')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`+tr(x)).join('')+(v.length?`<tr class="ins" onclick="insL('${v[v.length-1].l.id}','b')" title="Añadir una llegada justo aquí"><td colspan="11">+ añadir llegada aquí</td></tr>`:''))(rows.slice(0,any?500:30))}</table></div>${!any&&rows.length>30?'<small>Mostrando las 30 últimas llegadas; usa los filtros para ver el resto.</small>':''}`;
  return'<h2>Meta y cronómetro</h2><div class="g2"><div>'+h+'</div><div>'+cr+'</div></div>'}
+
 setInterval(()=>document.querySelectorAll('.clk').forEach(e=>{const r=S&&S.r[e.dataset.i];e.textContent=r&&r.t0?fmt(Date.now()-r.t0):'--:--:--'}),200);
 // ---- Resultados
-function res(){const o={},M=mins();S.l.forEach(l=>{if(M[l.d]!==l)return;const f=info(l);if(!f.p||!f.c||f.ms==null)return;(o[f.c.id]=o[f.c.id]||[]).push({p:f.p,ms:f.ms})});Object.values(o).forEach(a=>a.sort((x,y)=>x.ms-y.ms));return o}
-function rep(){const R=res(),K=F.k,im=k=>S.img[k]?`<img src="${S.img[k]}" style="width:100%">`:'',any=['pos','dorsal','nom','club','t'].some(k=>K[k]);
- return im('h')+`<h2>${S.t}</h2>`+S.c.filter(c=>R[c.id]&&(!K.cat||K.cat==c.id)).map(c=>{const rows=R[c.id].map((x,i)=>({x,i:i+1})).filter(({x,i})=>fmatch('k',{pos:i,dorsal:x.p.dorsal,nom:x.p.nombre+' '+x.p.apellidos,club:x.p.club,t:fmt(x.ms)}));if(any&&!rows.length)return'';
-  return`<h3>${c.nombre}</h3><table><tr><th>Pos<th>Dorsal<th>Nombre<th>Club<th>Tiempo</tr>${rows.map(({x,i})=>`<tr><td>${i}<td>${x.p.dorsal}<td>${esc(x.p.nombre+' '+x.p.apellidos)}<td>${esc(x.p.club||'')}<td>${fmt(x.ms)}`).join('')}</table>`}).join('')+im('f')}
-function vK(){return`<div class="np"><select id="fc" onchange="fset('k','cat',this.value)"><option value="">Todas las categorías</option>${S.c.map(c=>`<option value="${c.id}" ${F.k.cat==c.id?'selected':''}>${c.nombre}</option>`).join('')}</select> ${[['pos','Pos'],['dorsal','Dorsal'],['nom','Nombre'],['club','Club'],['t','Tiempo']].map(([k,l])=>`<input id="f_k_${k}" placeholder="${l}" style="width:100px" value="${esc(F.k[k]||'')}" oninput="fset('k','${k}',this.value,'f_k_${k}')">`).join(' ')} <button class="b" onclick="fclr('k')">Limpiar</button> <button class="b" onclick="imprimir()">🖨 Imprimir / PDF</button><button class="b" onclick="xl()">Exportar Excel</button><br><small>Los filtros afectan a la pantalla y a la impresión; el Excel exporta todos los resultados.</small></div><div id="rep">${rep()}</div>`}
+function rank(){const M=mins(),rows=[],pos={};
+ S.l.forEach(l=>{if(M[l.d]!==l)return;const f=info(l);if(!f.p||!f.c||f.ms==null)return;rows.push({l,p:f.p,c:f.c,r:f.r,ms:f.ms})});
+ rows.sort((x,y)=>x.ms-y.ms||String(x.l.id).localeCompare(String(y.l.id)));
+ const rc={},cc={};rows.forEach(x=>{x.pg=rc[x.r.id]=(rc[x.r.id]||0)+1;x.pc=cc[x.c.id]=(cc[x.c.id]||0)+1;pos[x.l.id]=x});
+ return{rows,pos}}
+const colores=()=>{const c=S.col||{};return{p:c.p||'#12355b',s:c.s||'#e6ebf2',f:c.f||'#ffffff'}};
+const ctr=h=>{const m=/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(h);if(!m)return'#000';const[r,g,b]=[1,2,3].map(i=>parseInt(m[i],16));return(0.299*r+0.587*g+0.114*b)>150?'#000':'#fff'};
+function setCol(k,v){S.col={...colores(),[k]:v};save()}
+const REPCSS=`.rep{background:var(--bg);color:#222;padding:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rep table.pg,.rep table.pg>thead>tr>td,.rep table.pg>tbody>tr>td,.rep table.pg>tfoot>tr>td{border:none;padding:0;background:transparent;width:100%;margin:0}
+.rep table.rt{border-collapse:collapse;width:100%;margin:6px 0 14px;background:transparent}
+.rep table.rt th,.rep table.rt td{border:1px solid #999;padding:4px 6px;text-align:left}
+.rep table.rt thead th.tt{border:none;color:var(--p);font-size:18px;padding:10px 2px 4px;background:transparent}
+.rep table.rt tr.hh th{background:var(--s);color:var(--st)}
+.rep h2{color:var(--p)}
+.rep tr{page-break-inside:avoid}
+.rep thead{display:table-header-group}.rep tfoot{display:table-footer-group}
+@media print{.rep{padding:0}}`;
+function rep(){const RK=rank(),K=F.k,C=colores(),modo=K.modo||'carrera',im=k=>S.img[k]?`<img src="${S.img[k]}" style="max-width:100%;display:block;margin:0 auto">`:'';
+ const base=RK.rows.filter(x=>(!K.cat||x.c.id==K.cat)&&(!K.car||x.r.id==K.car));
+ const gr=modo=='categoria'?S.c.map(c=>({n:c.nombre,rows:base.filter(x=>x.c.id==c.id)})):S.r.map(r=>({n:r.nombre,rows:base.filter(x=>x.r.id==r.id)}));
+ const cols=modo=='categoria'?['Pos','Dorsal','Nombre','Club','Tiempo']:['Pos','Dorsal','Nombre','Club','Categoría','Pos. cat.','Tiempo'];
+ const body=gr.map(g=>{const rows=g.rows.filter(x=>fmatch('k',{pos:modo=='categoria'?x.pc:x.pg,dorsal:x.p.dorsal,nom:x.p.nombre+' '+x.p.apellidos,club:x.p.club,pc:x.pc,t:fmt(x.ms)}));if(!rows.length)return'';
+  return`<table class="rt"><thead><tr><th class="tt" colspan="${cols.length}">${esc(g.n)}</th></tr><tr class="hh">${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(x=>modo=='categoria'?`<tr><td>${x.pc}<td>${x.p.dorsal}<td>${esc(x.p.nombre+' '+x.p.apellidos)}<td>${esc(x.p.club||'')}<td>${fmt(x.ms)}</tr>`:`<tr><td>${x.pg}<td>${x.p.dorsal}<td>${esc(x.p.nombre+' '+x.p.apellidos)}<td>${esc(x.p.club||'')}<td>${esc(x.c.nombre)}<td>${x.pc}<td>${fmt(x.ms)}</tr>`).join('')}</tbody></table>`}).join('');
+ const cab=im('h'),pie=im('f');
+ return`<style>${REPCSS}</style><div class="rep" style="--p:${C.p};--s:${C.s};--st:${ctr(C.s)};--bg:${C.f}"><table class="pg">${cab?`<thead><tr><td>${cab}</td></tr></thead>`:''}<tbody><tr><td><h2>${esc(S.t)}</h2>${body||'<p>Aún no hay resultados.</p>'}</td></tr></tbody>${pie?`<tfoot><tr><td>${pie}</td></tr></tfoot>`:''}</table></div>`}
+function vK(){const K=F.k,sel=(id,k,lbl,o)=>`<select id="${id}" onchange="fset('k','${k}',this.value)"><option value="">${lbl}</option>${o.map(([v,t])=>`<option value="${v}" ${K[k]==v?'selected':''}>${esc(t)}</option>`).join('')}</select>`;
+ return`<div class="np"><select id="fm" onchange="fset('k','modo',this.value)"><option value="carrera" ${(K.modo||'carrera')=='carrera'?'selected':''}>General por carrera</option><option value="categoria" ${K.modo=='categoria'?'selected':''}>Por categoría</option></select> ${sel('fr','car','Todas las carreras',S.r.map(r=>[r.id,r.nombre]))} ${sel('fc','cat','Todas las categorías',S.c.map(c=>[c.id,c.nombre+' ('+c.sexo+')']))}<br>${[['pos','Pos'],['dorsal','Dorsal'],['nom','Nombre'],['club','Club'],['pc','Pos. cat.'],['t','Tiempo']].map(([k,l])=>`<input id="f_k_${k}" placeholder="${l}" style="width:90px" value="${esc(K[k]||'')}" oninput="fset('k','${k}',this.value,'f_k_${k}')">`).join(' ')} <button class="b" onclick="fclr('k')">Limpiar</button> <button class="b" onclick="imprimir()">🖨 Imprimir / PDF</button><button class="b" onclick="xl()">Exportar Excel</button><br><small>Los filtros afectan a la pantalla y a la impresión; el Excel exporta todos los resultados del modo elegido. Las posiciones se recalculan solas al cambiar un tiempo.</small></div><div id="rep">${rep()}</div>`}
 function imprimir(){
- if(!document.querySelector('#rep table')){return toast('Aún no hay resultados que imprimir')}
- const h='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(S.t)+'</title><style>body{font-family:system-ui,sans-serif;margin:20px}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #999;padding:4px 6px;text-align:left}th{background:#e6ebf2}h3{page-break-after:avoid}tr{page-break-inside:avoid}img{max-width:100%}</style></head><body>'+rep()+'<script>setTimeout(function(){window.print()},500)<\/script></body></html>';
+ if(!document.querySelector('#rep table.rt')){return toast('Aún no hay resultados que imprimir')}
+ const h='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(S.t)+'</title><style>@page{margin:10mm}html,body{margin:0;background:'+colores().f+';font-family:system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>'+rep()+'<script>setTimeout(function(){window.print()},500)<\/script></body></html>';
  const w=window.open('','_blank');
  if(!w){try{window.print()}catch(e){}toast('El navegador bloquea la impresión desde esta vista. Abre cronometraje.html directamente en el navegador (doble clic en el archivo) y vuelve a probar.');return}
  w.document.open();w.document.write(h);w.document.close()}
-function xl(){const R=res(),wb=XLSX.utils.book_new();S.c.forEach(c=>{if(!R[c.id])return;XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Pos','Dorsal','Nombre','Apellidos','Club','Tiempo'],...R[c.id].map((x,i)=>[i+1,x.p.dorsal,x.p.nombre,x.p.apellidos,x.p.club,fmt(x.ms)])]),c.nombre.replace(/[\\\/?*\[\]:]/g,'').slice(0,31))});if(!wb.SheetNames.length)return toast('Aún no hay resultados');XLSX.writeFile(wb,'resultados.xlsx')}
+function xl(){const RK=rank(),wb=XLSX.utils.book_new(),modo=F.k.modo||'carrera',sn=n=>String(n).replace(/[\\\/?*\[\]:]/g,'').slice(0,31)||'Hoja';
+ const add=(nombre,aoa)=>{let n=sn(nombre),k=1;while(wb.SheetNames.includes(n))n=sn(nombre).slice(0,28)+'_'+(++k);XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),n)};
+ if(modo=='categoria')S.c.forEach(c=>{const rs=RK.rows.filter(x=>x.c.id==c.id);if(rs.length)add(c.nombre,[['Pos','Dorsal','Nombre','Apellidos','Club','Tiempo'],...rs.map(x=>[x.pc,x.p.dorsal,x.p.nombre,x.p.apellidos,x.p.club,fmt(x.ms)])])});
+ else S.r.forEach(r=>{const rs=RK.rows.filter(x=>x.r.id==r.id);if(rs.length)add(r.nombre,[['Pos','Dorsal','Nombre','Apellidos','Club','Categoría','Pos. categoría','Tiempo'],...rs.map(x=>[x.pg,x.p.dorsal,x.p.nombre,x.p.apellidos,x.p.club,x.c.nombre,x.pc,fmt(x.ms)])])});
+ if(!wb.SheetNames.length)return toast('Aún no hay resultados');XLSX.writeFile(wb,'resultados.xlsx')}
 // ---- Datos
 function imp(f){const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.target.result,{cellDates:true}),rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);let n=0;
  rows.forEach(o=>{const g={};for(const k in o)g[k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f\s_.]/g,'')]=o[k];
@@ -272,6 +334,24 @@ function imp(f){const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.targe
  const p={dorsal:+g.dorsal,nombre:g.nombre||'',apellidos:g.apellidos||'',club:g.club||'',nac:String(nac),sexo:/^(f|mu)/i.test(String(g.sexo||'').trim())?'F':'M',fed:si(g.federado),loc:si(g.local)};
  if(!p.dorsal)return;const i=S.p.findIndex(x=>x.dorsal==p.dorsal);p._m=Date.now();if(i<0){p.id=uid();p.salio=false;S.p.push(p)}else{p.id=S.p[i].id;p.salio=S.p[i].salio;if(S.p[i].tsal)p.tsal=S.p[i].tsal;S.p[i]=p}n++});
  save();toast(n+' participantes importados');view()};r.readAsArrayBuffer(f)}
+const nk=k=>String(k).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f\s_.\-]/g,'');
+function rdX(f,cb){if(!f)return;const r=new FileReader();r.onload=e=>{let rows;try{const wb=XLSX.read(e.target.result,{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{raw:false,defval:''}).map(o=>{const g={};for(const k in o)g[nk(k)]=String(o[k]).trim();return g})}catch(x){return toast('Archivo no válido')}cb(rows)};r.readAsArrayBuffer(f)}
+const gv=(g,...ks)=>{for(const k of ks)if(g[k]!==undefined&&g[k]!=='')return g[k];return''};
+const siV=v=>/^(s|si|sí|x|1|true|yes|verdadero)/i.test(String(v||'').trim());
+const secs=(v,tod)=>{const p=String(v).trim().split(':');if(!String(v).trim()||p.some(x=>x===''||isNaN(x)))return null;const n=p.map(Number).reverse();if(tod&&p.length==2)return n[1]*3600+n[0]*60;return(n[2]||0)*3600+(n[1]||0)*60+(n[0]||0)};
+function asegP(d){let p=S.p.find(x=>x.dorsal==d);if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p)}return p}
+function impX(k,f){rdX(f,rows=>{let n=0,sk=0;
+ if(k=='c')rows.forEach(g=>{const nombre=gv(g,'nombre','categoria'),ini=+gv(g,'ini','inicio','anoinicio','desde'),fin=+gv(g,'fin','anofin','hasta'),sx=gv(g,'sexo').toUpperCase(),sexo=/^(F|MU|FEM)/.test(sx)?'F':/^(X|MIX)/.test(sx)?'X':'M';
+  if(!nombre||!ini||!fin){sk++;return}const o=S.c.find(c=>c.nombre.toLowerCase()==nombre.toLowerCase()&&c.sexo==sexo);if(o){o.ini=ini;o.fin=fin}else S.c.push({id:uid(),nombre,ini,fin,sexo});n++});
+ if(k=='r')rows.forEach(g=>{const nombre=gv(g,'nombre','carrera'),hora=gv(g,'hora','horainicio','horaprevista'),cs=gv(g,'categorias','categoria').split(/[;,|]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+  if(!nombre){sk++;return}const ids=[];cs.forEach(nm=>S.c.forEach(c=>{const a=c.nombre.toLowerCase(),x=c.sexo.toLowerCase();if([a,a+' '+x,a+' ('+x+')'].includes(nm)&&!ids.includes(c.id))ids.push(c.id)}));
+  let hh='';if(hora){const q=secs(hora,1);if(q!=null)hh=String(q/3600|0).padStart(2,'0')+':'+String((q/60|0)%60).padStart(2,'0')}
+  const o=S.r.find(r=>r.nombre.toLowerCase()==nombre.toLowerCase());if(o){if(hh)o.hora=hh;if(ids.length)o.cats=ids}else S.r.push({id:uid(),nombre,hora:hh,cats:ids,t0:null});n++});
+ if(k=='s')rows.forEach(g=>{const d=+gv(g,'dorsal');if(!d){sk++;return}const v=gv(g,'salio','hasalido','salido','salida');if(v!==''&&!siV(v))return;const p=asegP(d);if(!p.salio){p.salio=true;const q=secs(gv(g,'hora','horasalida'),1),t=new Date();if(q!=null)t.setHours(q/3600|0,(q/60|0)%60,q%60,0);p.tsal=t.getTime()}n++});
+ if(k=='l'){rows.forEach(g=>{const d=+gv(g,'dorsal');if(!d){sk++;return}const p=asegP(d),r=raceOf(catOf(p)),tm=gv(g,'tiempo','time'),hr=gv(g,'hora','horallegada','horadellegada');let ts=null;
+  if(tm!==''){const q=secs(tm);if(q!=null&&r&&r.t0)ts=r.t0+q*1000}else if(hr!==''){const q=secs(hr,1);if(q!=null){const t=new Date(r&&r.t0?r.t0:Date.now());t.setHours(q/3600|0,(q/60|0)%60,q%60,0);ts=t.getTime()}}
+  if(ts==null||S.l.some(x=>x.d==d&&x.ts==ts)){sk++;return}const l={id:uid(),d,ts};if(siV(gv(g,'provisional')))l.prov=true;S.l.push(l);n++});S.l.sort((x,y)=>x.ts-y.ts)}
+ save();toast(n+' importados'+(sk?' · '+sk+' omitidos (datos incompletos, ya existentes, o carrera sin hora de salida)':''));view()})}
 function img(k,f){if(!f)return;const r=new FileReader();r.onload=e=>{S.img[k]=e.target.result;save();view()};r.readAsDataURL(f)}
 function bak(){dl(S.nombre,pack(S))}
 function rest(f){if(!f)return;const r=new FileReader();r.onload=async e=>{try{const d=unpack(JSON.parse(e.target.result));if(await ask('Esto reemplazará los datos de este evento por los del fichero. Con la sincronización activa, lo que no esté en el fichero también se borrará en la nube. ¿Continuar?')){const keep=new Set([...d.p,...d.c,...d.r,...d.l].map(x=>x.id)),ds=new Set([...(S.del||[]),...[...S.p,...S.c,...S.r,...S.l].filter(x=>x.id&&!keep.has(x.id)).map(x=>x.id)]);Object.assign(S,d);S.del=[...ds].filter(id=>!keep.has(id));save();view()}}catch(x){toast('Archivo no válido')}};r.readAsText(f)}
@@ -279,11 +359,19 @@ function vD(){return`<h2>Datos del evento</h2><div class="card"><b>Nombre del ev
 <div class="card"><b>Título del informe</b><br><input style="width:90%" value="${S.t}" onchange="S.t=this.value;save()"><br><br>
 Imagen cabecera: <input type=file accept="image/*" onchange="img('h',this.files[0])"> <button class="b r" onclick="S.img.h='';save();view()">Quitar</button><br>
 Imagen pie: <input type=file accept="image/*" onchange="img('f',this.files[0])"> <button class="b r" onclick="S.img.f='';save();view()">Quitar</button></div>
-<div class="card"><b>Importar participantes (Excel/CSV)</b><br>Columnas: dorsal, nombre, apellidos, club, fecha_nacimiento, sexo (M/F), federado, local<br><input type=file accept=".xlsx,.xls,.csv" onchange="imp(this.files[0])"></div>
+<div class="card"><b>Colores de los informes</b><br>Principal (título y categorías): <input type=color value="${colores().p}" onchange="setCol('p',this.value)"> Secundario (cabecera de las tablas): <input type=color value="${colores().s}" onchange="setCol('s',this.value)"> Fondo: <input type=color value="${colores().f}" onchange="setCol('f',this.value)"> <button class="b" onclick="S.col=null;save();view()">Restablecer</button></div>
+<div class="card"><b>Importar desde Excel/CSV</b> (primera hoja; la primera fila lleva los nombres de columna)
+<p><b>Participantes</b> · dorsal, nombre, apellidos, club, fecha_nacimiento, sexo (M/F), federado, local<br><input type=file accept=".xlsx,.xls,.csv" onchange="imp(this.files[0]);this.value=''"></p>
+<p><b>Categorías</b> · nombre, año_inicio, año_fin, sexo (M/F/X)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('c',this.files[0]);this.value=''"></p>
+<p><b>Carreras</b> · nombre, hora_inicio, categorias (separadas por ; o ,)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('r',this.files[0]);this.value=''"></p>
+<p><b>Control de salida</b> · dorsal, salido (sí/no, opcional), hora (opcional)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('s',this.files[0]);this.value=''"></p>
+<p><b>Llegadas de meta</b> · dorsal y tiempo (hh:mm:ss desde la salida de su carrera) o hora (hora del día); provisional (opcional)<br><input type=file accept=".xlsx,.xls,.csv" onchange="impX('l',this.files[0]);this.value=''"></p></div>
 <div class="card"><b>Fichero del evento (.json)</b><br>Contiene todas las tablas. Úsalo para llevar el evento a otro dispositivo, subirlo a la nube o archivarlo.<br><button class="b" onclick="bak()">Descargar evento</button> Cargar desde fichero: <input type=file accept=".json" onchange="rest(this.files[0]);this.value=''"><br>${FH?'Vinculado a <b>'+esc(FH.name)+'</b> (se guarda solo con cada cambio) <button class="b" onclick="FH=null;view()">Desvincular</button>':window.showSaveFilePicker?'<button class="b" onclick="vinc()">Vincular fichero (guardado automático)</button>':'<i>Tu navegador no permite vincular ficheros; usa Descargar evento.</i>'}</div>
 <div class="card"><b>Sincronización con la nube</b><br>${cfg.url?`<button class="b" onclick="sync()">⇅ Sincronizar ahora</button> <label><input type=checkbox ${cfg.auto?'checked':''} onchange="cfgAuto(this.checked)"> Automática (cada pocos segundos)</label><div id="sy">${esc(syncMsg)}</div>`:'Configura Firebase en la página de eventos (botón ⌂ Eventos).'}</div>
-<div class="card"><button class="b r" onclick="ask('¿Borrar TODAS las llegadas y salidas?').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
+<div class="card"><button class="b r" onclick="askCode('Vas a borrar <b>todas las llegadas y las salidas</b>. No se puede deshacer.').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
 function ordenar(){S.c.sort((a,b)=>(a.ini-b.ini)||(a.fin-b.fin)||String(a.sexo).localeCompare(b.sexo));S.r.sort((a,b)=>(a.hora||'99:99').localeCompare(b.hora||'99:99'))}
 function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus();if(tab=='s')$('#sal')?.focus()}
+document.addEventListener('click',e=>{if(!cur||tab!='m'||document.querySelector('.modal'))return;if(e.target.closest&&e.target.closest('input,select,textarea,button,a'))return;setTimeout(()=>{if(document.querySelector('.modal')||!cur||tab!='m')return;const a=document.activeElement;if(!a||a===document.body||!/INPUT|SELECT|TEXTAREA/.test(a.tagName))focoMeta()},0)});
+document.addEventListener('click',e=>{if(!dupF)return;const t=e.target;if(t&&t.closest&&t.closest('.dupb,#mt,.modal'))return;dupF=false;if(F.m.d){F.m.d='';if(tab=='m'&&cur)view()}});
 migrar();view();if(cfg.key&&CRED.email)login().then(()=>view()).catch(()=>{});
 </script></body></html>
