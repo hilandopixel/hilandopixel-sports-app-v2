@@ -71,6 +71,7 @@ function toast(t){const e=document.createElement('div');e.textContent=t;e.style.
 function ask(t){return new Promise(ok=>{const d=document.createElement('div');d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';d.innerHTML='<div class="card" style="max-width:340px">'+t+'<br><br><button class="b" id="y">Aceptar</button><button class="b r" id="n">Cancelar</button></div>';document.body.append(d);d.onpointerdown=e=>{if(e.target===d){d.remove();focoMeta();ok(false)}};d.querySelector('#y').onclick=()=>{d.remove();focoMeta();ok(true)};d.querySelector('#n').onclick=()=>{d.remove();focoMeta();ok(false)}})}
 const uid=()=>Math.random().toString(36).slice(2,9);
 const fmt=ms=>{let s=Math.floor(Math.max(0,ms)/1000);return[s/3600|0,(s/60|0)%60,s%60].map(x=>String(x).padStart(2,'0')).join(':')};
+const eqD=(a,b)=>a!==''&&a!=null&&b!==''&&b!=null&&+a===+b;
 const yr=p=>p.nac?+String(p.nac).slice(0,4):0;
 const catOf=p=>S.c.find(c=>yr(p)>=c.ini&&yr(p)<=c.fin&&(c.sexo=='X'||c.sexo==p.sexo));
 const raceOf=c=>c&&S.r.find(r=>r.cats.includes(c.id));
@@ -105,7 +106,7 @@ let snap={},cfgSnap='',noET=false;
 const rk=x=>{const{_m,...o}=x;return JSON.stringify(o)};
 function stamp(init){const now=Date.now();['p','c','r','l','ct','cp'].forEach(t=>(S[t]||[]).forEach(x=>{if(!x.id)return;const k=rk(x);if(snap[x.id]!==k){snap[x.id]=k;if(!init)x._m=now}}));
  const ck=JSON.stringify([S.nombre,S.t,S.img,S.col]);if(ck!==cfgSnap){cfgSnap=ck;if(!init)S.cfgM=now}}
-const fixP=p=>p.id?p:{...p,id:p.dorsal?'d'+p.dorsal:uid()};
+const fixP=p=>p.id?p:{...p,id:p.dorsal!==''&&p.dorsal!=null?'d'+p.dorsal:uid()};
 function mergeT(a,b,del){const m=new Map();[...a,...b].forEach(x=>{if(!x.id||del.has(x.id))return;const o=m.get(x.id);if(!o||(x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&JSON.stringify(x)>JSON.stringify(o)))m.set(x.id,x)});return[...m.values()]}
 function dedup(p,del){const g={};p.forEach(x=>{const nm=(x.nombre+' '+x.apellidos).trim().toLowerCase();if(x.dorsal===''||x.dorsal==null||!nm)return;const k=x.dorsal+'|'+nm,o=g[k];if(!o){g[k]=x;return}const w=((x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&x.id>o.id))?x:o;g[k]=w;del.add((w===x?o:x).id)});return p.filter(x=>!del.has(x.id))}
 const fp=x=>JSON.stringify([['p','c','r','l','ct','cp'].map(t=>(x[t]||[]).map(a=>a.id+':'+(a._m||0)).sort()),(x.del||[]).slice().sort(),x.cfgM||0]);
@@ -211,8 +212,8 @@ function fd(el,i){const d=el.value.replace(/\D/g,'').slice(0,8),f=d.length>4?d.s
  let nac=null;if(!d)nac='';else if(d.length==8){const D=+d.slice(0,2),M=+d.slice(2,4),Y=+d.slice(4),t=new Date(Y,M-1,D);if(Y>=1900&&Y<=new Date().getFullYear()&&t.getMonth()==M-1&&t.getDate()==D)nac=`${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`}
  el.style.outline=d.length==8&&nac===null?'2px solid #b3261e':'';
  if(nac!==null){S.p[i].nac=nac;save();const y=$('#y'+i),k=$('#k'+i);if(y)y.textContent=yr(S.p[i])||'';if(k)k.innerHTML=catOf(S.p[i])?.nombre||'<i>sin categoría</i>'}}
-function ed(t,i,k,v){if(t=='p'&&k=='dorsal'&&!v){S.p[i].dorsal='';save();return}
- if(t=='p'&&k=='dorsal'&&S.p.some((x,j)=>j!=i&&x.dorsal==v)){toast('Dorsal duplicado');return view()}
+function ed(t,i,k,v){if(t=='p'&&k=='dorsal'&&(v===''||v==null)){S.p[i].dorsal='';save();return}
+ if(t=='p'&&k=='dorsal'&&S.p.some((x,j)=>j!=i&&eqD(x.dorsal,v))){toast('Dorsal duplicado');return view()}
  S[t][i][k]=v;save();if(t=='p'&&k=='nac')view()}
 function add(t){const o=T[t].nuevo();if(!o)return;
  if(t=='p'){S.p.unshift(o);if($('#q'))$('#q').value='';save();view();document.querySelector('#v table tr:nth-child(2) input')?.focus()}
@@ -236,11 +237,11 @@ const dd={};if(t=='p')S.p.forEach(x=>{dd[x.dorsal]=(dd[x.dorsal]||0)+1});
 // ---- Meta
 async function salida(i){const r=S.r[i];if(r.t0&&!(await ask('Esta carrera ya tiene salida. ¿Reiniciar?')))return;r.t0=Date.now();save();view()}
 function ajustar(i){const v=$('#aj'+i).value;if(!v)return toast('Escribe el tiempo, ej. 15:00');const p=v.split(':').map(Number).reverse();const ms=((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;S.r[i].t0=Date.now()-ms;save();view()}
-function meta(){const ts=Date.now(),d=+$('#dor').value;if(!d){focoMeta();return}
- if(!S.p.some(x=>x.dorsal==d)){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false})}
+function meta(){const ts=Date.now(),dv=String($('#dor').value).trim(),d=+dv;if(dv===''||isNaN(d)){focoMeta();return}
+ if(!S.p.some(x=>eqD(x.dorsal,d))){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false})}
  S.l.push({id:uid(),d,ts});qclear();save();view();focoMeta()}
 function mins(){const m={};S.l.forEach(l=>{if(l.prov)return;const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
-function info(l){const p=S.p.find(x=>x.dorsal==l.d),c=p&&catOf(p),r=raceOf(c);return{p,c,r,ms:r&&r.t0?l.ts-r.t0:null}}
+function info(l){const p=S.p.find(x=>eqD(x.dorsal,l.d)),c=p&&catOf(p),r=raceOf(c);return{p,c,r,ms:r&&r.t0?l.ts-r.t0:null}}
 function tEdit(td,id){if(td.querySelector('input'))return;const cur=td.textContent.trim(),v=cur=='--'?'':cur;
  td.innerHTML=`<input value="${v}" placeholder="hh:mm:ss" style="width:84px">`;const i=td.querySelector('input');
  const done=ok=>{i.onblur=null;const val=i.value.trim();if(ok&&val&&val!==v)editL(id,val);else{td.textContent=cur;focoMeta()}};
@@ -248,7 +249,7 @@ function tEdit(td,id){if(td.querySelector('input'))return;const cur=td.textConte
 function editL(id,v){const l=S.l.find(x=>x.id==id),f=info(l);if(f.ms==null)return toast('La carrera no tiene salida');if(!v)return;const p=v.split(':').map(Number).reverse();l.ts=f.r.t0+((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;save();view()}
 function provL(id){const l=S.l.find(x=>x.id==id);if(!l)return;if(l.prov)delete l.prov;else l.prov=true;save();view()}
 async function delL(id){if(await askCode('Vas a borrar <b>1 llegada</b>. No se puede deshacer.')){(S.del=S.del||[]).push(id);S.l=S.l.filter(x=>x.id!=id);save();view()}}
-function marcarSalida(){const e=$('#sal'),d=+e.value;if(!d)return;const p=S.p.find(x=>x.dorsal==d);
+function marcarSalida(){const e=$('#sal'),d=+e.value;if(String(e.value).trim()===''||isNaN(d))return;const p=S.p.find(x=>eqD(x.dorsal,d));
  if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:true,tsal:Date.now()});save();toast('Dorsal '+d+' creado en participantes');view();return}
  if(p.salio)toast('El dorsal '+d+' ya estaba marcado como salido');else{p.salio=true;p.tsal=Date.now();save()}
  view()}
@@ -263,9 +264,9 @@ async function delCtl(id){if(ctlSel=='k0')return deshacerSalida(id);
  if(await askCode('Vas a borrar <b>1 registro</b> de este control.')){S.del=[...new Set([...(S.del||[]),id])];S.cp=S.cp.filter(x=>x.id!=id);SEL.s.delete(id);save();view()}}
 function marcarCtl(){if(ctlSel=='k0')return marcarSalida();
  const c=(S.ct||[]).find(x=>x.id==ctlSel);if(!c){ctlSel='k0';return view()}
- const e=$('#sal'),d=+e.value;if(!d)return;
+ const e=$('#sal'),d=+e.value;if(String(e.value).trim()===''||isNaN(d))return;
  if((S.cp||[]).some(x=>x.d==d&&x.c==c.id)){toast('El dorsal '+d+' ya está registrado en «'+c.nombre+'»');e.value='';return}
- const nuevo=!S.p.some(x=>x.dorsal==d);asegP(d);(S.cp=S.cp||[]).push({id:uid(),d,c:c.id,ts:Date.now()});save();if(nuevo)toast('Dorsal '+d+' creado en participantes');view()}
+ const nuevo=!S.p.some(x=>eqD(x.dorsal,d));asegP(d);(S.cp=S.cp||[]).push({id:uid(),d,c:c.id,ts:Date.now()});save();if(nuevo)toast('Dorsal '+d+' creado en participantes');view()}
 function popCtl(id){const c=id?(S.ct||[]).find(x=>x.id==id):null,d=document.createElement('div'),close=()=>{d.remove();focoMeta()};
  d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
  d.innerHTML=`<div class="card" style="max-width:380px;width:92%"><h3 style="margin-top:0">${c?'Editar control':'Añadir control'}</h3>Nombre del control<br><input id="ct_n" style="width:100%;font-size:18px" value="${esc(c?c.nombre:'')}"><br><br>Punto kilométrico (km)<br><input id="ct_k" inputmode="decimal" style="width:140px;font-size:18px" value="${c?c.km:''}"><br><small>El km 0 es la Salida, que ya existe. Para un control intermedio usa un km mayor que 0 (admite decimales).</small><br><br><button class="b" id="ok">Guardar</button>${c?'<button class="b r" id="del">Borrar control</button>':''}<button class="b" id="no">Cancelar</button></div>`;
@@ -280,7 +281,7 @@ function popCtl(id){const c=id?(S.ct||[]).find(x=>x.id==id):null,d=document.crea
  g('#ct_n').focus()}
 function vS(){const c=ctlAct(),esS=c.id=='k0',o=SORT.s,nm=p=>((p.nombre||'')+' '+(p.apellidos||'')).trim(),car=p=>{const r=raceOf(catOf(p));return r?r.nombre:''};
  const tmp=x=>{const r=raceOf(catOf(x.p));return r&&r.t0&&x.ts?x.ts-r.t0:null};
- const all=esS?S.p.filter(p=>p.salio).map(p=>({id:p.id,p,ts:p.tsal})):(S.cp||[]).filter(x=>x.c==c.id).map(x=>({id:x.id,p:S.p.find(q=>q.dorsal==x.d)||{dorsal:x.d},ts:x.ts}));
+ const all=esS?S.p.filter(p=>p.salio).map(p=>({id:p.id,p,ts:p.tsal})):(S.cp||[]).filter(x=>x.c==c.id).map(x=>({id:x.id,p:S.p.find(q=>eqD(q.dorsal,x.d))||{dorsal:x.d},ts:x.ts}));
  const val={dorsal:x=>+x.p.dorsal||0,nombre:x=>nm(x.p).toLowerCase(),carrera:x=>car(x.p).toLowerCase(),hora:x=>x.ts||0,tiempo:x=>tmp(x)??1e15};
  const fvs=x=>({dorsal:x.p.dorsal,nom:nm(x.p)||'sin datos',car:car(x.p)||'-',hora:x.ts?new Date(x.ts).toLocaleTimeString():'--',tpo:tmp(x)==null?'--':fmt(tmp(x))});
  const rows=all.filter(x=>fmatch('s',fvs(x))).sort((a,b)=>{const u=(val[o.k]||val.hora)(a),v=(val[o.k]||val.hora)(b);return(u<v?-1:u>v?1:0)*o.d});
@@ -310,15 +311,15 @@ function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
  g('nac').oninput=()=>maskD(g('nac'));d.onkeydown=e=>{if(e.key=='Escape'){d.remove();focoMeta()}};
  d.querySelector('#no').onclick=()=>{d.remove();focoMeta()};
  d.querySelector('#ok').onclick=()=>{const q=S.p.find(x=>x.id==id);if(!q){d.remove();return toast('El participante ya no existe')}
-  const dor=+g('dorsal').value;if(!dor)return toast('El dorsal es obligatorio');
-  if(S.p.some(x=>x.id!=id&&x.dorsal==dor))return toast('Dorsal duplicado');
+  const dv=String(g('dorsal').value).trim(),dor=+dv;if(dv===''||isNaN(dor))return toast('El dorsal es obligatorio');
+  if(S.p.some(x=>x.id!=id&&eqD(x.dorsal,dor)))return toast('Dorsal duplicado');
   const nac=parseD(g('nac').value);if(nac===null)return toast('Fecha no válida (dd/mm/aaaa)');
   q.dorsal=dor;q.nombre=g('nombre').value.trim();q.apellidos=g('apellidos').value.trim();q.club=g('club').value.trim();q.nac=nac;q.sexo=g('sexo').value;q.fed=g('fed').checked;q.loc=g('loc').checked;
   const sal=g('salio').checked;if(sal&&!q.salio)q.tsal=Date.now();if(!sal)delete q.tsal;q.salio=sal;
   d.remove();save();view()};
  g('nombre').focus()}
 function corregirD(id,n){const l=S.l.find(x=>x.id==id);if(!l)return;const old=l.d;asegP(n);l.d=n;
- const po=S.p.find(x=>x.dorsal==old);
+ const po=S.p.find(x=>eqD(x.dorsal,old));
  if(po&&old!=n&&!S.l.some(x=>x.d==old)&&!po.salio&&!po.fed&&!po.loc&&!['nombre','apellidos','club','nac','sexo'].some(k=>String(po[k]||'').trim())){S.del=[...new Set([...(S.del||[]),po.id])];S.p=S.p.filter(x=>x.id!=po.id)}
  save()}
 function dorMenu(id){const l=S.l.find(x=>x.id==id);if(!l)return;const d=document.createElement('div'),close=()=>{d.remove();focoMeta()};
@@ -330,11 +331,11 @@ function dorMenu(id){const l=S.l.find(x=>x.id==id);if(!l)return;const d=document
  q('#dm_x').onclick=close;
  q('#dm_m').onclick=()=>{d.remove();popD(l.d)};
  q('#dm_c').onclick=()=>{q('#dm_b').innerHTML=`Nuevo dorsal para esta llegada:<br><input id="dm_n" type="number" style="font-size:24px;width:150px"><div id="dm_p" style="margin:8px 0;min-height:20px"></div><button class="b" id="dm_ok">Aceptar</button><button class="b r" id="dm_no">Cancelar</button>`;
-  const n=q('#dm_n');n.oninput=()=>{const v=+n.value,p=v?S.p.find(x=>x.dorsal==v):null;q('#dm_p').textContent=!v?'':v==l.d?'Es el mismo dorsal':p?(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'Participante sin datos')+(raceOf(catOf(p))?' · '+raceOf(catOf(p)).nombre:''):'El dorsal no existe: se creará vacío'};
+  const n=q('#dm_n');n.oninput=()=>{const sv=String(n.value).trim(),v=+sv,p=sv!==''?S.p.find(x=>eqD(x.dorsal,v)):null;q('#dm_p').textContent=sv===''?'':v==l.d?'Es el mismo dorsal':p?(((p.nombre||'')+' '+(p.apellidos||'')).trim()||'Participante sin datos')+(raceOf(catOf(p))?' · '+raceOf(catOf(p)).nombre:''):'El dorsal no existe: se creará vacío'};
   q('#dm_no').onclick=close;
-  const ok=()=>{const v=+n.value;if(!v)return toast('Escribe el nuevo dorsal');if(v==l.d)return close();corregirD(id,v);d.remove();view();focoMeta()};
+  const ok=()=>{const sv=String(n.value).trim(),v=+sv;if(sv===''||isNaN(v))return toast('Escribe el nuevo dorsal');if(v==l.d)return close();corregirD(id,v);d.remove();view();focoMeta()};
   q('#dm_ok').onclick=ok;n.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();ok()}};n.focus()}}
-function popD(d){let p=S.p.find(x=>x.dorsal==d);if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p);save()}popP(p.id)}
+function popD(d){let p=S.p.find(x=>eqD(x.dorsal,d));if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p);save()}popP(p.id)}
 function insL(id,mode){const i=S.l.findIndex(x=>x.id==id);if(i<0)return;const R=S.l[i];let ts;
  if(mode=='a'){const nx=S.l[i+1];ts=R.ts+1000;if(nx&&nx.ts<=ts)ts=R.ts+Math.floor((nx.ts-R.ts)/2)}
  else{const pv=S.l[i-1];ts=R.ts-1000;if(pv&&pv.ts>=ts)ts=pv.ts+Math.floor((R.ts-pv.ts)/2)}
@@ -343,24 +344,24 @@ function popL(o){const d=document.createElement('div'),fh=t=>new Date(t).toTimeS
  d.className='modal';d.style.cssText='position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9';
  d.innerHTML=`<div class="card" style="max-width:380px;width:92%"><h3 style="margin-top:0">Añadir llegada</h3>Dorsal<br><input id="il_d" type="number" style="font-size:24px;width:150px"><div id="il_p" style="margin:8px 0;min-height:20px"></div>Tiempo de carrera (hh:mm:ss)<br><input id="il_t" placeholder="00:31:10" style="font-size:20px;width:150px"><div style="margin:8px 0">Hora de llegada (automática): <b id="il_h">${fh(o.ts)}</b></div><small>Si no escribes el tiempo, se usa el propuesto (1 segundo respecto a la fila contigua).</small><br><br><button class="b" id="ok">Añadir</button><button class="b r" id="no">Cancelar</button></div>`;
  document.body.append(d);const g=k=>d.querySelector('#il_'+k);
- const raza=()=>{const dor=+g('d').value;if(!dor)return{};const p=S.p.find(x=>x.dorsal==dor);return{p,r:p?raceOf(catOf(p)):null}};
+ const raza=()=>{const dv=String(g('d').value).trim(),dor=+dv;if(dv===''||isNaN(dor))return{};const p=S.p.find(x=>eqD(x.dorsal,dor));return{p,r:p?raceOf(catOf(p)):null}};
  const calc=()=>{const{r}=raza(),v=g('t').value.trim();if(man&&v!==''){const q=secs(v);if(q==null)return{err:'Tiempo no válido (hh:mm:ss)'};if(!r||!r.t0)return{err:'No se puede calcular la hora: el dorsal no tiene una carrera con salida'};return{ts:r.t0+q*1000}}return{ts:o.ts}};
  const show=()=>{const{p,r}=raza(),c=calc(),m=d.querySelector('#il_p');g('h').textContent=c.ts?fh(c.ts):'--:--:--';
-  m.textContent=!+g('d').value?'':!p?'El dorsal no existe: se creará vacío (se usa la hora propuesta)':!r?'Sin carrera (revisa fecha de nacimiento y sexo): se usa la hora propuesta':!r.t0?r.nombre+' · sin salida: se usa la hora propuesta':r.nombre;
+  m.textContent=String(g('d').value).trim()===''?'':!p?'El dorsal no existe: se creará vacío (se usa la hora propuesta)':!r?'Sin carrera (revisa fecha de nacimiento y sexo): se usa la hora propuesta':!r.t0?r.nombre+' · sin salida: se usa la hora propuesta':r.nombre;
   if(c.err)m.textContent=c.err};
  const fill=()=>{const{r}=raza();if(!man){g('t').value=r&&r.t0?fmt(o.ts-r.t0):''}};
  g('d').oninput=()=>{fill();show()};g('t').oninput=()=>{man=g('t').value.trim()!=='';if(!man)fill();show()};
  const close=()=>{d.remove();focoMeta()};
  d.onpointerdown=e=>{if(e.target===d)close()};d.onkeydown=e=>{if(e.key=='Escape')close();if(e.key=='Enter')d.querySelector('#ok').click()};
  d.querySelector('#no').onclick=close;
- d.querySelector('#ok').onclick=()=>{const dor=+g('d').value;if(!dor)return toast('Escribe el dorsal');const c=calc();if(c.err)return toast(c.err);
+ d.querySelector('#ok').onclick=()=>{const dv=String(g('d').value).trim(),dor=+dv;if(dv===''||isNaN(dor))return toast('Escribe el dorsal');const c=calc();if(c.err)return toast(c.err);
   const a=S.l.findIndex(x=>x.id==o.anchor),at=a<0?S.l.length:(o.mode=='a'?a+1:a);asegP(dor);S.l.splice(at,0,{id:uid(),d:dor,ts:c.ts});d.remove();save();view();focoMeta()};
  g('d').focus()}
 function vMeta(){const M=mins(),K=cnt(),RK=rank(),B=S.r.map(()=>[]);
  S.p.forEach(p=>{const r=raceOf(catOf(p));if(r&&p.dorsal!=='')B[S.r.indexOf(r)].push(p)});
  const bd='display:inline-block;padding:2px 9px;border-radius:12px;margin:2px;font-weight:bold;font-size:13px;cursor:pointer;';
  const badge=p=>`<span onclick="popP('${p.id}')" title="${esc(((p.nombre||'')+' '+(p.apellidos||'')).trim())}" style="${bd}${M[p.dorsal]?'background:#43a047;color:#fff':!p.salio?'background:#e53935;color:#fff':'background:#fdd835;color:#000'}">${p.dorsal}</span>`;
- const U=Object.keys(M).map(Number).filter(d=>{const p=S.p.find(x=>x.dorsal==d);return!p||!((p.nombre||'').trim()||(p.apellidos||'').trim())}).sort((a,b)=>a-b);
+ const U=Object.keys(M).map(Number).filter(d=>{const p=S.p.find(x=>eqD(x.dorsal,d));return!p||!((p.nombre||'').trim()||(p.apellidos||'').trim())}).sort((a,b)=>a-b);
  const unreg=`<div class="card"><b>Llegadas sin datos de participante (${U.length})</b><div style="margin:6px 0">${U.length?U.map(d=>`<span onclick="popD(${d})" title="Pulsa para completar sus datos" style="${bd}background:#fff;color:#c62828;border:2px solid #c62828">${d}</span>`).join(''):'<small>✓ Todas las llegadas tienen datos</small>'}</div></div>`;
  const dm={};S.l.forEach(l=>{if(!l.prov)(dm[l.d]=dm[l.d]||[]).push(l)});
  const DU=Object.keys(dm).filter(d=>dm[d].length>1).map(Number).sort((a,b)=>a-b);
@@ -445,14 +446,14 @@ function imp(f){const r=new FileReader();r.onload=e=>{const wb=XLSX.read(e.targe
  else if(/^\d{4}$/.test(String(nac)))nac=nac+'-01-01';
  const si=v=>/^(s|si|sí|x|1|true|yes)/i.test(String(v||'').trim());
  const p={dorsal:+g.dorsal,nombre:g.nombre||'',apellidos:g.apellidos||'',club:g.club||'',nac:String(nac),sexo:/^(f|mu)/i.test(String(g.sexo||'').trim())?'F':'M',fed:si(g.federado),loc:si(g.local)};
- if(!p.dorsal)return;const i=S.p.findIndex(x=>x.dorsal==p.dorsal);p._m=Date.now();if(i<0){p.id=uid();p.salio=false;S.p.push(p)}else{p.id=S.p[i].id;p.salio=S.p[i].salio;if(S.p[i].tsal)p.tsal=S.p[i].tsal;S.p[i]=p}n++});
+ if(g.dorsal===undefined||String(g.dorsal).trim()===''||isNaN(p.dorsal))return;const i=S.p.findIndex(x=>eqD(x.dorsal,p.dorsal));p._m=Date.now();if(i<0){p.id=uid();p.salio=false;S.p.push(p)}else{p.id=S.p[i].id;p.salio=S.p[i].salio;if(S.p[i].tsal)p.tsal=S.p[i].tsal;S.p[i]=p}n++});
  save();toast(n+' participantes importados');view()};r.readAsArrayBuffer(f)}
 const nk=k=>String(k).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f\s_.\-]/g,'');
 function rdX(f,cb){if(!f)return;const r=new FileReader();r.onload=e=>{let rows;try{const wb=XLSX.read(e.target.result,{type:'array'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{raw:false,defval:''}).map(o=>{const g={};for(const k in o)g[nk(k)]=String(o[k]).trim();return g})}catch(x){return toast('Archivo no válido')}cb(rows)};r.readAsArrayBuffer(f)}
 const gv=(g,...ks)=>{for(const k of ks)if(g[k]!==undefined&&g[k]!=='')return g[k];return''};
 const siV=v=>/^(s|si|sí|x|1|true|yes|verdadero)/i.test(String(v||'').trim());
 const secs=(v,tod)=>{const p=String(v).trim().split(':');if(!String(v).trim()||p.some(x=>x===''||isNaN(x)))return null;const n=p.map(Number).reverse();if(tod&&p.length==2)return n[1]*3600+n[0]*60;return(n[2]||0)*3600+(n[1]||0)*60+(n[0]||0)};
-function asegP(d){let p=S.p.find(x=>x.dorsal==d);if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p)}return p}
+function asegP(d){let p=S.p.find(x=>eqD(x.dorsal,d));if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p)}return p}
 function impX(k,f){rdX(f,rows=>{let n=0,sk=0;
  if(k=='c')rows.forEach(g=>{const nombre=gv(g,'nombre','categoria'),ini=+gv(g,'ini','inicio','anoinicio','desde'),fin=+gv(g,'fin','anofin','hasta'),sx=gv(g,'sexo').toUpperCase(),sexo=/^(F|MU|FEM)/.test(sx)?'F':/^(X|MIX)/.test(sx)?'X':'M';
   if(!nombre||!ini||!fin){sk++;return}const o=S.c.find(c=>c.nombre.toLowerCase()==nombre.toLowerCase()&&c.sexo==sexo);if(o){o.ini=ini;o.fin=fin}else S.c.push({id:uid(),nombre,ini,fin,sexo});n++});
@@ -460,8 +461,8 @@ function impX(k,f){rdX(f,rows=>{let n=0,sk=0;
   if(!nombre){sk++;return}const ids=[];cs.forEach(nm=>S.c.forEach(c=>{const a=c.nombre.toLowerCase(),x=c.sexo.toLowerCase();if([a,a+' '+x,a+' ('+x+')'].includes(nm)&&!ids.includes(c.id))ids.push(c.id)}));
   let hh='';if(hora){const q=secs(hora,1);if(q!=null)hh=String(q/3600|0).padStart(2,'0')+':'+String((q/60|0)%60).padStart(2,'0')}
   const o=S.r.find(r=>r.nombre.toLowerCase()==nombre.toLowerCase());if(o){if(hh)o.hora=hh;if(ids.length)o.cats=ids;if(dist!=='')o.dist=num(dist);if(dpos!=='')o.dpos=num(dpos);if(dneg!=='')o.dneg=num(dneg)}else S.r.push({id:uid(),nombre,hora:hh,dist:num(dist),dpos:num(dpos),dneg:num(dneg),cats:ids,t0:null});n++});
- if(k=='s')rows.forEach(g=>{const d=+gv(g,'dorsal');if(!d){sk++;return}const v=gv(g,'salio','hasalido','salido','salida');if(v!==''&&!siV(v))return;const p=asegP(d);if(!p.salio){p.salio=true;const q=secs(gv(g,'hora','horasalida'),1),t=new Date();if(q!=null)t.setHours(q/3600|0,(q/60|0)%60,q%60,0);p.tsal=t.getTime()}n++});
- if(k=='l'){rows.forEach(g=>{const d=+gv(g,'dorsal');if(!d){sk++;return}const p=asegP(d),r=raceOf(catOf(p)),tm=gv(g,'tiempo','time'),hr=gv(g,'hora','horallegada','horadellegada');let ts=null;
+ if(k=='s')rows.forEach(g=>{const dv=gv(g,'dorsal'),d=+dv;if(dv===''||isNaN(d)){sk++;return}const v=gv(g,'salio','hasalido','salido','salida');if(v!==''&&!siV(v))return;const p=asegP(d);if(!p.salio){p.salio=true;const q=secs(gv(g,'hora','horasalida'),1),t=new Date();if(q!=null)t.setHours(q/3600|0,(q/60|0)%60,q%60,0);p.tsal=t.getTime()}n++});
+ if(k=='l'){rows.forEach(g=>{const dv=gv(g,'dorsal'),d=+dv;if(dv===''||isNaN(d)){sk++;return}const p=asegP(d),r=raceOf(catOf(p)),tm=gv(g,'tiempo','time'),hr=gv(g,'hora','horallegada','horadellegada');let ts=null;
   if(tm!==''){const q=secs(tm);if(q!=null&&r&&r.t0)ts=r.t0+q*1000}else if(hr!==''){const q=secs(hr,1);if(q!=null){const t=new Date(r&&r.t0?r.t0:Date.now());t.setHours(q/3600|0,(q/60|0)%60,q%60,0);ts=t.getTime()}}
   if(ts==null||S.l.some(x=>x.d==d&&x.ts==ts)){sk++;return}const l={id:uid(),d,ts};if(siV(gv(g,'ignorado','ignorada','provisional')))l.prov=true;S.l.push(l);n++});S.l.sort((x,y)=>x.ts-y.ts)}
  save();toast(n+' importados'+(sk?' · '+sk+' omitidos (datos incompletos, ya existentes, o carrera sin hora de salida)':''));view()})}
