@@ -58,9 +58,9 @@ let IDX=[];try{IDX=JSON.parse(localStorage.getItem('crono_idx'))||[]}catch(e){}
 let S=null,cur=null,FH=null,wt;
 const idxSave=()=>{try{localStorage.setItem('crono_idx',JSON.stringify(IDX))}catch(e){}};
 const newS=n=>({nombre:n,p:[],c:[],r:[],l:[],img:{h:'',f:''},t:n,ct:[],cp:[]});
-const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,cfgM:s.cfgM||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img,col:s.col||null},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l,controles:s.ct||[],pasos:s.cp||[]}});
-const unpack=o=>{if(o&&(o.tablas||o.formato=='cronometraje')){const t=o.tablas||{},c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},col:c.col||null,p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],ct:t.controles||[],cp:t.pasos||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
- if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},col:o.col||null,p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[],ct:o.ct||[],cp:o.cp||[]};throw new Error('formato de datos no válido')};
+const pack=s=>({formato:'cronometraje',version:1,nombre:s.nombre,cid:s.cid,cfgM:s.cfgM||0,mod:s.mod||0,eliminadas:s.del||[],config:{titulo:s.t,img:s.img,col:s.col||null,lcols:s.lcols||null,lsort:s.lsort||null},tablas:{participantes:s.p,categorias:s.c,carreras:s.r,llegadas:s.l,controles:s.ct||[],pasos:s.cp||[]}});
+const unpack=o=>{if(o&&(o.tablas||o.formato=='cronometraje')){const t=o.tablas||{},c=o.config||{};return{nombre:o.nombre||'Evento',t:c.titulo||o.nombre||'Resultados',img:c.img||{h:'',f:''},col:c.col||null,lcols:c.lcols||null,lsort:c.lsort||null,p:(t.participantes||[]).map(fixP),c:t.categorias||[],r:(t.carreras||[]).map(x=>({...x,cats:x.cats||[],t0:x.t0||null})),l:t.llegadas||[],ct:t.controles||[],cp:t.pasos||[],del:o.eliminadas||[],cfgM:o.cfgM||0,mod:o.mod||0,...(o.cid?{cid:o.cid}:{})}}
+ if(o&&Array.isArray(o.p))return{nombre:o.nombre||'Evento importado',t:o.t||'Resultados',img:o.img||{h:'',f:''},col:o.col||null,lcols:o.lcols||null,lsort:o.lsort||null,p:o.p.map(fixP),c:o.c||[],r:o.r||[],l:o.l||[],ct:o.ct||[],cp:o.cp||[]};throw new Error('formato de datos no válido')};
 let cfg={},TOKEN='';try{cfg=JSON.parse(localStorage.getItem('crono_fb'))||{}}catch(e){}
 if('auth' in cfg){delete cfg.auth;try{localStorage.setItem('crono_fb',JSON.stringify(cfg))}catch(e){}}
 let lastKnown=0,st,syncing=false,pend=false,syncMsg='';
@@ -81,7 +81,7 @@ const T={
  r:{n:'Carreras',cols:[['nombre','Nombre'],['hora','Hora inicio prevista','time'],['dist','Distancia (km)','number'],['dpos','Desnivel + (m)','number'],['dneg','Desnivel - (m)','number']],nuevo:()=>({id:uid(),nombre:'Nueva carrera',hora:'',dist:'',dpos:'',dneg:'',cats:[],t0:null})}
 };
 let tab='p';
-const tabs={p:'Participantes',c:'Categorías',r:'Carreras',s:'Control',m:'Meta / Cronómetro',k:'Clasificación',d:'Datos'};
+const tabs={p:'Participantes',c:'Categorías',r:'Carreras',ls:'Listado de salida',s:'Control',m:'Meta / Cronómetro',k:'Clasificación',d:'Datos'};
 let RTOK='',TEXP=0,CRED={};try{CRED=JSON.parse(sessionStorage.getItem('crono_cred'))||{}}catch(e){}
 function credStore(){try{CRED.email||CRED.pass?sessionStorage.setItem('crono_cred',JSON.stringify(CRED)):sessionStorage.removeItem('crono_cred')}catch(e){}}
 function cfgOut(){CRED={};TOKEN='';RTOK='';TEXP=0;credStore();view()}
@@ -105,7 +105,7 @@ function refresh(){const a=document.activeElement,busy=a&&(a.tagName=='INPUT'||a
 let snap={},cfgSnap='',noET=false;
 const rk=x=>{const{_m,...o}=x;return JSON.stringify(o)};
 function stamp(init){const now=Date.now();['p','c','r','l','ct','cp'].forEach(t=>(S[t]||[]).forEach(x=>{if(!x.id)return;const k=rk(x);if(snap[x.id]!==k){snap[x.id]=k;if(!init)x._m=now}}));
- const ck=JSON.stringify([S.nombre,S.t,S.img,S.col]);if(ck!==cfgSnap){cfgSnap=ck;if(!init)S.cfgM=now}}
+ const ck=JSON.stringify([S.nombre,S.t,S.img,S.col,S.lcols,S.lsort]);if(ck!==cfgSnap){cfgSnap=ck;if(!init)S.cfgM=now}}
 const fixP=p=>p.id?p:{...p,id:p.dorsal!==''&&p.dorsal!=null?'d'+p.dorsal:uid()};
 function mergeT(a,b,del){const m=new Map();[...a,...b].forEach(x=>{if(!x.id||del.has(x.id))return;const o=m.get(x.id);if(!o||(x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&JSON.stringify(x)>JSON.stringify(o)))m.set(x.id,x)});return[...m.values()]}
 function dedup(p,del){const g={};p.forEach(x=>{const nm=(x.nombre+' '+x.apellidos).trim().toLowerCase();if(x.dorsal===''||x.dorsal==null||!nm)return;const k=x.dorsal+'|'+nm,o=g[k];if(!o){g[k]=x;return}const w=((x._m||0)>(o._m||0)||((x._m||0)==(o._m||0)&&x.id>o.id))?x:o;g[k]=w;del.add((w===x?o:x).id)});return p.filter(x=>!del.has(x.id))}
@@ -125,7 +125,7 @@ async function sync(quiet){
    const et=r.headers.get('ETag'),R=await r.json();let up=true;
    if(R){const d=unpack(R),del=new Set([...(S.del||[]),...(d.del||[])]);
     S.p=dedup(mergeT(S.p,d.p,del),del);S.c=mergeT(S.c,d.c,del);S.r=mergeT(S.r,d.r,del);S.l=mergeT(S.l,d.l,del).sort((x,y)=>x.ts-y.ts);S.ct=mergeT(S.ct||[],d.ct||[],del);S.cp=mergeT(S.cp||[],d.cp||[],del);S.del=[...del];
-    if((d.cfgM||0)>(S.cfgM||0)){S.nombre=d.nombre;S.t=d.t;S.img=d.img;S.col=d.col||null;S.cfgM=d.cfgM}
+    if((d.cfgM||0)>(S.cfgM||0)){S.nombre=d.nombre;S.t=d.t;S.img=d.img;S.col=d.col||null;S.lcols=d.lcols||null;S.lsort=d.lsort||null;S.cfgM=d.cfgM}
     up=fp(S)!==fp(d);if(!up)S.mod=d.mod}
    if(up)S.mod=Date.now();
    snap={};cfgSnap='';stamp(1);persist();
@@ -145,10 +145,10 @@ async function nube(){if(!cfg.url)return toast('Escribe la URL y pulsa Guardar')
 async function bajar(c){if(IDX.find(x=>x.cid==c))return toast('Ya está en este dispositivo: ábrelo y pulsa Sincronizar');
  try{await tok();const r=await fetch(fb('/eventos/'+c));if(!r.ok)throw herr(r);const d=unpack(await r.json());d.cid=c;nuevoEv(d);toast('Evento descargado');view()}catch(e){toast('Error: '+e.message)}}
 setInterval(()=>{if(cur&&cfg.auto&&cfg.url&&S.cid){if(pend)refresh();sync(true)}},8000);
-let F={p:{},c:{},r:{},m:{},k:{},s:{}},QF={};
+let F={p:{},c:{},r:{},m:{},k:{},s:{},ls:{}},QF={};
 function qset(k,v){QF[k]=1;fset('m',k,v)}
 function qclear(){const ks=Object.keys(QF);QF={};let ch=false;ks.forEach(k=>{if(F.m[k]){F.m[k]='';ch=true}});return ch}
-const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['est','sx']};
+const EXACT={p:['sexo','fed','loc','salio'],c:['sexo'],m:['est','sx'],ls:['sx','fed','loc']};
 const iso2=n=>{const m=String(n||'').match(/^(\d{4})-(\d\d)-(\d\d)/);return m?m[3]+'/'+m[2]+'/'+m[1]:''};
 function fmatch(t,vals){return Object.entries(F[t]).every(([k,f])=>{if(!f||!(k in vals))return true;const v=String(vals[k]??'').toLowerCase(),g=String(f).toLowerCase();return(EXACT[t]||[]).includes(k)?v===g:v.includes(g)})}
 function fv(t,x){if(t=='p')return{dorsal:x.dorsal,nombre:x.nombre,apellidos:x.apellidos,club:x.club,nac:iso2(x.nac)||'sin fecha',sexo:x.sexo||'Vacío',fed:x.fed?'Sí':'No',loc:x.loc?'Sí':'No',salio:x.salio?'Sí':'No',anyo:yr(x)||'',cat:catOf(x)?.nombre||'sin categoría'};
@@ -162,7 +162,7 @@ function restScroll(o){document.querySelectorAll('#v .sc').forEach((e,i)=>{if(o.
 function keep(fn,id){const e=id?document.getElementById(id):null,pos=e&&e.selectionStart!=null?e.selectionStart:null,sc=snapScroll();fn();restScroll(sc);
  const n=id?document.getElementById(id):null;if(n){n.focus({preventScroll:true});if(pos!=null)try{n.setSelectionRange(pos,pos)}catch(_){}}}
 function fset(t,k,v,id){if(t=='m'&&id)delete QF[k];F[t][k]=v;if(SEL[t])SEL[t].clear();keep(view,id)}
-function fclr(t){if(t=='m')QF={};F[t]=t=='k'&&F.k.modo?{modo:F.k.modo}:{};if(SEL[t])SEL[t].clear();view()}
+function fclr(t){if(t=='m')QF={};F[t]=(t=='k'||t=='ls')&&F[t].modo?{modo:F[t].modo}:{};if(SEL[t])SEL[t].clear();view()}
 const SEL={p:new Set(),c:new Set(),r:new Set(),m:new Set(),s:new Set()};
 function selUpd(t){const b=$('#bs_'+t);if(b)b.textContent='🗑 Borrar seleccionados ('+SEL[t].size+')'}
 function selOne(t,id,v){v?SEL[t].add(id):SEL[t].delete(id);selUpd(t)}
@@ -186,7 +186,7 @@ const load=id=>JSON.parse(localStorage.getItem('crono_ev_'+id));
 function nuevoEv(d){const id=uid();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.push({id,nombre:d.nombre,mod:Date.now(),cid:d.cid});idxSave();return id}
 function migrar(){try{const old=localStorage.getItem('crono');if(old&&!IDX.length){const o=JSON.parse(old);o.nombre=o.nombre||'Evento anterior';nuevoEv(o)}}catch(e){}}
 function crear(){const n=$('#en').value.trim();if(!n)return toast('Escribe un nombre para el evento');abrir(nuevoEv(newS(n)))}
-function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);S.ct=S.ct||[];S.cp=S.cp||[];ctlSel='k0';snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{},s:{}};Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
+function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);S.ct=S.ct||[];S.cp=S.cp||[];ctlSel='k0';snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{},s:{},ls:{}};Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
 function salir(){cur=null;S=null;FH=null;view()}
 function dup(id){const d=load(id);d.nombre+=' (copia)';delete d.cid;d.del=[];d.l=[];d.cp=[];d.p.forEach(p=>{p.salio=false;delete p.tsal});d.r.forEach(r=>r.t0=null);nuevoEv(d);view()}
 async function borrarEv(id){if(await ask('¿Borrar este evento y todos sus datos? (descárgalo antes si quieres conservarlo)')){localStorage.removeItem('crono_ev_'+id);IDX=IDX.filter(x=>x.id!=id);idxSave();view()}}
@@ -253,7 +253,7 @@ function marcarSalida(){const e=$('#sal'),d=+e.value;if(String(e.value).trim()==
  if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:true,tsal:Date.now()});save();toast('Dorsal '+d+' creado en participantes');view();return}
  if(p.salio)toast('El dorsal '+d+' ya estaba marcado como salido');else{p.salio=true;p.tsal=Date.now();save()}
  view()}
-let SORT={s:{k:'hora',d:-1}},ctlSel='k0';
+let SORT={s:{k:'hora',d:-1},ls:{k:'dorsal',d:1}},ctlSel='k0';
 const CTL0={id:'k0',nombre:'Salida',km:0};
 const controles=()=>[CTL0,...(S.ct||[]).slice().sort((a,b)=>a.km-b.km)];
 const ctlAct=()=>controles().find(c=>c.id==ctlSel)||CTL0;
@@ -423,9 +423,45 @@ function rep(ui){const K=F.k,C=colores(),modo=K.modo||'general',im=k=>S.img[k]?`
  const cab=im('h'),pie=im('f');
  return`<style>${REPCSS}</style><div class="rep" style="--p:${C.p};--s:${C.s};--st:${ctr(C.s)};--bg:${C.f}"><table class="pg">${cab?`<thead><tr><td>${cab}</td></tr></thead>`:''}<tbody><tr><td>${bar}<h2>${esc(S.t)}</h2>${body||'<p>Aún no hay resultados.</p>'}</td></tr></tbody>${pie?`<tfoot><tr><td>${pie}</td></tr></tfoot>`:''}</table></div>`}
 function vK(){return`<div id="rep">${rep(true)}</div>`}
+const LMODO={carreras:'Por carreras',categorias:'Por categorías',todos:'Todos los registros'};
+const LORDER=['dorsal','nombre','apellidos','club','sexo','categoria','carrera','fnac','fed','loc'];
+const LDEF={carreras:LORDER.filter(k=>k!='carrera'),categorias:LORDER.filter(k=>k!='categoria'&&k!='carrera'),todos:LORDER};
+const lcols=m=>{const v=S.lcols&&S.lcols.length?S.lcols:LDEF[m];return LORDER.filter(k=>v.includes(k))};
+function togCol(k,v){const modo=F.ls.modo||'carreras';let c=lcols(modo).slice();c=v?[...new Set([...c,k])]:c.filter(x=>x!==k);if(!c.length){toast('Debe quedar al menos una columna');return view()}S.lcols=LORDER.filter(x=>c.includes(x));save();keep(view)}
+function colsDef(){S.lcols=null;save();keep(view)}
+const LHEAD={dorsal:'Dorsal',nombre:'Nombre',apellidos:'Apellidos',club:'Club',sexo:'Sexo',categoria:'Categoría',carrera:'Carrera',fnac:'F. nacimiento',fed:'Federado',loc:'Local'};
+const LVAL={dorsal:x=>x.p.dorsal===''||x.p.dorsal==null?'':String(x.p.dorsal),nombre:x=>(x.p.nombre||'').trim(),apellidos:x=>(x.p.apellidos||'').trim(),club:x=>x.p.club||'',sexo:x=>x.p.sexo||'',categoria:x=>x.c?x.c.nombre:'sin categoría',carrera:x=>x.r?x.r.nombre:'sin carrera',fnac:x=>iso2(x.p.nac),fed:x=>x.p.fed?'Sí':'No',loc:x=>x.p.loc?'Sí':'No'};
+const LSORT={dorsal:x=>x.p.dorsal===''||x.p.dorsal==null?1e12:+x.p.dorsal,fnac:x=>x.p.nac||'9999'};
+const lord=k=>LSORT[k]||(x=>LVAL[k](x).toLowerCase());
+const lsort=()=>S.lsort&&LHEAD[S.lsort.k]?S.lsort:{k:'dorsal',d:1};
+function sortL(k){const o=lsort();S.lsort=o.k==k?{k,d:-o.d}:{k,d:1};save();view()}
+function setSort(k,d){S.lsort={k,d:d||lsort().d};save();keep(view)}
+function sortDef(){S.lsort=null;save();keep(view)}
+function gruposL(){const K=F.ls,modo=K.modo||'carreras',o=lsort(),f=lord(o.k);
+ const rows=S.p.map(p=>{const c=catOf(p);return{p,c,r:c?raceOf(c):null}}).filter(x=>(!K.car||(x.r&&x.r.id==K.car))&&(!K.cat||(x.c&&x.c.id==K.cat))&&fmatch('ls',{dorsal:LVAL.dorsal(x),nom:LVAL.nombre(x),ape:LVAL.apellidos(x),club:LVAL.club(x),sx:x.p.sexo||'Vacío',fed:LVAL.fed(x),loc:LVAL.loc(x)}));
+ const srt=a=>a.slice().sort((x,y)=>{const u=f(x),v=f(y);return((u<v?-1:u>v?1:0)*o.d)||(String(x.p.id)<String(y.p.id)?-1:1)});
+ let gs;
+ if(modo=='todos')gs=[{n:'Todos los participantes',rows}];
+ else if(modo=='categorias'){gs=S.c.map(c=>({n:c.nombre+' ('+c.sexo+')',rows:rows.filter(x=>x.c&&x.c.id==c.id)}));gs.push({n:'Sin categoría',rows:rows.filter(x=>!x.c)})}
+ else{gs=S.r.map(r=>({n:r.nombre,t:r.nombre+(rinfo(r)?' · '+rinfo(r):'')+(r.hora?' · salida '+r.hora:''),rows:rows.filter(x=>x.r&&x.r.id==r.id)}));gs.push({n:'Sin carrera',rows:rows.filter(x=>!x.r)})}
+ return gs.filter(g=>g.rows.length).map(g=>({...g,rows:srt(g.rows)}))}
+const gtL=g=>(g.t||g.n)+' · '+g.rows.length+(g.rows.length==1?' participante':' participantes');
+function repL(ui){const K=F.ls,C=colores(),modo=K.modo||'carreras',cols=lcols(modo),o=lsort(),im=k=>S.img[k]?`<img src="${S.img[k]}" style="max-width:100%;display:block;margin:0 auto">`:'';
+ const body=gruposL().map(g=>`<table class="rt"><thead><tr><th class="tt" colspan="${cols.length}">${esc(gtL(g))}</th></tr><tr class="hh">${cols.map(k=>`<th${ui?` style="cursor:pointer" title="Ordenar" onclick="sortL('${k}')"`:''}>${LHEAD[k]}${ui&&o.k==k?(o.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>${g.rows.map(x=>`<tr>${cols.map(k=>`<td>${esc(LVAL[k](x))}</td>`).join('')}</tr>`).join('')}</tbody></table>`).join('');
+ let bar='';
+ if(ui){const sel=(id,k,lbl,op)=>`<select id="${id}" onchange="fset('ls','${k}',this.value)"><option value="">${lbl}</option>${op.map(([v,t])=>`<option value="${v}" ${K[k]==v?'selected':''}>${esc(t)}</option>`).join('')}</select>`,
+  txt=(k,l)=>`<input id="f_ls_${k}" placeholder="${l}" style="width:100px" value="${esc(K[k]||'')}" oninput="fset('ls','${k}',this.value,'f_ls_${k}')">`;
+  bar=`<div class="np" style="margin:8px 0"><b>Listado de salida</b><br>${sel('lm','modo','',Object.entries(LMODO)).replace('<option value=""></option>','')} ${sel('lr','car','Todas las carreras',S.r.map(r=>[r.id,r.nombre]))} ${sel('lc','cat','Todas las categorías',S.c.map(c=>[c.id,c.nombre+' ('+c.sexo+')']))}<br>${txt('dorsal','Dorsal')} ${txt('nom','Nombre')} ${txt('ape','Apellidos')} ${txt('club','Club')} ${sel('lsx','sx','Sexo',[['M','M'],['F','F'],['Vacío','Vacío']])} ${sel('lfe','fed','Federado',[['Sí','Federado: sí'],['No','Federado: no']])} ${sel('llo','loc','Local',[['Sí','Local: sí'],['No','Local: no']])} <button class="b" onclick="fclr('ls')">Limpiar</button> <button class="b" onclick="imprimir()">🖨 Imprimir / PDF</button><button class="b" onclick="xjL()">Exportar JSON</button><br><b>Columnas a mostrar:</b> ${LORDER.map(k=>`<label style="white-space:nowrap;margin-right:8px"><input type=checkbox ${lcols(modo).includes(k)?'checked':''} onchange="togCol('${k}',this.checked)"> ${LHEAD[k]}</label>`).join('')}<button class="b" onclick="colsDef()">Columnas por defecto</button><br><b>Ordenar por:</b> ${LORDER.map(k=>`<label style="white-space:nowrap;margin-right:8px"><input type=radio name="lsk" ${o.k==k?'checked':''} onchange="setSort('${k}')"> ${LHEAD[k]}</label>`).join('')}<select onchange="setSort(lsort().k,+this.value)"><option value="1" ${o.d>0?'selected':''}>Ascendente ▲</option><option value="-1" ${o.d<0?'selected':''}>Descendente ▼</option></select> <button class="b" onclick="sortDef()">Orden por defecto</button><br><small>Se basa en la lista de participantes, no en las llegadas de meta. Pulsa una cabecera para ordenar. Los filtros afectan a la pantalla, al PDF y al JSON.</small></div>`}
+ const cab=im('h'),pie=im('f');
+ return`<style>${REPCSS}</style><div class="rep" style="--p:${C.p};--s:${C.s};--st:${ctr(C.s)};--bg:${C.f}"><table class="pg">${cab?`<thead><tr><td>${cab}</td></tr></thead>`:''}<tbody><tr><td>${bar}<h2>${esc(S.t)}</h2><h3 style="color:var(--p);margin:4px 0 10px">Listado de salida · ${LMODO[modo]}</h3>${body||'<p>No hay participantes.</p>'}</td></tr></tbody>${pie?`<tfoot><tr><td>${pie}</td></tr></tfoot>`:''}</table></div>`}
+function vL(){return`<div id="rep">${repL(true)}</div>`}
+function xjL(){const modo=F.ls.modo||'carreras',gs=gruposL();if(!gs.length)return toast('No hay participantes que exportar');
+ const cols=lcols(modo),out={evento:S.nombre,titulo:S.t,listado:'Listado de salida · '+LMODO[modo],generado:new Date().toISOString(),
+  tablas:gs.map(g=>({titulo:gtL(g),columnas:cols.map(k=>LHEAD[k]),filas:g.rows.map(x=>{const o={};cols.forEach(k=>o[LHEAD[k]]=LVAL[k](x));return o})}))};
+ dl(S.nombre+'_listado_salida_'+modo,out)}
 function imprimir(){
  if(!document.querySelector('#rep table.rt')){return toast('Aún no hay resultados que imprimir')}
- const h='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(S.t)+'</title><style>@page{margin:10mm}html,body{margin:0;background:'+colores().f+';font-family:system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>'+rep()+'<script>setTimeout(function(){window.print()},500)<\/script></body></html>';
+ const h='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(S.t)+'</title><style>@page{margin:10mm}html,body{margin:0;background:'+colores().f+';font-family:system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>'+(tab=='ls'?repL():rep())+'<script>setTimeout(function(){window.print()},500)<\/script></body></html>';
  const w=window.open('','_blank');
  if(!w){try{window.print()}catch(e){}toast('El navegador bloquea la impresión desde esta vista. Abre cronometraje.html directamente en el navegador (doble clic en el archivo) y vuelve a probar.');return}
  w.document.open();w.document.write(h);w.document.close()}
@@ -484,7 +520,7 @@ Imagen pie: <input type=file accept="image/*" onchange="img('f',this.files[0])">
 <div class="card"><b>Sincronización con la nube</b><br>${cfg.url?`<button class="b" onclick="sync()">⇅ Sincronizar ahora</button> <label><input type=checkbox ${cfg.auto?'checked':''} onchange="cfgAuto(this.checked)"> Automática (cada pocos segundos)</label><div id="sy">${esc(syncMsg)}</div>`:'Configura Firebase en la página de eventos (botón ⌂ Eventos).'}</div>
 <div class="card"><button class="b r" onclick="askCode('Vas a borrar <b>todas las llegadas, las salidas y los pasos por controles</b>. No se puede deshacer.').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];(S.del=S.del||[]).push(...(S.cp||[]).map(x=>x.id));S.cp=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
 function ordenar(){S.c.sort((a,b)=>(a.ini-b.ini)||(a.fin-b.fin)||String(a.sexo).localeCompare(b.sexo));S.r.sort((a,b)=>(a.hora||'99:99').localeCompare(b.hora||'99:99'))}
-function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus({preventScroll:true});if(tab=='s')$('#sal')?.focus({preventScroll:true})}
+function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='ls'?vL():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus({preventScroll:true});if(tab=='s')$('#sal')?.focus({preventScroll:true})}
 document.addEventListener('click',e=>{if(!cur||tab!='m'||document.querySelector('.modal'))return;if(e.target.closest&&e.target.closest('input,select,textarea,button,a'))return;setTimeout(()=>{if(document.querySelector('.modal')||!cur||tab!='m')return;const a=document.activeElement;if(!a||a===document.body||!/INPUT|SELECT|TEXTAREA/.test(a.tagName))focoMeta()},0)});
 document.addEventListener('click',e=>{if(!Object.keys(QF).length)return;const t=e.target;if(t&&t.closest&&t.closest('.dupb,#mt,.modal'))return;if(qclear()&&tab=='m'&&cur)view()});
 document.addEventListener('click',e=>{if(!(e.target&&e.target.closest&&e.target.closest('.dd')))document.querySelectorAll('.ddm.open').forEach(x=>x.classList.remove('open'))});
