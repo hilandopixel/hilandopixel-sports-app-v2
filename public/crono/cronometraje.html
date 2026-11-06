@@ -186,8 +186,8 @@ const load=id=>JSON.parse(localStorage.getItem('crono_ev_'+id));
 function nuevoEv(d){const id=uid();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.push({id,nombre:d.nombre,mod:Date.now(),cid:d.cid});idxSave();return id}
 function migrar(){try{const old=localStorage.getItem('crono');if(old&&!IDX.length){const o=JSON.parse(old);o.nombre=o.nombre||'Evento anterior';nuevoEv(o)}}catch(e){}}
 function crear(){const n=$('#en').value.trim();if(!n)return toast('Escribe un nombre para el evento');abrir(nuevoEv(newS(n)))}
-function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);S.ct=S.ct||[];S.cp=S.cp||[];ctlSel='k0';snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{},s:{},ls:{}};Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
-function salir(){cur=null;S=null;FH=null;view()}
+function abrir(id){try{S=load(id);cur=id;FH=null;tab='p';S.p=S.p.map(fixP);S.ct=S.ct||[];S.cp=S.cp||[];ctlSel='k0';snap={};cfgSnap='';stamp(1);lastKnown=0;F={p:{},c:{},r:{},m:{},k:{},s:{},ls:{}};if(floGet().open)mostrarFlot();Object.values(SEL).forEach(x=>x.clear());view()}catch(e){toast('No se pudo abrir el evento')}}
+function salir(){flotOcultar();cur=null;S=null;FH=null;view()}
 function dup(id){const d=load(id);d.nombre+=' (copia)';delete d.cid;d.del=[];d.l=[];d.cp=[];d.p.forEach(p=>{p.salio=false;delete p.tsal});d.r.forEach(r=>r.t0=null);nuevoEv(d);view()}
 async function borrarEv(id){if(await ask('¿Borrar este evento y todos sus datos? (descárgalo antes si quieres conservarlo)')){localStorage.removeItem('crono_ev_'+id);IDX=IDX.filter(x=>x.id!=id);idxSave();view()}}
 function renEv(id,v){const d=load(id);d.nombre=v;d.cfgM=Date.now();d.mod=Date.now();localStorage.setItem('crono_ev_'+id,JSON.stringify(d));IDX.find(x=>x.id==id).nombre=v;idxSave()}
@@ -237,7 +237,7 @@ const dd={};if(t=='p')S.p.forEach(x=>{dd[x.dorsal]=(dd[x.dorsal]||0)+1});
 // ---- Meta
 async function salida(i){const r=S.r[i];if(r.t0&&!(await ask('Esta carrera ya tiene salida. ¿Reiniciar?')))return;r.t0=Date.now();save();view()}
 function ajustar(i){const v=$('#aj'+i).value;if(!v)return toast('Escribe el tiempo, ej. 15:00');const p=v.split(':').map(Number).reverse();const ms=((p[2]||0)*3600+(p[1]||0)*60+(p[0]||0))*1000;S.r[i].t0=Date.now()-ms;save();view()}
-function meta(){const ts=Date.now(),dv=String($('#dor').value).trim(),d=+dv;if(dv===''||isNaN(d)){focoMeta();return}
+function meta(el){el=el||$('#dor');const ts=Date.now(),dv=String(el.value).trim(),d=+dv;if(dv===''||isNaN(d)){focoMeta();return}el.value='';
  if(!S.p.some(x=>eqD(x.dorsal,d))){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;S.p.unshift({id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false})}
  S.l.push({id:uid(),d,ts});qclear();save();view();focoMeta()}
 function mins(){const m={};S.l.forEach(l=>{if(l.prov)return;const o=m[l.d];if(!o||l.ts<o.ts||(l.ts==o.ts&&l.id<o.id))m[l.d]=l});return m}
@@ -293,7 +293,7 @@ function vS(){const c=ctlAct(),esS=c.id=='k0',o=SORT.s,nm=p=>((p.nombre||'')+' '
 <button class="b r" id="bs_s" onclick="borrarSel('s')">🗑 Borrar seleccionados (${SEL.s.size})</button><div class="sc" id="st"><table><thead><tr><th><input type=checkbox title="Seleccionar todo" onchange="selAll('s',this.checked)">${th('dorsal','Dorsal')}${th('nombre','Nombre')}${th('carrera','Carrera')}${th('hora','Hora')}${esS?'':th('tiempo','Tiempo')}<th></tr>${fr}</thead><tbody>${rows.slice(0,500).map(x=>`<tr><td><input type=checkbox class="sel_s" data-id="${x.id}" ${SEL.s.has(x.id)?'checked':''} onchange="selOne('s','${x.id}',this.checked)"><td>${esc(x.p.dorsal)}<td>${esc(nm(x.p)||'sin datos')}<td>${esc(car(x.p)||'-')}<td>${x.ts?new Date(x.ts).toLocaleTimeString():'--'}${esS?'':`<td>${tmp(x)==null?'--':fmt(tmp(x))}`}<td><button class="b r" onclick="delCtl('${x.id}')">✕</button></tr>`).join('')}</tbody></table></div>${rows.length>500?'<small>Mostrando 500 de '+rows.length+'; usa los filtros.</small>':''}`}
 function regKm(km){const r=new Set();if(+km==0)S.p.forEach(p=>{if(p.salio)r.add(p.dorsal)});(S.ct||[]).filter(c=>+c.km==+km).forEach(c=>(S.cp||[]).forEach(x=>{if(x.c==c.id)r.add(x.d)}));return r}
 function cnt(km){const M=mins(),R=regKm(km||0),k=S.r.map(()=>({l:0,s:0,e:0,q:0,a:0}));S.p.forEach(p=>{const r=raceOf(catOf(p));if(!r)return;const o=k[S.r.indexOf(r)],ar=!!M[p.dorsal],sa=R.has(p.dorsal);o.l++;if(sa)o.s++;if(ar)o.e++;if(sa&&ar)o.a++;if(sa&&!ar)o.q++});return k}
-function focoMeta(){if(cur&&tab=='m'){const e=$('#dor');if(e)e.focus()}}
+function focoMeta(){const f=document.getElementById('fdor');if(f){f.focus();return}if(cur&&tab=='m'){const e=$('#dor');if(e)e.focus()}}
 function maskD(el){const g=el.value.replace(/\D/g,'').slice(0,8),f=g.length>4?g.slice(0,2)+'/'+g.slice(2,4)+'/'+g.slice(4):g.length>2?g.slice(0,2)+'/'+g.slice(2):g;if(el.value!=f)el.value=f}
 function parseD(v){const g=String(v).replace(/\D/g,'');if(!g)return'';if(g.length!=8)return null;const D=+g.slice(0,2),M=+g.slice(2,4),Y=+g.slice(4),t=new Date(Y,M-1,D);return Y>=1900&&Y<=new Date().getFullYear()&&t.getMonth()==M-1&&t.getDate()==D?`${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')}`:null}
 function popP(id){const p=S.p.find(x=>x.id==id);if(!p)return;
@@ -335,6 +335,25 @@ function dorMenu(id){const l=S.l.find(x=>x.id==id);if(!l)return;const d=document
   q('#dm_no').onclick=close;
   const ok=()=>{const sv=String(n.value).trim(),v=+sv;if(sv===''||isNaN(v))return toast('Escribe el nuevo dorsal');if(v==l.d)return close();corregirD(id,v);d.remove();view();focoMeta()};
   q('#dm_ok').onclick=ok;n.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();ok()}};n.focus()}}
+const floGet=()=>{try{return JSON.parse(localStorage.getItem('crono_float'))||{}}catch(e){return{}}};
+const floSet=o=>{try{localStorage.setItem('crono_float',JSON.stringify({...floGet(),...o}))}catch(e){}};
+function clampFlot(p){const w=p.offsetWidth||320,h=p.offsetHeight||150,x=Math.max(0,Math.min(p.offsetLeft,window.innerWidth-w)),y=Math.max(0,Math.min(p.offsetTop,window.innerHeight-h));p.style.left=x+'px';p.style.top=y+'px';return[x,y]}
+function flotOcultar(){const p=document.getElementById('fpanel');if(p)p.remove()}
+function cerrarFlot(){floSet({open:false});flotOcultar();focoMeta()}
+function abrirFlot(){floSet({open:true});mostrarFlot();const f=document.getElementById('fdor');if(f)f.focus()}
+function mostrarFlot(){if(document.getElementById('fpanel'))return;const st=floGet(),p=document.createElement('div');p.id='fpanel';p.className='fpanel';
+ p.style.cssText='position:fixed;z-index:50;width:min(320px,92vw);background:#fff;border:2px solid #12355b;border-radius:12px;box-shadow:0 8px 24px #0006;touch-action:none';
+ p.innerHTML=`<div id="fhead" style="cursor:move;background:#12355b;color:#fff;padding:8px 10px;border-radius:9px 9px 0 0;display:flex;justify-content:space-between;align-items:center;gap:8px;user-select:none;touch-action:none"><b>⠿ Dorsal a meta</b><button class="b r" id="fcl" style="padding:4px 10px;margin:0">Cerrar modal</button></div><div style="padding:10px"><input id="fdor" type="number" placeholder="Dorsal" style="font-size:30px;width:100%"><button class="b" id="fok" style="width:100%;margin:8px 0 0">Registrar</button></div>`;
+ document.body.append(p);
+ p.style.left=(st.x!=null?st.x:Math.max(0,window.innerWidth-340))+'px';p.style.top=(st.y!=null?st.y:90)+'px';clampFlot(p);
+ const q=k=>p.querySelector(k),head=q('#fhead'),inp=q('#fdor');
+ q('#fcl').onclick=cerrarFlot;q('#fok').onclick=()=>meta(inp);
+ inp.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();meta(inp)}};
+ head.onpointerdown=e=>{if(e.target.closest&&e.target.closest('button'))return;const sx=e.clientX-p.offsetLeft,sy=e.clientY-p.offsetTop;if(head.setPointerCapture)head.setPointerCapture(e.pointerId);
+  head.onpointermove=ev=>{p.style.left=(ev.clientX-sx)+'px';p.style.top=(ev.clientY-sy)+'px';clampFlot(p)};
+  head.onpointerup=()=>{head.onpointermove=null;head.onpointerup=null;const[x,y]=clampFlot(p);floSet({x,y})}};
+ inp.focus()}
+window.addEventListener('resize',()=>{const p=document.getElementById('fpanel');if(p)clampFlot(p)});
 function popD(d){let p=S.p.find(x=>eqD(x.dorsal,d));if(!p){const id=(S.del||[]).includes('d'+d)?uid():'d'+d;p={id,dorsal:d,nombre:'',apellidos:'',club:'',nac:'',sexo:'',fed:false,loc:false,salio:false};S.p.unshift(p);save()}popP(p.id)}
 function insL(id,mode){const i=S.l.findIndex(x=>x.id==id);if(i<0)return;const R=S.l[i];let ts;
  if(mode=='a'){const nx=S.l[i+1];ts=R.ts+1000;if(nx&&nx.ts<=ts)ts=R.ts+Math.floor((nx.ts-R.ts)/2)}
@@ -370,7 +389,7 @@ function vMeta(){const M=mins(),K=cnt(),RK=rank(),B=S.r.map(()=>[]);
  const IG=Object.keys(ig).map(Number).sort((a,b)=>a-b);
  const ign=`<div class="card"><b>Dorsales ignorados (${IG.length})</b><div style="margin:6px 0">${IG.length?IG.map(d=>`<span class="dupb" onclick="qset('d','${d}')" title="${ig[d].length} llegada(s) ignorada(s) · pulsa para filtrar la tabla" style="${bd}background:#e0e0e0;color:#555;border:2px solid #9e9e9e">${d}${ig[d].length>1?' ×'+ig[d].length:''}</span>`).join(''):'<small>✓ No hay dorsales ignorados</small>'}</div></div>`;
  let cr=unreg+dups+ign+'<small>🟢 ya tiene llegada · 🔴 no ha salido · 🟡 en carrera, sin llegada</small>'+S.r.map((r,i)=>`<div class="card"><b>${r.nombre}</b> (prevista ${r.hora||'--'}${r.t0?' · salida real '+new Date(r.t0).toLocaleTimeString():''})${rinfo(r)?'<br><small>'+rinfo(r)+'</small>':''}<div class="clk" data-i="${i}">--:--:--</div><div style="margin:6px 0">Total (<b>${K[i].e}/${K[i].l}</b> - <b style="color:#e53935">${K[i].l-K[i].e}</b>)<br>Total control km 0 (<b>${K[i].a}/${K[i].s}</b> - <b style="color:#e53935">${K[i].s-K[i].a}</b>)</div><div style="margin:6px 0">${B[i].sort((a,b)=>a.dorsal-b.dorsal).map(badge).join('')}</div><button class="b" onclick="salida(${i})">▶ Dar salida</button><br><input id="aj${i}" placeholder="hh:mm:ss (ej. 00:15:30)" style="width:210px"><button class="b" onclick="ajustar(${i})">⏱ Ya llevan...</button></div>`).join('');
- let h=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter'){event.preventDefault();meta()}" autofocus> <button class="b" onclick="meta()">Registrar</button></div>`;
+ let h=`<div class="card"><b>Dorsal que llega a meta:</b><br><input id="dor" type="number" onkeydown="if(event.key=='Enter'){event.preventDefault();meta()}" autofocus> <button class="b" onclick="meta()">Registrar</button> <button class="b" onclick="abrirFlot()" title="Abrir el campo de dorsal en una ventana flotante que puedes mover por la pantalla">🗔 Ventana flotante</button></div>`;
  const sxc=x=>x=='F'?'#f8bbd0':x=='M'?'#bbdefb':'transparent';
  const fr=`<tr class="np"><th>${['d','nom'].map(k=>fcell('m',k)).join('')}${['cat','t','pg'].map(k=>fcell('m',k)).join('')}${fcell('m','est',[['Duplicado','⚠️ Duplicado'],['Ignorado','🚫 Ignorado'],['OK','✅ OK'],['Sin datos','❓ Sin datos']])}<th><button class="b" onclick="fclr('m')">Limpiar</button></tr>`,any=Object.values(F.m).some(Boolean);
  const st=(l,f)=>l.prov?'Ignorado':(!f.p||!((f.p.nombre||'').trim()||(f.p.apellidos||'').trim())||!f.c)?'Sin datos':M[l.d]!==l?'Duplicado':'OK',IC={'Duplicado':'⚠️','Ignorado':'🚫','OK':'✅','Sin datos':'❓'};
@@ -520,9 +539,9 @@ Imagen pie: <input type=file accept="image/*" onchange="img('f',this.files[0])">
 <div class="card"><b>Sincronización con la nube</b><br>${cfg.url?`<button class="b" onclick="sync()">⇅ Sincronizar ahora</button> <label><input type=checkbox ${cfg.auto?'checked':''} onchange="cfgAuto(this.checked)"> Automática (cada pocos segundos)</label><div id="sy">${esc(syncMsg)}</div>`:'Configura Firebase en la página de eventos (botón ⌂ Eventos).'}</div>
 <div class="card"><button class="b r" onclick="askCode('Vas a borrar <b>todas las llegadas, las salidas y los pasos por controles</b>. No se puede deshacer.').then(y=>{if(y){(S.del=S.del||[]).push(...S.l.map(x=>x.id));S.l=[];(S.del=S.del||[]).push(...(S.cp||[]).map(x=>x.id));S.cp=[];S.p.forEach(p=>{p.salio=false;delete p.tsal});S.r.forEach(r=>r.t0=null);save();view()}})">Reiniciar llegadas y salidas</button></div>`}
 function ordenar(){S.c.sort((a,b)=>(a.ini-b.ini)||(a.fin-b.fin)||String(a.sexo).localeCompare(b.sexo));S.r.sort((a,b)=>(a.hora||'99:99').localeCompare(b.hora||'99:99'))}
-function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='ls'?vL():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')$('#dor')?.focus({preventScroll:true});if(tab=='s')$('#sal')?.focus({preventScroll:true})}
+function view(){nav();if(!cur){$('#v').innerHTML=vHome();return}ordenar();$('#v').innerHTML=tab=='m'?vMeta():tab=='s'?vS():tab=='ls'?vL():tab=='k'?vK():tab=='d'?vD():tabla(tab);if(tab=='m')(document.getElementById('fdor')||$('#dor'))?.focus({preventScroll:true});if(tab=='s')$('#sal')?.focus({preventScroll:true})}
 document.addEventListener('click',e=>{if(!cur||tab!='m'||document.querySelector('.modal'))return;if(e.target.closest&&e.target.closest('input,select,textarea,button,a'))return;setTimeout(()=>{if(document.querySelector('.modal')||!cur||tab!='m')return;const a=document.activeElement;if(!a||a===document.body||!/INPUT|SELECT|TEXTAREA/.test(a.tagName))focoMeta()},0)});
-document.addEventListener('click',e=>{if(!Object.keys(QF).length)return;const t=e.target;if(t&&t.closest&&t.closest('.dupb,#mt,.modal'))return;if(qclear()&&tab=='m'&&cur)view()});
+document.addEventListener('click',e=>{if(!Object.keys(QF).length)return;const t=e.target;if(t&&t.closest&&t.closest('.dupb,#mt,.modal,.fpanel'))return;if(qclear()&&tab=='m'&&cur)view()});
 document.addEventListener('click',e=>{if(!(e.target&&e.target.closest&&e.target.closest('.dd')))document.querySelectorAll('.ddm.open').forEach(x=>x.classList.remove('open'))});
 migrar();view();if(cfg.key&&CRED.email)login().then(()=>view()).catch(()=>{});
 </script></body></html>
