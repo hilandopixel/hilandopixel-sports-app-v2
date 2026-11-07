@@ -4,7 +4,7 @@
  "nombre": "Final Interprovincial CxM Escolar 26",
  "cid": "p8b9f2jjz77qw3",
  "cfgM": 1793948256543,
- "mod": 1793979785054,
+ "mod": 1794043642257,
  "eliminadas": [
   "jfdllom",
   "d8484848",
@@ -975,7 +975,15 @@
   "s5hqirz",
   "gavewvj",
   "ab166w4",
-  "wjh8642"
+  "wjh8642",
+  "snbsb4e",
+  "w9q4egp",
+  "6bdum7h",
+  "5bv4gpp",
+  "46hxild",
+  "d8o80cv",
+  "32kqx6y",
+  "d350"
  ],
  "config": {
   "titulo": "Resultados",
@@ -1918,32 +1926,32 @@
   ],
   "carreras": [
    {
-    "id": "dwklh4b",
-    "nombre": "Benjamines",
-    "hora": "10:30",
+    "_m": 1794043616967,
     "cats": [
      "xrlqrcu",
      "ngajoai"
     ],
-    "t0": null,
-    "_m": 1793948390854,
     "dist": 2,
+    "dneg": 63,
     "dpos": 63,
-    "dneg": 63
+    "hora": "10:30",
+    "id": "dwklh4b",
+    "nombre": "Benjamines",
+    "t0": null
    },
    {
-    "id": "umz3ny4",
-    "nombre": "Cadetes",
-    "hora": "10:45",
+    "_m": 1794043616967,
     "cats": [
      "edpf5q8",
      "gouczgy"
     ],
-    "t0": null,
-    "_m": 1793948390854,
     "dist": 8.5,
+    "dneg": 560,
     "dpos": 560,
-    "dneg": 560
+    "hora": "10:45",
+    "id": "umz3ny4",
+    "nombre": "Cadetes",
+    "t0": null
    },
    {
     "id": "nl5hqt8",
