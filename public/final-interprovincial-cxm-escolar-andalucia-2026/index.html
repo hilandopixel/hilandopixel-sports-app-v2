@@ -5,17 +5,17 @@
 <meta name="author" content="HilandoPixel">
 <meta content="carrera, fotos, running, tusresulta2, hilandopixel, larompepiernas" name="keywords">
 <meta content="Búsqueda de fotos y resultados de la Final Interprovincial Andaluza CxM Edad Escolar 2026" name="description">
-<meta property="og:image" content="/final-interprovincial-cxm-escolar-andalucia-2026/previewWeb.png">
+<meta property="og:image" content="previewWeb.png">
 <meta property="og:title" content="Final Interprovincial Andaluza CxM Edad Escolar 2026 - TusResulta2 - Búsqueda de fotos" />
 <meta property="og:description" content="Búsqueda de fotos y resultados de la Final Interprovincial Andaluza CxM Edad Escolar 2026" />
 <title>Final Interprovincial Andaluza CxM Edad Escolar 2026 - HilandoPixel - TusResulta2 - Búsqueda de fotos</title>
 <link rel="icon" href="/assets/favicon.ico">
 <link rel="stylesheet" href="/assets/style.css">
-    <link rel="stylesheet" href="/style.css">
-    <script src="/navbar.js" defer></script>
+<link rel="stylesheet" href="/style.css">
+<script src="/navbar.js" defer></script>
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--tx:#1b1f24;--mut:#5b6672;--pri:#12355b;--acc:#f5a623;--ok:#2e7d32;--err:#b3261e;--bd:#d5dae1;--res:#e8f1fb}
-@media (prefers-color-scheme:dark){:root{--bg:#10151b;--card:#1a222b;--tx:#eef2f6;--mut:#9aa7b4;--pri:#7fb2ee;--acc:#f5a623;--ok:#66bb6a;--err:#ef9a9a;--bd:#2d3945;--res:#22313f}}
+:root{--bg:#fff;--card:#fff;--tx:#5da999;--mut:#5b6672;--pri:#5da999;--acc:#f5a623;--ok:#2e7d32;--err:#b3261e;--bd:#d5dae1;--res:#e8f1fb}
+@media (prefers-color-scheme:dark){}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--tx);font:18px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
@@ -37,59 +37,79 @@ details summary{cursor:pointer;font-weight:600}
 .res .dnum{font-size:clamp(34px,11vw,52px);font-weight:800;color:var(--pri);line-height:1.1}
 .res .nom{font-size:clamp(24px,7vw,34px);font-weight:700;margin-top:6px;word-break:break-word}
 .res .ape{font-size:clamp(22px,6.5vw,30px);font-weight:600;word-break:break-word}
-.res .cat{display:inline-block;margin-top:12px;padding:8px 14px;border-radius:999px;background:var(--acc);color:#1b1f24;font-weight:700;font-size:clamp(18px,5vw,22px)}
+.res .cat{display:inline-block;margin-top:12px;padding:8px 14px;border-radius:999px;background:var(--pri);color:white;font-weight:700;font-size:clamp(18px,5vw,22px)}
 .res .cat.sin{background:var(--bd);color:var(--mut)}
 .resultado{margin-top:16px;padding:14px;border-radius:12px;background:var(--res)}
-.resultado .et{font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+.resultado .et{font-size:14px;color:var(--tx);text-transform:uppercase;letter-spacing:1px}
 .resultado .tiempo{font-size:clamp(34px,11vw,52px);font-weight:800;font-variant-numeric:tabular-nums;color:var(--pri);line-height:1.15}
 .resultado .pos{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .resultado .pos div{flex:1 1 120px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;text-align:center}
 .resultado .pos b{display:block;font-size:clamp(22px,7vw,30px)}
 .resultado .pos span{font-size:13px;color:var(--mut)}
 .resultado .ritmo{margin-top:8px;color:var(--mut);font-size:16px}
-.sinres{margin-top:14px;color:var(--mut);font-style:italic}
+.sinres{margin-top:14px;color:var(--err);font-style:italic}
 .msg{color:var(--mut)}.err{color:var(--err);font-weight:600}.ok{color:var(--ok)}
 .vacio{font-style:italic;color:var(--mut)}
 #est{font-size:14px;color:var(--mut);text-align:center;margin:14px 0}
-article.card .et{font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+article.card .et{font-size:14px;color:var(--tx);text-transform:uppercase;letter-spacing:1px}
 .card.resultado{background:var(--res);margin-top:12px}
 .tcat{max-height:60vh;overflow:auto;border:1px solid var(--bd);border-radius:10px;margin-top:8px}
 .tcat table{width:100%;border-collapse:collapse}
 .tcat th,.tcat td{padding:8px 10px;text-align:left;font-size:16px;border-bottom:1px solid var(--bd)}
 .tcat th{position:sticky;top:0;background:var(--pri);color:#fff}
-@media (prefers-color-scheme:dark){.tcat th{color:#10151b}}
+@media (prefers-color-scheme:dark){}
 .tcat td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
-.tcat tr.yo td{background:var(--acc);color:#1b1f24;font-weight:700}
+
+
+/* Fila destacada: Fondo verde y animación de cambio de color de fuente entre negro y blanco */
+.tcat tr.yo td {
+  background: var(--pri);
+  font-weight: 700;
+  animation: parpadeoTexto 1.5s infinite ease-in-out;
+}
+
+@keyframes parpadeoTexto {
+  0%, 100% {
+    color: #000000;
+  }
+  50% {
+    color: #ffffff;
+  }
+}
+
 @media (max-width:440px){.hm{display:none}}
 [hidden]{display:none!important}
 </style>
 </head>
-<body>
+<body class="bg-white">
 <navbar-header></navbar-header>
-<main>
+<main class="bg-white">
 <section id="busq" class="card" hidden>
-    <h1 class="bg-white text-primary" id="ev"></h1>
-
- <label for="dorsal">Buscar participante por dorsal, nombre o apellido</label>
- <input id="dorsal" type="text" autocomplete="off" placeholder="Dorsal, nombre o apellidos">
+ <h1 class="text-primary" id="ev" style="margin-top:0;"></h1>
+<div>
+    <a><img class="width-full" src="/final-interprovincial-cxm-escolar-andalucia-2026/previewWeb-hq.png" alt="Fotos y resultados de Final Interprovincial Andaluza CxM Edad Escolar 2026" /></a>
+    <h2 class="sinres">Fotos aún no disponibles</h2>
+</div>
+<label for="dorsal">Buscar participante por dorsal, nombre o apellido</label>
+ <input class="bg-white text-primary" id="dorsal" type="text" autocomplete="off" placeholder="Dorsal, nombre o apellidos">
  <div class="fila"><button id="buscar" class="bg-primary" type="button">Buscar</button><button id="limpiar" type="button" class="sec">Borrar</button></div>
 </section>
 <section id="res" aria-live="polite"></section>
 <div id="est"></div>
 </main>
 <script>
+
 // =========================================================================
 // VARIABLES DE CONFIGURACIÓN INTERNA
 // =========================================================================
 const DB_URL = 'https://hilandopixel-crono-default-rtdb.europe-west1.firebasedatabase.app';
-const EVENTO_ID = 'p8b9f2jjz77qw3'; // <-- Cambia esto por la clave o ID de tu evento
-const REFRESCO = 30000;               // Refresco automático cada 30 segundos
+const EVENTO_ID = 'p8b9f2jjz77qw3';
+const REFRESCO = 30000;
 // =========================================================================
 
 const $ = id => document.getElementById(id);
 let DATA = null, timer = null, SIG = '';
 
-// Permite sobreescribir mediante parámetros URL ?db=... o ?evento=... si fuese necesario
 const q = new URLSearchParams(location.search);
 const db_activa = q.get('db') || DB_URL;
 const cid = q.get('evento') || EVENTO_ID;
@@ -150,6 +170,7 @@ const ritmo = x => {
 const norm = s => String(s || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
 function buscarParticipante(txt) {
+  if (!DATA || !DATA.p) return [];
   const t = String(txt).trim();
   if (t === '') return null;
   const tNorm = norm(t);
@@ -174,11 +195,26 @@ function buscarParticipante(txt) {
 function estado(t, cls) { const e = $('est'); e.textContent = t; e.className = cls || ''; }
 function msg(t, cls) { const r = $('res'); r.innerHTML = ''; const d = document.createElement('div'); d.className = 'card ' + (cls || 'msg'); d.textContent = t; r.appendChild(d); }
 
-function pintar(rs, txt) {
+function pintar(rs, txt, errorActualizacion) {
   const r = $('res');
   r.innerHTML = '';
+
+  if (errorActualizacion) {
+    const aviso = document.createElement('div');
+    aviso.className = 'card err';
+    aviso.style.marginBottom = '12px';
+    aviso.textContent = '⚠️ Error al actualizar desde la base de datos. Mostrando copia en caché.';
+    r.appendChild(aviso);
+  }
+
   if (rs === null) return msg('Escribe un número de dorsal, nombre o apellidos.');
-  if (!rs.length) return msg('No se encontraron participantes que coincidan con "' + String(txt).trim() + '".', 'err');
+  if (!rs.length) {
+    const sinResultados = document.createElement('div');
+    sinResultados.className = 'card err';
+    sinResultados.textContent = 'No se encontraron participantes que coincidan con "' + String(txt).trim() + '".';
+    r.appendChild(sinResultados);
+    return;
+  }
   
   const add = (p, c, t) => { const d = document.createElement('div'); d.className = c; d.textContent = t; p.appendChild(d); return d; };
   const card = cls => { const a = document.createElement('article'); a.className = 'card ' + cls; return a; };
@@ -224,10 +260,21 @@ function pintar(rs, txt) {
   if (foco) foco.box.scrollTop = Math.max(0, foco.yo.offsetTop - foco.box.clientHeight / 2);
 }
 
-function buscar() {
-  if (!DATA) return msg('Conectando a los datos...');
+async function buscar() {
   const t = $('dorsal').value;
-  pintar(buscarParticipante(t), t);
+  let falloActualizacion = false;
+
+  try {
+    await cargarDatos(true);
+  } catch (e) {
+    falloActualizacion = true;
+  }
+
+  if (!DATA) {
+    return msg('Error al actualizar y no hay datos en caché previa.', 'err');
+  }
+
+  pintar(buscarParticipante(t), t, falloActualizacion);
 }
 
 async function cargarDatos(silencio) {
@@ -240,16 +287,18 @@ async function cargarDatos(silencio) {
       DATA = { p: arr(p), c: arr(c).sort((a, b) => (a.ini - b.ini) || (a.fin - b.fin) || String(a.sexo).localeCompare(String(b.sexo))), r: arr(r).sort((a, b) => (a.hora || '99:99').localeCompare(b.hora || '99:99')), l: arr(l) };
       DATA.res = calcular();
     }
-    estado('Datos actualizados a las ' + new Date().toLocaleTimeString() + ' · ' + DATA.p.length + ' participantes · se actualiza cada ' + REFRESCO / 1000 + ' s', 'ok');
+    estado('Datos actualizados a las ' + new Date().toLocaleTimeString() + ' · ' + DATA.p.length + ' participantes', 'ok');
     $('busq').hidden = false;
     if (!silencio) { $('dorsal').focus(); }
     else if (!igual && $('dorsal').value.trim() !== '') {
-      const sc = [...document.querySelectorAll('.tcat')].map(e => e.scrollTop); buscar();
+      const sc = [...document.querySelectorAll('.tcat')].map(e => e.scrollTop);
+      pintar(buscarParticipante($('dorsal').value), $('dorsal').value, false);
       document.querySelectorAll('.tcat').forEach((e, i) => { if (sc[i] != null) e.scrollTop = sc[i]; });
     }
   } catch (e) {
-    estado(e.message || String(e), 'err');
-    if (!silencio) msg(e.message || String(e), 'err');
+    estado('Error de conexión al actualizar datos', 'err');
+    if (!silencio && !DATA) msg(e.message || String(e), 'err');
+    throw e;
   }
 }
 
@@ -266,15 +315,16 @@ async function obtenerNombreEvento() {
 async function iniciar() {
   estado('Conectando…');
   await obtenerNombreEvento();
-  await cargarDatos(false);
-  if (!timer) timer = setInterval(() => { if (cid && DATA) cargarDatos(true); }, REFRESCO);
+  try {
+    await cargarDatos(false);
+  } catch(e) {}
+  if (!timer) timer = setInterval(() => { if (cid) cargarDatos(true).catch(() => {}); }, REFRESCO);
 }
 
 $('buscar').onclick = buscar;
 $('limpiar').onclick = () => { $('dorsal').value = ''; $('res').innerHTML = ''; $('dorsal').focus(); };
 $('dorsal').onkeydown = e => { if (e.key == 'Enter') { e.preventDefault(); buscar(); } };
 
-// Iniciar aplicación
 iniciar();
 </script>
 </body></html>
